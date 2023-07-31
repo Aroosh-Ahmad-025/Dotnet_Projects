@@ -1,0 +1,33 @@
+﻿@using Microsoft.Data.SqlClient;
+@inject SqlConnection de
+@using LoginFinal.BL
+@using System.Security.Claims;
+@{
+    var Userid =User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
+    var CurrentUserRecord = new UserBL().GetActiveUserById(Convert.ToInt32(Userid), de);
+    User loggedinUser = CurrentUserRecord;
+
+    ViewBag.Title = "No Results";
+    Layout = "~/Views/Shared/_FrontLayout.cshtml";
+}
+
+
+
+<!-- No Result Found -->
+      <section class="pb-5 pt-0 bg-white border-bottom">
+         <div class="container">
+            <div class="row py-lg-3">
+               <div class="col-lg-8 col-md-8 mx-auto text-center">
+                  <center><video autoplay loop muted playsinline src="~/FrontAssets/js/notfound.mp4" width="300" height="300"></video></center>
+                  <h1>Sorry! No Results Found.</h1>
+                  <p class="land">Search back another query, Thanks.</p>
+                  <div class="mt-5">
+                     <a href="@Url.Action("Index","Home")" class="btn btn-success"><i class="mdi mdi-home"></i> Go To Home</a>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+      <!-- End No Result Found -->
+<!-- Lottie -->
+      <script src="https://unpkg.com/@@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>

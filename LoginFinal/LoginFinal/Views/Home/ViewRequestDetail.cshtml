@@ -1,0 +1,271 @@
+﻿@using LoginFinal.Models
+@using LoginFinal.HelpingClasses
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@model RequesthelpDto 
+
+@{
+    ViewData["Title"] = "ViewRequestDetail";
+    Layout = "~/Views/Shared/_FrontLayout.cshtml";
+}
+
+@*<h2>ViewRequestDetail</h2>*@
+
+<div class="bg-white">
+    <div class="container">
+        @if(ViewBag.thankyou!="")
+            {
+                <div class="h5 alert alert-info" id="alertMsg" role="alert">
+                    <span>@ViewBag.thankyou</span>
+                </div>
+            }
+
+        <div class="row">
+            <div class="col-lg-6 my-auto videonone">
+                <center><lottie-player class="video-tablet" src="https://assets4.lottiefiles.com/packages/lf20_zw0djhar.json" background="transparent" speed="1" style="width: 500px; height: 500px;" loop autoplay></lottie-player></center>
+            </div>
+            <div class="col-lg-6 mx-auto">
+                <div class="osahan-login py-4">
+                    <div class="text-center mb-4">
+                        <a href="@Url.Action("Index","Home")"><img src="~/images/butlerlogo.png" alt="" style="width: 139.22px; height: 38px;"></a>
+                        <h5 class="font-weight-bold mt-3">View Request Details</h5>
+                        @*<p style="font-size: 15px;font-weight: bold;">Register as @ViewBag.Category </p>*@
+                    </div>
+
+                    
+                @*<form action="@Url.Action("","")" >*@
+                    
+                    <div class="form-row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="mb-1">Title</label>
+                                <div class="position-relative ">
+                                    <input type="text" readonly name="Title" class="form-control" value="@Model.Title" required>
+                                </div>
+                               
+                            </div>
+                        </div>
+                        @*<div class="col">
+                            <div class="form-group">
+                                <label class="mb-1">Budget&nbsp;($)</label>
+                                <div class="position-relative">
+                                    <input type="number" readonly min="1" name="budget" value="@Model.budget" class="form-control" required>
+                                </div>
+                                
+                            </div>
+                        </div>*@
+                    </div>
+
+                    @*<div hidden class="form-group">
+                        <label class="mb-1">City</label>
+                        <div class="position-relative">
+                            <input type="text" readonly value="@Model.City" name="City" id="city" class="form-control" required>
+
+                        </div>
+                        
+                    </div>*@
+
+                    @*<input hidden id="daterow" value="@Model.FromDateTime" />*@
+                   @if(Model.FromDateTime!=null)
+                    {
+                       <div id="readdate_div" class="form-row" >
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="mb-1">From Date Time</label>
+                                <div class="position-relative ">
+                                    <input type="text" readonly value="@Model.FromDateTime" name="FromDateTime" class="form-control" required>
+                                </div>
+                               
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="mb-1">To Date Time</label>
+                                <div class="position-relative">
+                                    <input type="text" readonly value="@Model.ToDateTime" name="ToDateTime" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    }
+                    
+
+                     <div class="form-row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="mb-1">Skills</label>
+                                <div class="position-relative ">
+                                    <input type="text" readonly value="@Model.skills" name="skills" class="form-control" required>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div hidden class="col">
+                            <div class="form-group">
+                                <label class="mb-1">Zip code</label>
+                                <div class="position-relative">
+                                    <input type="text" readonly value="@Model.Zipcodes" name="Zipcodes" class="form-control" required>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="mb-1">Tags</label>
+                        <div class="position-relative">
+                            
+                            <input type="text" name="Tags" readonly value="@Model.Tags" id="password" class="form-control" required>
+                        </div>
+                    </div>
+                     
+
+                     <div class="form-group">
+                        <label class="mb-1">Prefer Language</label>
+                        <div class="position-relative">
+                            <input type="text" readonly value="@Model.Language" name="City" id="city" class="form-control" required>
+
+                            @*<select name="City" class="form-control countrypicker" data-live-search="true" data-default="United States" data-flag="true" required></select>*@
+                        </div>
+                        
+                    </div>
+
+                    <div class="form-group">
+                        <label class="mb-1">Description</label>
+                        <div class="position-relative">
+                           @* <i class="mdi mdi-key-variant position-absolute"></i>*@
+                            <textarea type="text" readonly  name="Description" id="Descriptionss" class="form-control" required >@Model.Description</textarea>
+                        </div>
+                    </div>
+
+                   
+
+                        
+                       
+
+                @*</form>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Recommended Carousal -->
+
+    <section class="py-5 bg-light">
+        <div class="view_slider recommended">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                     
+                    @if(ViewBag.mssg==0)
+                    {
+                    <h3 class="text-dark">Matching Butlers</h3>
+                        
+                    }
+
+                    @if(ViewBag.mssg==1)
+                    {
+                        <h5 class="text-dark">No butler matched against your request yet. We will notify you when any butler match against your request!</h5><br />
+                    <h3 class="text-dark">Recomended Other Butlers</h3>
+                    }
+
+                        <div class="view recent-slider recommended-slider">
+
+                           @foreach (var x in ViewBag.butlers)
+                            {
+
+                                    <div>
+                                        <a>
+                                            <img class="img-fluid" src="~/@x.ImagePath" onerror="this.onerror=null; this.src='/FrontAssets/images/user/s4.png';" />
+                                        </a>
+                                        <div class="inner-slider">
+                                            <div class="inner-wrapper">
+                                                <div class="d-flex align-items-center">
+                                                    <span class="seller-image">
+                                                        <img class="img-fluid"
+                                                               src="~/@x.ImagePath"
+                                                               onerror="this.onerror=null; this.src='/FrontAssets/images/user/s4.png';" alt='' />
+                                                    </span>
+                                                    <span class="seller-name">
+                                                        <a href="@Url.Action("UserProfile","Home", new {idx=@x.UserId })">@x.FirstName @x.LastName</a>
+                                                    </span>
+                                                </div>
+                                                <h3 class="text-dark" style=" display:inline-block;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 20ch;">@x.Description</h3>
+                                              <br/>
+                                                <a class="text-dark"  style="text-decoration:none;text-color:black;" href="@Url.Action("UserProfile","Home", new {idx=@x.UserId})">
+                                                         @x.City
+                                                    </a>
+                                                  <a class="text-dark" href="@Url.Action("UserProfile","Home", new {idx= @x.UserId})"><p style="font-weight:bold;">@x.Country</p></a>
+                                                <div class="footer">
+                                                     <div class="content-info">
+                                                    <div class="rating-wrapper">
+                                                        <span class="gig-rating text-body-2">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1792 1792" width="15" height="15">
+                                                                <path fill="#FFD700"
+                                                d="M1728 647q0 22-26 48l-363 354 86 500q1 7 1 20 0 21-10.5 35.5t-30.5 14.5q-19 0-40-12l-449-236-449 236q-22 12-40 12-21 0-31.5-14.5t-10.5-35.5q0-6 2-20l86-500-364-354q-25-27-25-48 0-37 56-46l502-73 225-455q19-41 49-41t49 41l225 455 502 73q56 9 56 46z">
+                                                                </path>
+
+                                                            </svg>
+                                                                @if(@x.Stars==null)
+                                                                {
+                                                                    <span style="font-size:14px;color:black;">0</span> 
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>@x.Stars</span> 
+                                                                }
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                    <div class="price">
+                                                        <a class="stretched-link" href="@Url.Action("UserProfile","Home", new {idx=@x.UserId })">
+                                                            @*Starting At $<span>@x.StartingFrom$</span>*@
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                               
+                            }
+                        </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+
+
+<!-- Recommended Carousal -->
+ @*pagination*@
+
+
+
+ @*pagination end*@
+
+
+<script src="https://unpkg.com/@@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
+
+ <script>
+     $("#alertMsg").fadeOut(6000);
+
+   
+//     $(document).ready(function(){
+//   debugger;
+//        var fromdate=$("#daterow").val();
+//        if(fromdate==null || fromdate=="")
+//        {
+//            $("#readdate_div").hide();
+            
+//        }
+//        else{
+//            $("#readdate_div").show();
+
+//        }
+//});
+ </script>

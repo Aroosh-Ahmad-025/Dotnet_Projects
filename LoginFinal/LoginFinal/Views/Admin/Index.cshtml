@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row text-center m-10">
+    <div class="col-md-12">
+        <h1 class="text-bold text-highlight"><u>Admin Dashboard</u></h1>
+    </div>
+
+    <div class="col-md-4 col-md-offset-2" style="margin-bottom:12px">
+        <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+            <h3 class="text-semibold">Total Customers</h3>
+            <h2 class="text-bold">@ViewBag.Buyer</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4 col-md-offset-">
+        <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+            <h3 class="text-semibold">Total I.T. Butlers</h3>
+            <h2 class="text-bold">@ViewBag.Seller</h2>
+        </div>
+    </div>
+
+</div>
+
+@*Satrt Massam 10-01-23*@
+<div class="row text-center m-10">
+    <div class="col-md-4 col-md-offset-2" style="margin-bottom:12px">
+        <div class="text-center text-white" style="padding: 25px; background: #196F9C">
+            <h3 class="text-semibold">Customers Under Review</h3>
+            <h2 class="text-bold">@ViewBag.CustomersUnderReview</h2>
+        </div>
+    </div>
+    <div class="col-md-4 col-md-offset-">
+        <div class="text-center text-white" style="padding: 25px; background: #196F9C">
+            <h3 class="text-semibold">I.T. Butlers Under Review</h3>
+            <h2 class="text-bold">@ViewBag.ButlersUnderReview</h2>
+        </div>
+    </div>
+</div>
+@*End Massam 10-01-23*@
+
+
+<script>
+    //Used to handle Sidebar links Activeness
+    $('#adminIndex').addClass('active');
+
+</script>

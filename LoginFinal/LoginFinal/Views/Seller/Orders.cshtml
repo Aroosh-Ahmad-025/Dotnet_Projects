@@ -1,0 +1,89 @@
+﻿@using LoginFinal.Models
+@using Microsoft.Data.SqlClient;
+@inject SqlConnection de
+@using LoginFinal.BL
+@using System.Security.Claims;
+@using LoginFinal.HelpingClasses
+@{
+    var Userid = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
+    var CurrentUserRecord = new UserBL().GetActiveUserById(Convert.ToInt32(Userid), de);
+    User loggedinUser = CurrentUserRecord;
+
+    ViewData["Title"] = "Orders";
+    Layout = "~/Views/Shared/_FrontLayout.cshtml";
+}
+
+          <div class="main-page second py-5">
+         <div class="container">
+            <div class="row">
+               <div class="col-md-12">
+                  <h2 class="mb-3">Manage Orders
+                  </h2>
+                  <div class="osahan-table bg-white rounded shadow-sm px-3 pt-1">
+                     <div class="tab-pane" id="all">
+                        <div class="table-responsive box-table mt-3">
+                           <table class="table table-bordered">
+                              <thead>
+                                 <tr>
+                                    <th>ORDER SUMMARY</th>
+                                    <th>ORDER DATE</th>
+                                    <th>DUE ON</th>
+                                    <th>TOTAL</th>
+                                    <th>STATUS</th>
+                                 </tr>
+                              </thead>
+                              <tbody>
+                                  @foreach(var x in ViewBag.Orders)
+                                  {
+                                 <tr>
+                                    <td>
+                                       <a href="@Url.Action("OrderDetails","Seller",new{ id2= StringCipher.EncryptId(@x.Id)})" class="make-black">
+                                          <img class="order-proposal-image streached-link" width="50" height="50" onerror="this.error=null;this.src='/FrontAssets/images/user/s4.png';" src="~/@x.Seller.ImagePath">
+                                          <span class="order-proposal-title">@x.OrderTitle</span>
+                                                    @if (@x.BuyerCommentsCount != "0" && @x.BuyerId==@loggedinUser.Id)
+                                                    {
+                                                        <span id="msgzcount_@x.Id" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 5px;margin-bottom:15px;color:white;">@x.BuyerCommentsCount</span>
+                                                    }
+                                                    else if(@x.SellerCommentsCount != "0" && @x.SellerId==@loggedinUser.Id )
+                                                    {
+                                                        <span id="msgzcount_@x.Id" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 5px;margin-bottom:15px;color:white;">@x.SellerCommentsCount</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span id="msgzcount_@x.Id" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 5px;margin-bottom:15px;color:white;"></span>
+                                                    }
+                                                </a>
+                                    </td>
+                                    <td>@x.StartDate</td>
+                                    <td>@x.EndDate</td>
+                                    <td>$@x.OrderPrice</td>
+                                            @if(@x.IsAccepted==-1)
+                                            {
+                                                <td><button class="btn btn-sm btn-danger">Cancelled</button></td>
+                                            }
+                                            else if (@x.IsDelivered == 0)
+                                            {
+                                                <td><a href="@Url.Action("OrderDetails","Seller",new{ id2= StringCipher.EncryptId(@x.Id)})" class="btn btn-sm btn-success">In Progress</a></td>
+                                            }
+                                            else if(@x.IsDelivered== 1)
+                                            {
+                                                    <td><a href="@Url.Action("OrderDetails","Seller",new{ id2= StringCipher.EncryptId(@x.Id)})" class="btn btn-sm btn-danger">Delivered</a></td>
+                                            }
+                                            else
+                                            {
+                                                <td><a href="@Url.Action("OrderDetails","Seller",new{ id2= StringCipher.EncryptId(@x.Id)})" class="btn btn-sm btn-success">Completed</a></td>
+                                            }
+                                        </tr>
+                                    }
+                              </tbody>
+                           </table>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+
+

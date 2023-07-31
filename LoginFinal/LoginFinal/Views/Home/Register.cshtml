@@ -1,0 +1,135 @@
+﻿@{
+    ViewData["Title"] = " Register";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<!-- Register -->
+
+<div class="bg-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 my-auto videonone">
+                <center><lottie-player class="video-tablet" src="https://assets4.lottiefiles.com/packages/lf20_zw0djhar.json" background="transparent" speed="1" style="width: 500px; height: 500px;" loop autoplay></lottie-player></center>
+            </div>
+            @*Start Massam 06-01-23*@
+            <div class="col-lg-6 mx-auto pt-5">
+                @*End Massam 06-01-23*@
+                <div class="osahan-login py-4">
+                    <div class="text-center mb-4">
+                        <a href="@Url.Action("Index","Home")"><img src="~/images/butlerlogo.png" alt="" style="width: 139.22px; height: 38px;"></a>
+                        <h5 class="font-weight-bold mt-3">Join IT Butler</h5>
+                        <p style="font-size: 15px;font-weight: bold;">Register as @ViewBag.Category </p>
+                    </div>
+
+                    @*@if (ViewData["acr"] != null)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            Registered Successfully ! An Activation Email is Sent To Your Email ! You can Login to Your Account !
+                        </div>
+                    }*@
+                <form action="@Url.Action("PostRegister","Auth")" method="post">
+                    
+                    <div class="form-row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="mb-1">First name<span class="text-danger">*</span></label>
+                                <div class="position-relative ">
+                                    <input type="text" name="FirstName" class="form-control" required>
+                                </div>
+                                <span name="FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="mb-1">Last name<span class="text-danger">*</span></label>
+                                <div class="position-relative">
+                                    <input type="text" name="LastName" class="form-control" required>
+                                </div>
+                                <span name="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="mb-1">Username<span class="text-danger">*</span></label>
+                        <div class="position-relative icon-form-control">
+                            <i class="mdi mdi-account-outline position-absolute"></i>
+                            <input type="text" name="UserName" class="form-control" required onkeyup="validateUsername(this.value)">
+                        </div>
+                        <span name="UserName" id="nameErrMsg" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="mb-1">Email<span class="text-danger">*</span></label>
+                        <div class="position-relative icon-form-control">
+                            <i class="mdi mdi-email-outline position-absolute"></i>
+                            <input type="email" name="Email" class="form-control" required onkeyup="validateEmail(this.value)">
+                        </div>
+                        <span name="Email" id="emailErrMsg" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="mb-1">Password<span class="text-danger">*</span></label>
+                        <div class="position-relative icon-form-control">
+                            <i class="mdi mdi-key-variant position-absolute"></i>
+                            <input type="password" name="Password" id="password" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="mb-1">Confirm Password<span class="text-danger">*</span></label>
+                        <div class="position-relative icon-form-control">
+                            <i class="mdi mdi-key-variant position-absolute"></i>
+                            <input type="password" name="_confirmPassword" id="confirmPw" onkeyup="matchPassword(this.value)" class="form-control" required>
+                        </div>
+                        <span name="_confirmPassword" id="pwErrMsg" class="text-danger"></span>
+                    </div>
+
+                     <div class="form-group">
+                        <label class="mb-1">Enter City<span class="text-danger">*</span></label>
+                        <div class="position-relative">
+                             <input type="text" name="City" class="form-control" placeholder="Please Enter A valid City Name" required/>
+                            @*<select name="City" class="form-control countrypicker" data-live-search="true" data-default="United States" data-flag="true" required></select>*@
+                        </div>
+                        @*<span name="City" class="text-danger"></span>*@
+                    </div>
+                    <div class="form-group">
+                        <label class="mb-1">ZipCode<span class="text-danger">*</span></label>
+                        <div class="position-relative">
+                             <input type="text" name="ZipCode" class="form-control" placeholder="Please Enter Your Zip Code" required/>
+                            @*<select name="City" class="form-control countrypicker" data-live-search="true" data-default="United States" data-flag="true" required></select>*@
+                        </div>
+                        @*<span name="City" class="text-danger"></span>*@
+                    </div>
+
+                    <div class="form-group">
+                        <label class="mb-1">Select Country<span class="text-danger">*</span></label>
+                        <div class="position-relative">
+                            <select name="Country" class="form-control countrypicker" data-live-search="true" data-default="United States" data-flag="true" required></select>
+                        </div>
+                        <span name="Country" class="text-danger"></span>
+                    </div>
+                    
+                    <input type="hidden" name="val" value="@ViewBag.Category"/>
+
+                        @if (@ViewBag.rdx != null && @ViewBag.rdx!="")
+                        {   
+                            <label>Refferal Code</label>
+                            <input type="text" class="form-control col-sm-3" value="@ViewBag.rdx" disabled/>
+                            <input type="hidden" name="Reffered_By" value="@ViewBag.rdx"/>
+                            <br/>
+                        }
+                        <button id="RegisterForm" class="btn btn-success btn-block text-uppercase" type="submit">  Join as @ViewBag.Category </button>
+
+                    <div class="py-3 d-flex align-item-center">
+                        <span class="mr-0"> Already on IT Butler? <a href="@Url.Action("Login","Auth")">Sign in</a></span>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Register -->
+
+<script src="https://unpkg.com/@@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>

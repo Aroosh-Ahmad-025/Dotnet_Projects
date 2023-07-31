@@ -1,0 +1,157 @@
+﻿@using LoginFinal.HelpingClasses
+@using Microsoft.Data.SqlClient;
+@inject SqlConnection de
+@using LoginFinal.BL
+@using System.Security.Claims;
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@model IEnumerable<User>
+@{
+    var Userid = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
+    var CurrentUserRecord = new UserBL().GetActiveUserById(Convert.ToInt32(Userid), de);
+    User loggedinUser = CurrentUserRecord;
+    ViewBag.Title = "Search Results";
+    Layout = "~/Views/Shared/_FrontLayout.cshtml";
+}
+
+<head>
+    <style>
+        .pgn{
+            background-color:aliceblue;
+            color: ButtonHighlight;
+        }
+  
+    </style>
+</head>
+      
+      <div class="main-page best-selling">
+         <div class="view_slider recommended pt-5">
+            <div class="container">
+               <h3>Search Results</h3>
+            </div>
+            <div class="container">
+               <div class="row">
+                     @foreach( var m in Model)
+                        {  
+                            @if(m!=null)
+                            {
+                  
+                  <div class="col-md-3">
+                     <a href="@Url.Action("UserProfile","Home", new {idx=StringCipher.EncryptId(@m.Id) , keyword= @ViewBag.Search})">
+                           <img class="img-fluid" src="~/@m.ImagePath" onerror="this.error=null;this.src='/FrontAssets/images/user/s4.png';" />
+                      </a>
+                     <div class="inner-slider">
+                        <div class="inner-wrapper">
+                           <div class="d-flex align-items-center">
+                              <span class="seller-image">
+                             
+                           <img class="img-fluid" src="~/@m.ImagePath" onerror="this.error=null;this.src='/FrontAssets/images/user/s4.png';" />
+                              </span>
+                             <span class="seller-name">
+                                    <a class="stretched-link" href="@Url.Action("UserProfile","Home", new {idx=StringCipher.EncryptId(@m.Id) , keyword= @ViewBag.Search})">@m.FirstName @m.LastName</a>
+                                    <a class="text-muted" href="@Url.Action("UserProfile","Home", new {idx=StringCipher.EncryptId(@m.Id),  keyword= @ViewBag.Search})">@m.Username</a>
+                                  @*  <span class="level hint--top level-one-seller">
+                                    Level 1 Seller
+                                    </span>*@
+                                    </span>
+                                     <span class="seller-card">
+                              @if(@m.Status==1)
+                            {
+                           <div class="user-online-indicator is-online " data-user-id="1152855">
+                              <i class="fa fa-circle"></i>online
+                            </div>
+                            }
+                            else
+                            {
+                             <div class="user-online-indicator is-online" style="border-color:red;color:red !important" data-user-id="1152855">
+                              <i class="fa fa-circle"></i>offline
+                            </div>
+                            }
+                            </span>
+                           </div>
+                         
+                          <br/>
+                         <a style="text-decoration:none;text-color:black;" href="@Url.Action("UserProfile","Home", new {idx=StringCipher.EncryptId(@m.Id) ,  keyword= @ViewBag.Search})">
+                                 <p class="text-dark" style=" display:inline-block;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 20ch;">@m.Description</p>
+                          </a>
+
+                          <br/>
+                          <a class="text-dark"  style="text-decoration:none;text-color:black;" href="@Url.Action("UserProfile","Home", new {idx=StringCipher.EncryptId(@m.Id) ,  keyword= @ViewBag.Search})">
+                                 @m.City
+                          </a>
+                          <a class="text-dark" href="@Url.Action("UserProfile","Home", new {idx=StringCipher.EncryptId(@m.Id) ,  keyword= @ViewBag.Search})"><p style="font-weight:bold;">@m.Country</p></a>
+                          
+
+                           @*Starting At Section*@
+                           <div class="footer px-2 py-0 row">
+                                <div class="p-2">
+                              <div>
+                                 <span class="gig-rating text-body-2 text-dark">
+                                    <svg style="margin-bottom:2px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1792 1792" width="15" height="15">
+                                       <path fill="#FFD700"
+                                          d="M1728 647q0 22-26 48l-363 354 86 500q1 7 1 20 0 21-10.5 35.5t-30.5 14.5q-19 0-40-12l-449-236-449 236q-22 12-40 12-21 0-31.5-14.5t-10.5-35.5q0-6 2-20l86-500-364-354q-25-27-25-48 0-37 56-46l502-73 225-455q19-41 49-41t49 41l225 455 502 73q56 9 56 46z">
+                                       </path>
+                                    </svg> 
+                                    <span>@m.Stars</span>
+                                 </span>
+                               
+                              </div>
+
+                           </div>
+                              <div class="price">
+                                 <a class="stretched-link" href="@Url.Action("UserProfile","Home", new {idx=StringCipher.EncryptId(@m.Id) , keyword= @ViewBag.Search})">
+                                 Starting At $@m.StartingFrom
+                               </a>
+                              </div>
+                           </div>
+                        </div>
+                       
+                     </div>
+                  </div>
+                  
+                  }}
+               </div>
+            </div>
+         </div>
+         <div class="footer-pagination text-center">
+           @* 
+               <ul class="pagination">
+                  <li class="page-item">
+                     <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true"><i class="fa fa-chevron-left" aria-hidden="true"></i></span>
+                      
+                     </a>
+                  </li>
+                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item active"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">4</a></li>
+                  <li class="page-item"><a class="page-link" href="#">5</a></li>
+                  <li class="page-item">
+                     <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true"><i class="fa fa-chevron-right" aria-hidden="true"></i></span>
+                     </a>
+                  </li>
+               </ul>
+            </nav>*@
+
+                      
+
+     <nav>
+          @Html.PagedListPager((IPagedList)Model, currentPage => Url.Action("Search","Home", new { currentPage = currentPage, search=@ViewBag.search }),
+          new X.PagedList.Mvc.Common.PagedListRenderOptions{
+
+              UlElementClasses = new[] { "pagination" },
+              LiElementClasses = new[] { "page-item pgn"  },
+              LinkToPreviousPageFormat= 
+                       "<span aria-hidden='true'><i class='fa fa-chevron-left' aria-hidden='true'></i></span>",
+              LinkToNextPageFormat = 
+              "<span aria-hidden='true'><i class='fa fa-chevron-right' aria-hidden='true'></i></span>",
+             DisplayItemSliceAndTotal = false,
+             DisplayLinkToIndividualPages = true,
+             MaximumPageNumbersToDisplay =5,
+             DisplayLinkToPreviousPage = X.PagedList.Mvc.Common.PagedListDisplayMode.Always,
+			 DisplayLinkToNextPage = X.PagedList.Mvc.Common.PagedListDisplayMode.Always,
+             DisplayPageCountAndCurrentLocation= true,
+            })
+            </nav>
+         </div>

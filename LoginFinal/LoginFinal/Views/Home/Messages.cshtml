@@ -1,0 +1,1188 @@
+﻿@using LoginFinal.HelpingClasses
+@using Microsoft.Data.SqlClient;
+@inject SqlConnection de
+@using LoginFinal.BL
+@using System.Security.Claims;
+
+@using Microsoft.Extensions.Options
+
+@inject IOptions<StripeSettings> Stripe
+
+@{
+    ViewData["Title"] = "Messages";
+    Layout = "~/Views/Shared/_FrontLayout.cshtml";
+    var Userid = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
+    var CurrentUserRecord = new UserBL().GetActiveUserById(Convert.ToInt32(Userid), de);
+    User loggedinUser = CurrentUserRecord;
+   
+}
+
+@*Start Massam 06-01-23*@
+<style>
+@@media only screen and (max-width: 768px) {
+	.sidebar-chat-list{
+	  display:none;
+	}
+}
+</style>
+@*End Massam 06-01-23*@
+
+        <input type="hidden" id="sndid" value="@ViewBag.SenderId"/>
+        <input type="hidden" id="recid" value=""/>
+        
+              <div class="py-5">
+         <div class="container">
+            <div class="row">
+               <!-- Main Content -->
+               <main class="col order-xl-2 col-lg-12 col-md-12 col-sm-12 col-12">
+                  <div class="box shadow-sm rounded bg-white mb-3 osahan-chat">
+                     <h5 class="pl-3 pt-3 pr-3 border-bottom mb-0 pb-3">Messaging</h5>
+                   
+                     <div class="row m-0">
+
+                        <div class="border-right col-lg-5 col-xl-4 px-0">
+                           <div class="osahan-chat-left">
+
+                                @*Start Massam 06-01-23*@
+                                <!---Search Chat List-->
+                              <div class="position-relative icon-form-control p-3 border-bottom w-100 sidebar-chat-list">
+                                 <i class="fa fa-search position-absolute"></i>
+                                 <input placeholder="Search Contact" id="searchName" onkeyup="searchTable()" type="text" class="form-control">
+                              </div>
+                               <!---Search Chat List-->
+                              <!---Sidebar Chat List-->
+                              <div  class="osahan-chat-list sidebar-chat-list">
+                                        <div id="othermsg">
+                                   </div>
+                             </div>
+                             <!---Sidebar Chat List-->
+                             @*End Massam 06-01-23*@
+                        </div>
+
+                        </div>
+
+                        
+                      
+                        <div class="col-lg-7 col-xl-8 px-0">
+                           
+                              
+                            <!---Name Navbar-->
+                            <div class="p-3 d-flex align-items-center border-bottom osahan-post-header">
+                              <div class="font-weight-bold mr-1 overflow-hidden">
+                                
+                                  
+                                  <div class="text-truncate" id="navname">
+                                      
+                                 </div>
+                                  
+
+                                
+
+                              </div>
+                               <div id="usrstatus" class="ml-2 small text-truncate overflow-hidden text-black-50"></div>
+                           </div>
+
+                            <!---Name Navbar-->
+                           
+
+
+                            <!---Chat Box-->
+                           <div id="scrldn" class="osahan-chat-box p-3 border-top border-bottom bg-light">
+                            
+                                        
+                                    
+                                     <div class="msg21">
+
+                                            </div>
+                           </div>
+
+                           <!---Chat Box-->
+                            @if (@ViewBag.MsgCount != null && @ViewBag.MsgCount!=0)
+                            {
+                                <form id="message-form">
+
+                                    <!---Message Area-->
+                                    <div class="w-100 border-top border-bottom">
+                                        <textarea id="messageInput" placeholder="Write a message…" class="form-control border-0 p-3 shadow-none" rows="2"></textarea>
+                                    </div>
+                                    <!---Message Area-->
+
+
+                                    <!---Send and other buttons-->
+
+                                    <div class="p-3 d-flex align-items-center">
+
+                                        <div class="d-flex align-items-center">
+                                            <div class="overflow-hidden">
+                                                <button type="button" class="btn btn-outline-success btn-sm rounded" data-toggle="modal" data-target="#customer-order">
+                                                    <i class="mdi mdi-coin md-24"></i><span style="padding-left:5px;">Create an offer</span>
+                                                </button>
+                                                @* <button type="button" class="ml-2 btn btn-outline-success btn-sm rounded" onclick="RequestMeeting()">
+                                 <i class="mdi mdi-video md-24"></i><span style="padding-left:5px;">Zoom meeting</span>
+                                 </button>*@
+                                            </div>
+
+
+                                        </div>
+
+
+                                        <span class="ml-auto">
+
+                                            <button type="submit" id="sendButton" class="btn btn-success btn-sm rounded">
+                                                <i class="mdi mdi-send"></i> Send
+                                            </button>
+                                        </span>
+
+
+                                    </div>
+
+                                    <!---Send and other buttons-->
+                                </form>
+                            }
+                        </div>
+
+
+                     </div>
+            
+                  </div>
+
+               </main>
+
+            </div>
+         </div>
+      </div>
+ 
+ 
+
+ <div class="container">
+  <!-- 
+
+
+
+  -->
+  <div class="modal fade" id="customer-order" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+           <div class="modal-header px-4">
+             <h5 class="font-weight-bold">Create an Offer</h5>
+             <button type="button" class="close" data-dismiss="modal">&times;</button>
+           </div>
+        <div class="modal-body">
+              <div class="col-lg-12">
+                  <div class="bg-white  sidebar-page-right">
+                     <div class="bg-white rounded p-0">
+                       <div class="p-3">
+                           <label>Project Title</label>
+                           <div class="input-group mb-2 col-md-12 p-0">
+                              <input type="text" class="form-control" id="title">
+                           </div>
+                        </div>
+                         <div class="p-3">
+                           <label>From DateTime</label>
+                           <div class="input-group mb-2 col-md-12 p-0">
+                           <input type="datetime-local" name="FromDateTime" class="form-control" id="Fromdt" required>
+                             
+                           </div>
+                        </div>
+                        <div class="p-3">
+                           <label>To DateTime</label>
+                           <div class="input-group mb-2 col-md-12 p-0">
+                           <input type="datetime-local" name="ToDateTime" class="form-control" id="Todt" required>
+                             
+                           </div>
+                        </div>
+                        <div class="border-bottom p-3">
+                           <label>Describe the required services - please be as detailed as possible:</label>
+                           <form>
+                              <div class="form-group">
+                                 <textarea class="form-control" id="prodes" rows="5" placeholder="I'm looking for..." required></textarea>
+                              </div>
+                           </form>
+                        </div>
+                        @*<div class="border-bottom p-3">
+                           <label>Once you place your order, when would you like your service delivered?</label>
+                           <div class="row">
+                              <div class="form-group col-md-12">
+                                 <select id="delday" class="form-control" style="width:100% !important;" required>
+                                    <option selected>1 Day</option>
+                                   @for(int i=2;i<91;i++)
+                                   {
+                                    <option>@i Days</option>
+                                    }
+                                 </select>
+                              </div>
+                        </div>
+                       </div>*@
+                        @*<div class="p-3">
+                           <label>What is your budget for this service?</label>
+                           <div class="input-group mb-2 col-md-12 p-0">
+                              <div class="input-group-prepend">
+                                 <div class="btn btn-success">$</div>
+                              </div>
+                              <input type="number" onkeydown="limitText(this,5)" class="form-control" id="offerpr" max="50000" required>
+                           </div>
+                           <span id="msgErr" class="text-danger"></span>
+                        </div>*@
+                       
+                        <div class="p-3 d-flex justify-content-center justify-content-md-end">
+                           <button type="submit" id="subOrder" class="btn btn-success btn-lg font-weight-bold ">Submit Request</a>
+                            
+                        </div>
+                        
+                     </div>
+                  </div>
+               </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+   <!-- Modal -->
+</div>
+
+
+<script>
+
+    function searchTable()
+    {
+        var name = $('#searchName').val(); 
+        $('#othermsg').html("");
+        GetChatList(name);
+    }
+
+    var msgcount=0;
+    
+    var LoggedinId = @loggedinUser.Id;
+    var sndid= $('#sndid').val();
+    var recid=$('#recid').val();
+    
+    var curr= '';
+    var strt=0;
+    
+
+    var messageForm =  document.getElementById('message-form');
+    var messageBox = document.getElementById('messageInput');
+    var img= '';
+
+    connection.on('newMessage', (sender,sndid, messageText,reciever,imgt, msg_id,ordid,filen) => {
+        debugger;
+        var getrec= $("#recid").val();
+        console.log("sender:",sndid);
+        console.log("senderid:",getrec);
+          if(reciever == LoggedinId && sndid== recid && ordid==""  )
+    {   
+
+        
+        
+        if(LoggedinId!=reciever)
+        {
+          img=  '<div class="dropdown-list-image mr-3"><img id="curimg" class="rounded-circle" src="/'+"@loggedinUser.ImagePath"+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';" alt=""></div>';
+        }
+        else
+        {
+            img=  '<div class="dropdown-list-image mr-3"><img id="curimg1" class="rounded-circle" src="/'+imgt+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';" alt=""></div>';
+        }
+       
+
+        var timenow= Date.parse("@DateTime.UtcNow").toLocaleTimeString();
+        console.log(`${sender}:${messageText}`);
+
+        if(messageText.includes("http"))
+        {
+            var txt= ('<a href="'+messageText+'">'+messageText+'</a>').toString();
+            messageText= txt;
+        }
+          var avatarchat= 
+                              '<div class="d-flex align-items-center osahan-post-header">'+
+
+                                 img+
+                                 '<div class="mr-1">'+
+                                    '<div class="text-truncate h6 mb-3" class="gtn">'+`${sender}`
+                                    +'</div>'+
+                                    '<p class="msgl">'+`${messageText}`+ '</p>'+
+                                 '</div>'+
+                                 '<span class="ml-auto mb-auto">'+
+                                    '<div class="text-right text-muted pt-1 small" class="msgtime">'+timenow+'</div>'+
+                                 '</span>'+
+                              '</div>';
+
+                            
+                               var guestdiv= document.createElement('div');
+                               guestdiv.setAttribute("class","guestdiv");
+                               guestdiv.setAttribute("id",msg_id);
+                               guestdiv.innerHTML= avatarchat;
+
+                               $('.msg21').append(guestdiv);
+                              if(isHTML(messageText) && !messageText.includes('http'))
+                               {
+
+                                   messageText= "Offer Requested";
+                               }
+                                $('#abc'+curr).html("");
+                                $('#abc'+curr).html(`${sender}: ${messageText}`);
+                             
+
+                           
+                            }  
+                              
+                            else if(reciever == LoggedinId && sndid!= recid && ordid=="")
+                            {
+
+                            }
+                              $("#scrldn").scrollTop( $("#scrldn").prop('scrollHeight') - $("#scrldn").outerHeight() );
+                         });
+                   
+  
+        
+     if(messageForm != null && messageForm!="")
+     {
+         messageForm.addEventListener('submit', ev => {
+            ev.preventDefault();
+        
+        let message = messageBox.value;
+        message= message.trim();
+        recid=$('#recid').val();
+        if(message!=null && message!="")
+        {
+      
+        connection.invoke('SendMessage',"@loggedinUser.FirstName @loggedinUser.LastName", message,sndid,$('#recid').val(),"");
+        }
+        if(LoggedinId==sndid && recid!='' && message!=null && message!="")
+        {
+        if(message.includes("http"))
+        {
+           
+            var txt= ('<a href="'+message+'">'+message+'</a>').toString();
+            message= txt;
+        }
+            var dtn= Date.parse("@DateTime.UtcNow").toLocaleTimeString();
+            var img=  '<div class="dropdown-list-image mr-3 mb-auto"><img id="curimg" class="rounded-circle" src="/'+"@loggedinUser.ImagePath"+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';" alt=""></div>';
+          var avatarchat= 
+                              '<div class="d-flex align-items-center osahan-post-header">'+
+
+                                 img+
+                                 '<div class="mr-1">'+
+                                    '<div class="text-truncate h6 mb-3" class="gtn">'+`${"@loggedinUser.FirstName @loggedinUser.LastName"}`
+                                    +'</div>'+
+                                    '<p class="msgl">'+`${message}`+ '</p>'+
+                                 '</div>'+
+                                 '<span class="ml-auto mb-auto">'+
+                                    '<div class="text-right text-muted pt-1 small" class="msgtime">'+dtn+'</div>'+
+                                 '</span>'+
+                              '</div>';
+
+                            
+                               var guestdiv= document.createElement('div');
+                               guestdiv.setAttribute("class","guestdiv");
+                               guestdiv.innerHTML= avatarchat;
+
+                               $('.msg21').append(guestdiv);
+                              if(isHTML(message) && !message.includes('http'))
+                               {
+                                   message= "Offer Requested";
+                               }
+                               $('#abc'+curr).html("");
+                                $('#abc'+curr).html(`${"@loggedinUser.FirstName @loggedinUser.LastName"}: ${message}`);
+                              
+                            
+         }
+        messageBox.value = '';
+        messageBox.value= messageBox.value.trim();
+        
+
+    });
+    }
+
+
+      $("#messageInput").keydown(function(event){
+    if(event.keyCode == 13){
+         if($("#messageInput").val()!="")
+         {
+        $("#sendButton").click();
+         $("#scrldn").scrollTop( $("#scrldn").prop('scrollHeight') - $("#scrldn").outerHeight() );
+         $("#messageInput").val("");
+         }
+    }
+      
+});
+
+//Offer Created in Message
+$('#subOrder').click(function(){
+    debugger;
+
+    var title= $('#title').val();
+    var offerprice= $('#offerpr').val();
+    var fromdatetime=$('#Fromdt').val();
+    var todatetime=$('#Todt').val();
+
+    var prodes= $('#prodes').val();
+    @*var deliveryday= $('#delday').val();*@
+    if(recid!='' && title!="" && fromdatetime!="" && todatetime!="" && prodes!="")
+    {
+   
+    var wdrwbtn='';
+    
+    var order= '<div class="box shadow-sm mb-3 rounded bg-white">'+
+                     '<div class="p-3 border-bottom">'+
+                        '<h6 class="text-dark"><span class="font-weight-bold">'+title+'</span></h6>'+
+                        '<p class="mb-0 text-muted mb-3">'+prodes+'</p>'+
+                        //'<p class="mb-1"><i class="mdi mdi-coin mr-2"></i>Offer price: $'+offerprice+'</p>'+
+                        '<p class="mb-1">Started From:<i class="mdi mdi-clock"></i>'+fromdatetime+'</p>'+
+                        '<p class="mb-1">Ending Time:<i class="mdi mdi-clock"></i>'+todatetime+'</p>'+
+
+                        '<div class="p-1">'+
+                       '<p class="ml-1 font-weight-bold font-italic">Offer Requested</p>'+
+                       wdrwbtn+
+                       '</div>'+
+                     '</div>'+
+                  '</div>';
+
+     var orderreq= '<div class="d-flex align-items-center osahan-post-header">'+
+                                 '<div class="dropdown-list-image mr-3 mb-auto"><img class="rounded-circle" src="/@loggedinUser.ImagePath" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';"  alt=""></div>'+
+                                 '<div class="mr-1">'+ '<div class="text-truncate h6 mb-3" class="getNAme">'+"@loggedinUser.FirstName @loggedinUser.LastName"+
+                                  '</div>'+
+                                  order + 
+                                 '</div>'+
+                                 '<span class="ml-auto mb-auto">'+
+                                    '<div class="text-right text-muted pt-1 small" class="msgtime"></div>'+
+                                 '</span>'+
+                              '</div>';
+
+
+    
+                    
+   $('.msg21').append(orderreq);
+   @*var fromdatetime=$('#Fromdt').val();
+    var todatetime=$('#Todt').val();*@
+    
+   connection.invoke("OrderRequest",$('#recid').val(),LoggedinId.toString(),title.toString(),prodes.toString(),fromdatetime.toString(),todatetime.toString() @*,deliveryday.toString(),offerprice.toString()*@);
+
+   $("#scrldn").scrollTop( $("#scrldn").prop('scrollHeight') - $("#scrldn").outerHeight() );
+   $('#title').val("");
+   $('#offerpr').val("");
+   $('#Fromdt').val(""); //babar added
+   $('#Todtdt').val("");//babar
+   $('#prodes').val("");
+   $('#delday').val("");
+   $("#customer-order").modal('hide');
+
+    }
+    else
+    {
+         $("#msgErr").text("please fill all feilds !");
+    }
+
+});
+
+connection.on("OrderReq", (recieverid, loginid, title,prodes,fromdatetime,todatetime,orderCharges,newOrder) => {
+
+    debugger;
+                
+                var logedinUser= GetUserById(loginid);
+
+                //console.log(logedinUser);
+                //console.log("Keys and");
+                ////console.log(JSON.stringify(logedinUser));
+                ////console.log(logedinUser);
+                
+                
+              
+                var buyerid= recieverid;
+                var basei= "@ProjectVariables.baseUrl";
+               
+                var wdrwbtn="";
+                var rejectbtn="";
+
+                if(@loggedinUser.Role==3)
+                {
+                //rejectbtn=  '<a id="rjct'+newOrder+'" role="button" onclick="RejectOffer('+newOrder+')" class="btn btn-outline-danger btn-sm pl-4 pr-4 font-weight-bold">Reject Offer</a>';
+                
+                wdrwbtn='<form id="stripe'+newOrder+'" class="p-3 center" action="@Url.Action("Charge","Seller")" method="post">'+
+                            @*'<input type="hidden" name="buyer" value="'+buyerid+'"/>'+
+                            '<input type="hidden" name="seller" value="'+loginid+'"/>'+
+                            '<input type="hidden" name="order" value="'+newOrder+'"/>'+
+                            '<input type="hidden" name="stripeDescription" value="'+prodes+'"/>'+
+                            '<input type="hidden" name="stripeAmount" value="'+offerprice+'"/>'+*@
+                            '<input type="hidden" name="buyerId" value="' + buyerid + '"/>' +
+                            '<input type="hidden" name="RecId" value="' + loginid + '"/>' +
+                            '<input type="hidden" name="orderId" value="' + newOrder + '"/>' +
+                            '<input type="hidden" name="desc" value="'+prodes+'"/>'+
+                            '<input type="hidden" name="workCharges" value="'+orderCharges+'"/>'+
+                            '<script src="//checkout.stripe.com/v2/checkout.js" class="stripe-button '+newOrder+'" data-key="@Stripe.Value.PublishableKey" data-label="Accept offer ($'+orderCharges+')" data-description="'+title+'" data-amount="'+orderCharges*100+'">'+
+                            '</form>';
+                        
+                }
+                    
+               
+
+                var order= '<div class="box shadow-sm mb-3 rounded bg-white">'+
+                     '<div class="p-3 border-bottom">'+
+                        '<h6 class="text-dark"><span class="font-weight-bold">'+title+'</span></h6>'+
+                        '<p class="mb-0 text-muted mb-3">'+prodes+'</p>'+
+                        '<p class="mb-1"><i class="mdi mdi-coin mr-2"></i>Offer price: $'+orderCharges+'</p>'+
+                        @*'<p class="pb-1"><i class="mdi mdi-clock mr-2"></i>'+deliveryday+'</p>'+*@
+                        '<p class="mb-1">Started from:<i class="mdi mdi-clock"></i> '+fromdatetime+'</p>'+
+                        '<p class="mb-1">Ending time:<i class="mdi mdi-clock"></i> '+todatetime+'</p>'+
+                        '<div class="p-1">'+
+                       '<p class="ml-1 font-weight-bold font-italic offf'+newOrder+'">'+'Offer Requested'+
+                       '</p>'+
+                      wdrwbtn+
+                       '</div>'+
+                     '</div>'+
+                  '</div>';
+
+    
+                    
+                //$('.msg21').append(orderreq);
+                if(LoggedinId==loginid)
+                {
+                connection.invoke('SendMessage',logedinUser[1]+" "+logedinUser[2], order,loginid,recieverid,"");
+                }
+    });
+
+
+function GetChat(id)
+{
+    //$('#readm').html("");
+    //GetChatList();
+     $('.msg21').html("");
+     $('#recid').val(id);
+     console.log("recid:",id);
+     console.log("sndid:",@loggedinUser.Id);
+     readm.attr("style",'display:none');
+     Unreadmsg(LoggedinId,0);
+     msgcount=0;
+     $('#navname').html("");
+     $('#usrstatus').html("");
+     recid= id;
+     curr= id;
+     var chats='';
+     $.ajax({
+                    type: 'POST',
+                    url: "../Ajax/GetAllChats",
+                    dataType: "json",
+                    @*async:false,*@ 
+                    data:{
+                        recieverid :id
+                    },
+                    success: function (response) {
+                      chats= response;
+
+                      @*massam*@
+
+                      for(let i=0; i<chats.length;i++)
+    {
+    chats[i].CreatedAt= new Date(chats[i].CreatedAt).toLocaleTimeString();
+    //console.log(response[i].Message_Description);
+
+     if( chats[i].Message_Description!=null && (chats[i].Message_Description.includes("https") || chats[i].Message_Description.includes("http")))
+        {
+           
+            var txt= ('<a href="'+chats[i].Message_Description+'">'+chats[i].Message_Description+'</a>').toString();
+            chats[i].Message_Description= txt;
+        }
+    
+      var avatarchat2= 
+                              '<div class="d-flex align-items-center osahan-post-header">'+
+                                 '<div class="dropdown-list-image mr-3 mb-auto"><img class="rounded-circle" src="/'+chats[i].Users.ImagePath+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';"  alt=""></div>'+
+                                 '<div class="mr-1">'+
+                                    '<div class="text-truncate h6 mb-3" class="getNAme">'+`${chats[i].Users.FirstName} ${chats[i].Users.LastName}`
+                                    +'</div>'+
+                                    '<p class="msgl" id="messagesList">'+`${chats[i].Message_Description}`+ '</p>'+
+                                 '</div>'+
+                                 '<span class="ml-auto mb-auto">'+
+                                    '<div class="text-right text-muted pt-1 small" class="msgtime">'+chats[i].CreatedAt+'</div>'+
+                                 '</span>'+
+                              '</div>';  
+                            if((chats[i].Users.Id==LoggedinId || chats[i].RecieverEnd.Id==LoggedinId) && (chats[i].Users.Id==id || chats[i].RecieverEnd.Id==id))
+                              {
+                               
+                               var guestdiv= document.createElement('div');
+                               guestdiv.setAttribute("class","guestdiv");
+                               guestdiv.setAttribute("id",chats[i].Id);
+                               guestdiv.innerHTML= avatarchat2;
+
+                               
+                               $('.msg21').append(guestdiv);
+
+
+                               
+                               
+                                
+                                //if(chats[i].RecieverEnd.Role==4 && LoggedinId==chats[i].RecieverEnd.Id)
+                                //   {
+                                //       var matches = $(".guestdiv").find("[id='decbtn']");
+                                       
+                                //       if(matches.html().includes("Accept"))
+                                //       {
+                                //       $(matches).html("");
+                                //       }
+                                //       //$(matches).attr('style','display:none;');
+                                     
+                                //   }
+
+                                if(LoggedinId==chats[i].Users.Id && chats[i].Users.Role==3 && chats[i].Message_Description.includes("stripe"))
+                                {
+                                    //console.log(chats[i].Message_Description);
+                                    var matches = $(".guestdiv").find("[class^='stripe-button']");
+                                    if(matches !== undefined && matches!=null)
+                                    {
+                                        matches.remove();
+                                    }
+                                   
+                                }
+
+                               if($('#navname').text()=="" && chats[i].Users.Id==LoggedinId)
+                               {
+                                   var os = ''; 
+                                   if(chats[i].RecieverEnd.Status==1)
+                                   {
+                                           os=   '<span class="ml-auto seller-card1 d-flex justify-content-end">'+
+                                                      '<span class="user-online-indicator is-online" data-user-id="1152855">'+
+                                                         'Online'+
+                                                      '</span>'+
+                                                        '</span>';
+                                   }
+                                   else
+                                   {
+                                          os=   '<span class="seller-card1 d-flex justify-content-center" style="border-color:red;">'+
+                                                      '<span class="user-online-indicator is-online " style="color:red !important;" data-user-id="1152855">'+
+                                                         'Offline'+
+                                                      '</span>'+
+                                                '</span>';
+                                   }
+                                   $('#navname').text(chats[i].RecieverEnd.FirstName+" "+chats[i].RecieverEnd.LastName);
+                                   $('#usrstatus').html(os);
+                                   //document.getElementById('navname').innerHTML+= os;
+                               }
+                               else if($('#navname').text()=="" && chats[i].RecieverEnd.Id==LoggedinId)
+                               {
+                                   var os='';
+                                     if(chats[i].Users.Status==1)
+                                   {
+                                        os=   '<span class="ml-auto seller-card1 d-flex justify-content-end">'+
+                                                      '<span class="user-online-indicator is-online" data-user-id="1152855">'+
+                                                         'Online'+
+                                                      '</span>'+
+                                                        '</span>';
+                                   }
+                                   else
+                                   {
+                                          os=   '<span class=" seller-card1 d-flex justify-content-center" style="border-color:red;">'+
+                                                      '<span class="user-online-indicator is-online" style="color:red !important; important" data-user-id="1152855">'+
+                                                         'Offline'+
+                                                      '</span>'+
+                                                '</span>';
+                                   }
+                                    $('#navname').text(chats[i].Users.FirstName+" "+chats[i].Users.LastName);
+                                    $('#usrstatus').html(os);
+                                     //document.getElementById('navname').innerHTML+= os;
+                               }
+                               
+                               if(isHTML(chats[i].Message_Description) && !chats[i].Message_Description.includes("http"))
+                               {
+                                   chats[i].Message_Description= "Offer Requested";
+
+                               }
+                               if(chats[i].SenderId!=LoggedinId)
+                               {
+                                $('#crat'+chats[i].SenderId).html(chats[i].CreatedAt);
+                                $('#abc'+chats[i].SenderId).html(`${chats[i].Users.FirstName}: ${chats[i].Message_Description}`);
+                               }
+                               else
+                               {
+                                $('#crat'+chats[i].RecieverId).html(chats[i].CreatedAt);
+                                $('#abc'+chats[i].RecieverId).html(`${chats[i].Users.FirstName}: ${chats[i].Message_Description}`);
+                               }
+                               
+                              }
+
+                              $("#scrldn").scrollTop( $("#scrldn").prop('scrollHeight') - $("#scrldn").outerHeight() );
+                      }
+
+
+                    },
+                    error: function()
+                    {
+                    },
+             });
+
+
+
+@*for(let i=0; i<chats.length;i++)
+    {
+    chats[i].CreatedAt= new Date(chats[i].CreatedAt).toLocaleTimeString();
+    //console.log(response[i].Message_Description);
+
+     if( chats[i].Message_Description!=null && (chats[i].Message_Description.includes("https") || chats[i].Message_Description.includes("http")))
+        {
+           
+            var txt= ('<a href="'+chats[i].Message_Description+'">'+chats[i].Message_Description+'</a>').toString();
+            chats[i].Message_Description= txt;
+        }
+    
+      var avatarchat2= 
+                              '<div class="d-flex align-items-center osahan-post-header">'+
+                                 '<div class="dropdown-list-image mr-3 mb-auto"><img class="rounded-circle" src="/'+chats[i].Users.ImagePath+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';"  alt=""></div>'+
+                                 '<div class="mr-1">'+
+                                    '<div class="text-truncate h6 mb-3" class="getNAme">'+`${chats[i].Users.FirstName} ${chats[i].Users.LastName}`
+                                    +'</div>'+
+                                    '<p class="msgl" id="messagesList">'+`${chats[i].Message_Description}`+ '</p>'+
+                                 '</div>'+
+                                 '<span class="ml-auto mb-auto">'+
+                                    '<div class="text-right text-muted pt-1 small" class="msgtime">'+chats[i].CreatedAt+'</div>'+
+                                 '</span>'+
+                              '</div>';  
+                            if((chats[i].Users.Id==LoggedinId || chats[i].RecieverEnd.Id==LoggedinId) && (chats[i].Users.Id==id || chats[i].RecieverEnd.Id==id))
+                              {
+                               
+                               var guestdiv= document.createElement('div');
+                               guestdiv.setAttribute("class","guestdiv");
+                               guestdiv.setAttribute("id",chats[i].Id);
+                               guestdiv.innerHTML= avatarchat2;
+
+                               
+                               $('.msg21').append(guestdiv);
+
+
+                               
+                               
+                                
+                                //if(chats[i].RecieverEnd.Role==4 && LoggedinId==chats[i].RecieverEnd.Id)
+                                //   {
+                                //       var matches = $(".guestdiv").find("[id='decbtn']");
+                                       
+                                //       if(matches.html().includes("Accept"))
+                                //       {
+                                //       $(matches).html("");
+                                //       }
+                                //       //$(matches).attr('style','display:none;');
+                                     
+                                //   }
+
+                                if(LoggedinId==chats[i].Users.Id && chats[i].Users.Role==3 && chats[i].Message_Description.includes("stripe"))
+                                {
+                                    //console.log(chats[i].Message_Description);
+                                    var matches = $(".guestdiv").find("[class^='stripe-button']");
+                                    if(matches !== undefined && matches!=null)
+                                    {
+                                        matches.remove();
+                                    }
+                                   
+                                }
+
+                               if($('#navname').text()=="" && chats[i].Users.Id==LoggedinId)
+                               {
+                                   var os = ''; 
+                                   if(chats[i].RecieverEnd.Status==1)
+                                   {
+                                           os=   '<span class="ml-auto seller-card1 d-flex justify-content-end">'+
+                                                      '<span class="user-online-indicator is-online" data-user-id="1152855">'+
+                                                         'Online'+
+                                                      '</span>'+
+                                                        '</span>';
+                                   }
+                                   else
+                                   {
+                                          os=   '<span class="seller-card1 d-flex justify-content-center" style="border-color:red;">'+
+                                                      '<span class="user-online-indicator is-online " style="color:red !important;" data-user-id="1152855">'+
+                                                         'Offline'+
+                                                      '</span>'+
+                                                '</span>';
+                                   }
+                                   $('#navname').text(chats[i].RecieverEnd.FirstName+" "+chats[i].RecieverEnd.LastName);
+                                   $('#usrstatus').html(os);
+                                   //document.getElementById('navname').innerHTML+= os;
+                               }
+                               else if($('#navname').text()=="" && chats[i].RecieverEnd.Id==LoggedinId)
+                               {
+                                   var os='';
+                                     if(chats[i].Users.Status==1)
+                                   {
+                                        os=   '<span class="ml-auto seller-card1 d-flex justify-content-end">'+
+                                                      '<span class="user-online-indicator is-online" data-user-id="1152855">'+
+                                                         'Online'+
+                                                      '</span>'+
+                                                        '</span>';
+                                   }
+                                   else
+                                   {
+                                          os=   '<span class=" seller-card1 d-flex justify-content-center" style="border-color:red;">'+
+                                                      '<span class="user-online-indicator is-online" style="color:red !important; important" data-user-id="1152855">'+
+                                                         'Offline'+
+                                                      '</span>'+
+                                                '</span>';
+                                   }
+                                    $('#navname').text(chats[i].Users.FirstName+" "+chats[i].Users.LastName);
+                                    $('#usrstatus').html(os);
+                                     //document.getElementById('navname').innerHTML+= os;
+                               }
+                               
+                               if(isHTML(chats[i].Message_Description) && !chats[i].Message_Description.includes("http"))
+                               {
+                                   chats[i].Message_Description= "Offer Requested";
+
+                               }
+                               if(chats[i].SenderId!=LoggedinId)
+                               {
+                                $('#crat'+chats[i].SenderId).html(chats[i].CreatedAt);
+                                $('#abc'+chats[i].SenderId).html(`${chats[i].Users.FirstName}: ${chats[i].Message_Description}`);
+                               }
+                               else
+                               {
+                                $('#crat'+chats[i].RecieverId).html(chats[i].CreatedAt);
+                                $('#abc'+chats[i].RecieverId).html(`${chats[i].Users.FirstName}: ${chats[i].Message_Description}`);
+                               }
+                               
+                              }
+
+                              $("#scrldn").scrollTop( $("#scrldn").prop('scrollHeight') - $("#scrldn").outerHeight() );
+                      }*@
+
+        
+}
+
+
+//Chat List on the basis of SenderId 
+function GetChatList(Name)
+{
+    var chklist=[];
+    var chatlist="";
+    $('#othermsg').html("");
+     $.ajax({
+                    type: 'POST',
+                    url: "../Ajax/GetChatList",
+                    data:{Name : Name},
+                    dataType: "json",   
+                    @*async: false,*@
+                    success: function (response) {
+                        
+                                          chatlist=response; 
+                                          
+                                          @*massam change*@
+
+                                          for(let i=0; i<chatlist.length;i++)
+                                            {
+                                                if(chatlist[i].Message_Description!=null && (chatlist[i].Message_Description.includes('http') || chatlist[i].Message_Description.includes('https')))
+                                                {
+                                                    chatlist[i].Message_Description= chatlist[i].Message_Description.innerHTML;
+                                                  
+                                                }
+                                                if(chatlist[i].Message_Description.includes('//checkout.stripe.com/v2/checkout.js') || chatlist[i].Message_Description.includes('mdi mdi-clock mr-2')){
+                                                    chatlist[i].Message_Description=chatlist[i].Users.FirstName+ ": Offer Requested";
+                                                }
+                                               
+
+                                                var tm= new Date(chatlist[i].CreatedAt).toLocaleTimeString();
+                                                    
+                                                   
+                                                    var listitem= '<a id="rec'+i+'" type="button" class="butn" style="position:absolute;text-decoration:none;background:transparent;" onclick="GetChat('+chatlist[i].Users.Id+')">'+ 
+                                                               '<div class="p-3 d-flex align-items-center border-bottom osahan-post-header">'+ 
+                                                                '<div class="dropdown-list-image mr-3"><img class="rounded-circle" src="/'+chatlist[i].Users.ImagePath+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';" alt=""></div>'+
+                                                                '<div class="font-weight-bold overflow-hidden">'+
+                                                                   '<div id="nm'+chatlist[i].Users.Id+'" class="text-truncate">'+chatlist[i].Users.FirstName+' '+chatlist[i].Users.LastName+'</div>'+
+                                                                   '<div id="abc'+chatlist[i].Users.Id+'" class="text-truncate overflow-hidden text-black-50">'+chatlist[i].Message_Description+'</div>'+
+                                                                '</div>'+
+                                                                '<span class="ml-auto mb-auto">'+
+                                                                   
+                                                                   '<div id="crat'+chatlist[i].Users.Id+'" class="text-right text-muted pt-1 small">'+tm+''+'</div>'+
+                                                                '</span>'+
+
+                                                                '</div>'
+                                                                 +'</a>';
+                                                   
+
+                                                    
+                                                              if(!chklist.includes(chatlist[i].SenderId) && !chklist.includes(chatlist[i].RecieverEnd.Id) && (chatlist[i].SenderId!=LoggedinId && chatlist[i].RecieverId==LoggedinId))
+                                                              {
+                                                                
+                                                               var guestdiv= document.createElement('div');
+                                                               guestdiv.setAttribute("class","listdiv"+i);
+                                                               guestdiv.innerHTML= listitem;
+                                                               $('#othermsg').append(guestdiv);
+                                                                $('#othermsg').append("<br/><br/><br/><br/>");
+                                                               chklist.push(chatlist[i].SenderId);
+                                                               
+                                                              }
+                                                              else
+                                                              {
+                                                               var listitem2= '<a id="rec'+i+'" type="button" class="butn" style="position:absolute;text-decoration:none;background:transparent;" onclick="GetChat('+chatlist[i].RecieverEnd.Id+')">'+
+                                                               '<div class="p-3 d-flex align-items-center border-bottom osahan-post-header">'+ 
+                                                                '<div class="dropdown-list-image mr-3"><img class="rounded-circle" src="/'+chatlist[i].RecieverEnd.ImagePath+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';" alt=""></div>'+
+                                                                '<div class="font-weight-bold overflow-hidden">'+
+                                                                   '<div id="nm'+chatlist[i].RecieverEnd.Id+'" class="text-truncate">'+chatlist[i].RecieverEnd.FirstName+' '+chatlist[i].RecieverEnd.LastName+'</div>'+
+                                                                   '<div id="abc'+chatlist[i].RecieverEnd.Id+'" class="text-truncate overflow-hidden text-black-50">'+chatlist[i].Message_Description+'</div>'+
+                                                                '</div>'+
+                                                                '<span class="ml-auto mb-auto">'+
+                                                                   '<div id="crat'+chatlist[i].RecieverEnd.Id+'" class="text-right text-muted pt-1 small">'+tm+''+'</div>'+
+                                                                '</span>'+
+                                                                '</div>'
+                                                                 +'</a>';
+
+                                                                      if(!chklist.includes(chatlist[i].RecieverId) && !chklist.includes(chatlist[i].SenderId) && (chatlist[i].RecieverId!=LoggedinId && chatlist[i].SenderId==LoggedinId))
+                                                                      {
+                                                                       var guestdiv= document.createElement('div');
+                                                                       guestdiv.setAttribute("class","listdiv"+i);
+                                                                       guestdiv.innerHTML= listitem2;
+                                                                       $('#othermsg').append(guestdiv);
+                                                                       $('#othermsg').append("<br/><br/><br/><br/>");
+                                                                       chklist.push(chatlist[i].RecieverEnd.Id);
+                                                                      
+                                                                      }
+                                                                 
+                                                                    
+                                                              }
+                                                             
+                                       
+                                             }
+
+                                             if(strt==0)
+                                             {
+                                                 $('#rec0').click();
+                                                 strt++;
+                                             }
+
+                                          @*end massam change*@
+                                            
+                                     },
+                                     error: function(response)
+                                     {
+                                     },
+                        });
+
+         @*for(let i=0; i<chatlist.length;i++)
+                                            {
+                                                if(chatlist[i].Message_Description!=null && (chatlist[i].Message_Description.includes('http') || chatlist[i].Message_Description.includes('https')))
+                                                {
+                                                    chatlist[i].Message_Description= chatlist[i].Message_Description.innerHTML;
+                                                  
+                                                }
+                                                if(chatlist[i].Message_Description.includes('//checkout.stripe.com/v2/checkout.js') || chatlist[i].Message_Description.includes('mdi mdi-clock mr-2')){
+                                                    chatlist[i].Message_Description=chatlist[i].Users.FirstName+ ": Offer Requested";
+                                                }
+                                               
+
+                                                var tm= new Date(chatlist[i].CreatedAt).toLocaleTimeString();
+                                                    
+                                                   
+                                                    var listitem= '<a id="rec'+i+'" type="button" class="butn" style="position:absolute;text-decoration:none;background:transparent;" onclick="GetChat('+chatlist[i].Users.Id+')">'+ 
+                                                               '<div class="p-3 d-flex align-items-center border-bottom osahan-post-header">'+ 
+                                                                '<div class="dropdown-list-image mr-3"><img class="rounded-circle" src="/'+chatlist[i].Users.ImagePath+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';" alt=""></div>'+
+                                                                '<div class="font-weight-bold overflow-hidden">'+
+                                                                   '<div id="nm'+chatlist[i].Users.Id+'" class="text-truncate">'+chatlist[i].Users.FirstName+' '+chatlist[i].Users.LastName+'</div>'+
+                                                                   '<div id="abc'+chatlist[i].Users.Id+'" class="text-truncate overflow-hidden text-black-50">'+chatlist[i].Message_Description+'</div>'+
+                                                                '</div>'+
+                                                                '<span class="ml-auto mb-auto">'+
+                                                                   
+                                                                   '<div id="crat'+chatlist[i].Users.Id+'" class="text-right text-muted pt-1 small">'+tm+''+'</div>'+
+                                                                '</span>'+
+
+                                                                '</div>'
+                                                                 +'</a>';
+                                                   
+
+                                                    
+                                                              if(!chklist.includes(chatlist[i].SenderId) && !chklist.includes(chatlist[i].RecieverEnd.Id) && (chatlist[i].SenderId!=LoggedinId && chatlist[i].RecieverId==LoggedinId))
+                                                              {
+                                                                
+                                                               var guestdiv= document.createElement('div');
+                                                               guestdiv.setAttribute("class","listdiv"+i);
+                                                               guestdiv.innerHTML= listitem;
+                                                               $('#othermsg').append(guestdiv);
+                                                                $('#othermsg').append("<br/><br/><br/><br/>");
+                                                               chklist.push(chatlist[i].SenderId);
+                                                               
+                                                              }
+                                                              else
+                                                              {
+                                                               var listitem2= '<a id="rec'+i+'" type="button" class="butn" style="position:absolute;text-decoration:none;background:transparent;" onclick="GetChat('+chatlist[i].RecieverEnd.Id+')">'+
+                                                               '<div class="p-3 d-flex align-items-center border-bottom osahan-post-header">'+ 
+                                                                '<div class="dropdown-list-image mr-3"><img class="rounded-circle" src="/'+chatlist[i].RecieverEnd.ImagePath+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';" alt=""></div>'+
+                                                                '<div class="font-weight-bold overflow-hidden">'+
+                                                                   '<div id="nm'+chatlist[i].RecieverEnd.Id+'" class="text-truncate">'+chatlist[i].RecieverEnd.FirstName+' '+chatlist[i].RecieverEnd.LastName+'</div>'+
+                                                                   '<div id="abc'+chatlist[i].RecieverEnd.Id+'" class="text-truncate overflow-hidden text-black-50">'+chatlist[i].Message_Description+'</div>'+
+                                                                '</div>'+
+                                                                '<span class="ml-auto mb-auto">'+
+                                                                   '<div id="crat'+chatlist[i].RecieverEnd.Id+'" class="text-right text-muted pt-1 small">'+tm+''+'</div>'+
+                                                                '</span>'+
+                                                                '</div>'
+                                                                 +'</a>';
+
+                                                                      if(!chklist.includes(chatlist[i].RecieverId) && !chklist.includes(chatlist[i].SenderId) && (chatlist[i].RecieverId!=LoggedinId && chatlist[i].SenderId==LoggedinId))
+                                                                      {
+                                                                       var guestdiv= document.createElement('div');
+                                                                       guestdiv.setAttribute("class","listdiv"+i);
+                                                                       guestdiv.innerHTML= listitem2;
+                                                                       $('#othermsg').append(guestdiv);
+                                                                       $('#othermsg').append("<br/><br/><br/><br/>");
+                                                                       chklist.push(chatlist[i].RecieverEnd.Id);
+                                                                      
+                                                                      }
+                                                                 
+                                                                    
+                                                              }
+                                                             
+                                       
+                                             }
+
+                                             if(strt==0)
+                                             {
+                                                 $('#rec0').click();
+                                                 strt++;
+                                             }*@
+}
+
+
+
+
+
+    function GetUserById(id)
+    {
+        var res = [];
+        $.ajax({
+                        type: 'POST',
+                        url: "../Ajax/GetUserById",
+                        data:{id:id},
+                        dataType: "json",
+                        async:false,
+                        success:function (response) 
+                        {
+                           res.push(response.imageName,response.firstName,response.lastName,response.role,response.id);
+                        },
+                        error: function (response)
+                        {
+                            alert("Error");
+                        },
+                    });
+                
+                 //console.log(res);
+                  return res;
+    }
+
+
+    function isHTML(str) {
+    var a = document.createElement('div');
+    a.innerHTML = str;
+
+    for (var c = a.childNodes, i = c.length; i--;) {
+        if (c[i].nodeType == 1) return true;
+    }
+
+    return false;
+}
+
+  
+
+
+connection.on('PlaceOrder',(buyer,seller,ordid)=>
+{
+                           connection.invoke('PlcOrder',seller.toString());
+                          
+                           var getmsg= $("#stripe"+ordid).closest('.guestdiv');
+                           var getmsgid= getmsg.attr('id');
+                           var btn= getmsg.find("[class^='stripe-button-el']");
+                           btn.remove();
+                          // btn.html("<a type='button' class='btn btn-primary w-100' href='/Orders'>Go To Manage Orders</a>");
+                           
+                           var txt= getmsg.find("[class='ml-1 font-weight-bold font-italic offf"+ordid+"']");
+                           txt.html('Offer Accepted');
+                           
+                           getmsg= getmsg.children();
+                           getmsg.find("[class='dropdown-list-image mr-3']").remove();
+                           getmsg.find("[class='dropdown-list-image mr-3 mb-auto']").remove();
+                           getmsg.find("[class='text-truncate h6 mb-3']").remove();
+                           getmsg.find("[class='text-right text-muted pt-1 small']").remove();
+                           
+                           UpdateChat(getmsgid,getmsg.html());
+                         
+
+
+                           //console.log(msg);
+                           //location.href=lnk;
+                           //location.reload();
+                          
+                           //$("#decbtn"+ordid).attr('style','display:none');
+                           //$(".offf"+ordid).html('Offer Accepted');
+                
+});
+
+
+//function RejectOffer(ordid)
+//{
+//                           ordx=ordid;
+//                           connection.invoke('PlcOrder',seller.toString());
+                          
+//                           var getmsg= $("#stripe"+ordid).closest('.guestdiv');
+//                           var getmsgid= getmsg.attr('id');
+//                           var btn= getmsg.find("[class^='stripe-button-el']");
+//                           btn.remove();
+                           
+//                           var txt= getmsg.find("[class='ml-1 font-weight-bold font-italic offf"+ordid+"']");
+//                           txt.html('Offer Rejected');
+                           
+//                           getmsg= getmsg.children();
+//                           getmsg.find("[class='dropdown-list-image mr-3']").remove();
+//                           getmsg.find("[class='dropdown-list-image mr-3 mb-auto']").remove();
+//                           getmsg.find("[class='text-truncate h6 mb-3']").remove();
+//                           getmsg.find("[class='text-right text-muted pt-1 small']").remove();
+                           
+//                           UpdateChat(getmsgid,getmsg.html());
+//}
+
+
+function Unreadmsg(id, cnt) {
+    $.ajax({
+        type: 'POST',
+        url: "../Ajax/UnreadChat",
+        data: { id: id, cnt: cnt },
+        dataType: "json",
+        success: function (response) {
+        },
+        error: function (response) {
+            alert("Error");
+        },
+    });
+}
+
+function UpdateChat(id,msg)
+{
+      $.ajax({
+                        type: 'POST',
+                        url: "../Ajax/UpdateChat",
+                        data:{id:id,modified_msg:msg},
+                        dataType: "json",
+                        success:function (response) 
+                        {
+                        },
+                        error: function (response)
+                        {
+                            alert("Error");
+                        },
+                    });
+}
+
+
+
+
+   connection.on('OrderPlace', (reciver) => {
+                                 if(LoggedinId==reciver)
+                                 {
+                                     location.reload();
+                                 }
+                             });
+
+     $(window).on('load', function() {
+                    var loc= "@ProjectVariables.baseUrl/Home/Messages";
+                    if (window.location != loc)
+                    {
+                        window.location.replace(loc);
+                    }
+                    GetChatList();
+                  $("#scrldn").scrollTop( $("#scrldn").prop('scrollHeight') - $("#scrldn").outerHeight() );          
+               
+                
+});
+</script>
+
+

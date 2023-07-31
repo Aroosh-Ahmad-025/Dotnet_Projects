@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.Title = "Signup";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+@using LoginFinal.HelpingClasses
+
+
+<pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+
+<div class="container">
+  <!-- Modal -->
+  <div class="modal fade" id="signup-consent" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <!-- Modal content-->
+      <div class="modal-content">
+         
+           <div class="modal-header px-4 text-center">
+             <h5 class="font-weight-bold ">Register as</h5>
+             <button type="button" class="close" data-dismiss="modal">&times;</button>
+           </div>
+          
+           <div class="modal-body">
+               <div class="row">
+                  <div class="col-md-6">
+                       <a href="@ProjectVariables.baseUrl/Home/Register?value=Customer&rdx=@ViewBag.Refferal_Code" type="button" style="font-weight:bold;" class="btn btn-outline-success w-100">Customer</a>
+                  </div>
+                  <div class="col-md-6">
+                       <a href="@ProjectVariables.baseUrl/Home/Register?value=Butler&rdx=@ViewBag.Refferal_Code" type="button" style="font-weight:bold;" class="btn btn-success w-100 mt-2 mt-md-0">I.T. Butler</a>
+                  </div>
+               </div>
+           </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+    $('#signup-consent').modal('show');
+</script>

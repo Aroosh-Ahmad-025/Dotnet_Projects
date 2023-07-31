@@ -1,0 +1,525 @@
+@using LoginFinal.Models
+@using Microsoft.Data.SqlClient;
+@inject SqlConnection de
+@using LoginFinal.BL
+@inject IOptions<StripeSettings> Stripe
+@model User
+@using System.Security.Claims;
+@using LoginFinal.HelpingClasses;
+@using Microsoft.Extensions.Options
+@{
+    var Userid = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
+    var CurrentUserRecord = new UserBL().GetActiveUserById(Convert.ToInt32(Userid), de);
+    User loggedinUser = CurrentUserRecord;
+    ViewBag.Title = "I.T. Butler Details";
+    Layout = "~/Views/Shared/_FrontLayout.cshtml";
+}
+
+<style type="text/css">
+    .dropdown-item:hover {
+        display: block;
+        width: 100%;
+        padding: 0.25rem 0.6rem;
+        clear: both;
+        font-weight: 400;
+        color: #212529;
+        text-align: inherit;
+        white-space: nowrap;
+        background-color: transparent;
+        border: 0;
+    }
+
+    .dropdown-item {
+        display: block;
+        width: 100%;
+        padding: 0.25rem 0.6rem;
+        clear: both;
+        font-weight: 400;
+        color: #212529;
+        text-align: inherit;
+        white-space: nowrap;
+        background-color: transparent;
+        border: 0;
+    }
+</style>
+
+
+
+
+    <div class="main-page second py-5">
+         <div class="container">
+        @if (ViewBag.msg != "")
+        {
+            <div class="h5 alert alert-info" id="alertMsg" role="alert">
+                <span>@ViewBag.msg</span>
+            </div>
+        }
+            <div class="row">
+               <div class="col-lg-4 left">
+                  <div class="profile_info">
+                     <div class="seller-card">
+                        <div>
+                            @if(@ViewBag.Status==1)
+                            {
+                           <div class="user-online-indicator is-online" data-user-id="1152855">
+                              <i class="fa fa-circle"></i>Online
+                            </div>
+                            }
+                            else
+                            {
+                             <div class="user-online-indicator is-online" style="border-color:red;color:red !important" data-user-id="1152855">
+                              <i class="fa fa-circle"></i>offline
+                            </div>
+                            }
+                        </div>
+                        <!-- <div><a href="#" class="ambassadors-badge">Ambassador</a></div> -->
+                        <div class="user-profile-info">
+                           <div>
+                              <div>
+                                 <label class="user-pict">
+                                        @if (@Model.ImagePath == "" || @Model.ImagePath == null)
+                                        {
+                                            <img
+                                    src="/FrontAssets/images/user/s4.png" width=256 height=256
+                                    class="img-fluid rounded-circle" onerror="this.error=null;this.src='/FrontAssets/images/user/s4.png';"  id="imgprev" alt="Responsive img"/>
+                                        }
+                                        else
+                                        {
+                                        <img
+                                    src="~/@Model.ImagePath" 
+                                    class="img-fluid rounded-circle" width=256 height=256 alt="Responsive img" onerror="this.error=null;this.src='/FrontAssets/images/user/s4.png';"/>
+                                        }
+                                 <a href="#"
+                                    class="user-badge-round user-badge-round-med locale-en-us top-rated-seller"></a></label>
+                              </div>
+                           </div>
+                           <div class="user-profile-label pt-3">
+                              <div class="username-line">
+                                 <a href="#" id="name" class="seller-link">@Model.FirstName @Model.LastName</a>
+                              </div>
+                              <div class="mt-1 oneliner-wrapper">
+                                 <small class="oneliner">@Model.Position</small>
+                                @* <div class="ratings-wrapper">
+                                    <p class="rating-text"><strong>5.</strong> (1k+ reviews)</p>
+                                 </div>*@
+                                   
+                                </div>
+                                 @if(@Model.Availability==1)
+                                    {
+                                        <p class="mt-1 oneliner text-success">Available</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="mt-1 oneliner text-danger">Not Available</p>
+                                    }
+                           </div>
+                        </div>
+                        <div class="buttons-wrapper">
+                           @if(ViewBag.pr==1)
+                            {
+                           <a href="#" class="btn-lrg-standard btn-contact-me js-contact-me js-open-popup-join">Contact Me</a>
+                            }
+                           else if(@loggedinUser!=null && ViewBag.pr!=1 && @loggedinUser.Id!=@Model.Id)
+                            {
+                                <a href="@Url.Action("Messages","Home", new{ rec= StringCipher.EncryptId(@Model.Id)})" class="btn-lrg-standard btn-contact-me js-contact-me js-open-popup-join">Contact
+                                    Me</a>
+                            }
+                            else if(@loggedinUser!=null && @loggedinUser.Id==@Model.Id)
+                            {
+                                  <a href="#" class="btn-lrg-standard btn-contact-me js-contact-me js-open-popup-join">Contact Me</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Login","Auth", new{ msg= "Please Login to Continue!", color="red"})" class="btn-lrg-standard btn-contact-me js-contact-me js-open-popup-join">Contact
+                                    Me</a>
+                            }
+
+                            @if(@loggedinUser!=null && @loggedinUser.Id==@Model.Id)
+                            {
+                                  <button class="btn btn-outline-danger ml-2"><i class="fa fa-solid fa-gift" style="font-size:20px;" title="Share User Refferal"></i></button>
+                            }
+                            else
+                            {
+                            <button onclick="CopyFunc()" class="btn btn-outline-danger ml-2"><i class="fa fa-solid fa-gift" style="font-size:20px;" title="Share User Refferal"></i></button>
+                            }
+                            @if(loggedinUser!=null)
+                            {
+                                 <input type="hidden" id="refval" value="@ProjectVariables.baseUrl/Home/Messages?rec=@StringCipher.EncryptId(@Model.Id)&refx=@loggedinUser.Refferal_Code"/>
+                            }
+
+                           @*<div class="btn-lrg-standard btn-white btn-custom-order">Share Refferal</div>*@
+                        </div>
+                        <div class="user-stats-desc">
+                           <ul class="user-stats">
+                              <li class="location">From<strong>@Model.Country</strong></li>
+                              <li class="member-since">Member since<strong>@Convert.ToDateTime(@Model.CreatedAt).ToString("MMMM yyyy")</strong></li>
+                                <li class="member-since">Hourly Rate<strong>$@Model.StartingFrom</strong></li>
+                                @if (@Model.Language != null && @Model.Language != "")
+                               {
+                                <li class="fa-solid fa-language"> <strong>@Model.Language</strong></li>
+                               }
+
+                                <span><i class="fa fa-solid fa-star mr-2"></i>Rating</span><strong><span>
+                                        @if (Model.Stars != null)
+                                        {
+                                            <span class="mr-1">@Model.Stars</span>
+                                        }
+                                        else
+                                        {
+                                             <span class="mr-1">0</span>
+                                        }
+                                        <span><svg class="mb-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1792 1792" width="15" height="15">
+                                                <path fill="#FFD700"
+                                          d="M1728 647q0 22-26 48l-363 354 86 500q1 7 1 20 0 21-10.5 35.5t-30.5 14.5q-19 0-40-12l-449-236-449 236q-22 12-40 12-21 0-31.5-14.5t-10.5-35.5q0-6 2-20l86-500-364-354q-25-27-25-48 0-37 56-46l502-73 225-455q19-41 49-41t49 41l225 455 502 73q56 9 56 46z">
+                                       </path>
+                                    </svg></span></span></strong>
+                               
+                               @*<li class="recent-delivery">Recent Delivery<strong>about&nbsp;15</strong></li>*@
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+                  
+
+
+                  
+                        
+                            @if (loggedinUser.Role == 4)
+                        {
+                            
+                                <div class="bg-white rounded shadow-sm py-3" style="border-top-style: solid;
+                            border-top-width: 15px; border-color: #26D7AA;">
+                                    <h3 class="pl-3">Buy Subscription</h3>
+                                    <div class="dropdown-menu-show">
+                                        @*<p class="text-muted text-center font-weight-bold dropdown-item py-2">Questions about our rates? <a href=""><u>Learn more</u></a></p>*@
+                                        <form action="@Url.Action("CheckOut","Home")" method="post">
+                                            <div class="mx-3" style="background-color: #afb8ec30; border-radius: 9px;">
+                                                <span class="dropdown-item pt-2" href="#" style="font-size:16px;"><input class="mr-2" type="radio" name="subscribtionCharges" value="100" id="defaultCheck1" required>5 sessions anytime(1 free session): <h5 class="pull-right"><b>$100/Year</b></h5></span>
+                                                <p class="dropdown-item pb-2" style="font-size:16px; padding-top: 0px;">@*<input class="mr-2" type="checkbox" value="" id="defaultCheck1" style="visibility: hidden;">For Each Additional Butler: <b class="pull-right">$20</b>*@</p>
+                                            </div>
+
+                                            <div class="mx-3" style="background-color: #26d7aa80; border-radius: 9px;">
+                                                <span class="dropdown-item pt-2" style="font-size:15px;"><input class="mr-2" type="radio" name="subscribtionCharges" value="200" id="defaultCheck1" required>10 sessions anytime(2 free session):<h5 class="pull-right"><span class="mr-2" style="font-size:16px;"><strike>$230</strike></span><b>$200/Year</b></h5></span>
+                                                <p class="dropdown-item pb-2" style="font-size:16px; padding-top: 0px;">@*<input class="mr-2" type="checkbox" value="" id="defaultCheck1" style="visibility: hidden;">For Each Additional Butler: <b class="pull-right">$30</b>*@</p>
+                                                @*<hr class="mt-0 mb-2" style="width:99%; background-color:#fff; border: 1px solid #fff;" />*@
+                                                @*<p class="dropdown-item pb-3">Only $10/month, members get $25 <br>off every job, and more benefits! <a href=""><u>Learn more</u></a></p>*@
+                                            </div>
+                                            <input type="text" class="form-control" name="title" value="Subscription" hidden>
+                                            <input type="text" class="form-control" name="buyerId" value="@loggedinUser.Id" hidden>
+                                            <input type="text" class="form-control" name="RecId" value="@ViewBag.RecId" hidden>
+
+
+                                            <button type="submit" class="btn btn-success ml-3">Subscribe Me</button>
+
+                                            @if (ViewBag.subscribed > 0){
+                                                <span class="text-primary" id="msg">Already Subscribed(@ViewBag.subscribed sessions left)</span>
+                                            }
+
+                                        </form>
+
+                                    </div>
+                                </div>
+                            
+                        }
+
+
+
+
+                  <div class="seller-profile mt-3">
+                     <div class="skills">
+                        <h3>Skills</h3>
+                        <ul>
+                            @if(@Model.Skills!=null)
+                            @foreach(var x in @Model.Skills)
+                            {
+                                    @if (@x.IsActive != 0)
+                                    {
+                                        string[] split = @x.SkillName.Split(',');
+                                        foreach (var y in split)
+                                        {
+                                            if (!@String.IsNullOrEmpty(y))
+                                            {
+                                                <li class="overflow-hidden" style="background:#138496 !important;">
+                                                    <a style="color:white !important;"  href="@Url.Action("Search","Home",new{ search=@y})">@y</a>
+                                                </li>
+                                            }
+                                        }
+                                    }
+                                }
+                        </ul>
+                     </div>
+                     <div class="linked-accounts">
+                        <h3>Linked Accounts</h3>
+                        <ul>
+                           <a href="@Model.FacebookLink"><li class="platform social-account facebook"><i class="platform-icon facebook hint--top"
+                              aria-hidden="true" data-hint="facebook"></i><span class="text">Facebook</span></li></a>
+                           <a href="@Model.GoogleLink"><li class="platform social-account google"><i class="platform-icon google hint--top"
+                              aria-hidden="true" data-hint="google"></i><span class="text">Google</span></li></a>
+                           <a href="@Model.StackOverFlowLink"><li class="platform fa fa-stack-overflow hint--top"><span class="text" style="padding:14%;font-size: 13px;font-family: 'Muli', sans-serif;font-weight: 400;">Stackoverflow</span></li></a><br/>
+                            <a href="@Model.TwitterLink"><li class="fa fa-twitter hint--top"><span class="text ml-1" style="font-size: 13px;padding:15%;font-family: 'Muli', sans-serif;font-weight: 400;">Twitter</span></li></a><br/>
+                            <a href="@Model.GitHubLink"><li class="fa fa-github hint--top"><span class="text ml-1" style="font-size: 13px;padding:15%;font-family: 'Muli', sans-serif;font-weight: 400;">GitHub</span></li></a><br/>
+                            <a href="@Model.VimeoLink"><li class="fa fa-vimeo hint--top"><span class="text ml-1" style="font-size: 13px;padding:15%;font-family: 'Muli', sans-serif;font-weight: 400;">Vimeo</span></li></a><br/>
+                            <a href="@Model.DribbleLink"><li class="fa fa-dribbble hint--top"><span class="text ml-1" style="padding:15%;font-size: 13px;font-family: 'Muli', sans-serif;font-weight: 400;">Dribbble</span></li></a><br/>
+                        </ul>
+                     </div>
+                  </div>
+               
+              </div>
+               
+               <div class="col-lg-8 right">
+                    <div class="stats-desc" style="margin-top: 0px !important; margin-bottom: 24px !important;">
+                        <ul class="user-stats">
+                           <li>From<strong>@Model.Country</strong></li>
+                           <li>Member since<strong>@Convert.ToDateTime(@Model.CreatedAt).ToString("MMMM yyyy")</strong></li>
+                            @if(@Model.Language!=null)
+                               {
+                           <li>Language<strong>@Model.Language</strong></li>
+                               }
+                          
+                        </ul>
+                        @if(@Model.Description!=null)
+                               {
+                        <article class="seller-desc pbox" >
+                           <div class="inner">
+                               
+                               <p style="font-weight:bold;">About</p>
+                              <p>@Model.Description</p>
+                               
+                           </div>
+                        </article>
+                               }
+
+                     </div>
+
+                  <div class="seller-profile">
+                     <div class="description">
+
+                     <div class="education-list list">
+                        <h3>Education</h3>
+                        <ul>
+                            @if(@Model.Education!=null)
+                            @foreach(var x in @Model.Education)
+                            {
+                           <li>
+                               @if(@x.IsActive!=0)
+                               {
+                              <p><b>Institute</b> : @x.InstituteName </p>
+                              <p><b>Degree</b> : @x.DegreeName</p>
+                              <p>@Convert.ToDateTime(@x.StartDate).ToString("dd-MMMM-yyyy") - @Convert.ToDateTime(@x.EndDate).ToString("dd-MMMM-yyyy")</p>
+                              <hr/>
+                               }
+                           </li>
+                            }
+                        </ul>
+                     </div>
+                  </div>
+               </div>
+
+               <div class="seller-profile">
+                     <div class="description">
+
+                     <div class="education-list list">
+                        <h3>Experience</h3>
+                       @* <ul>
+                           <li>
+                              <p>Worked as @Model.Position in @Model.Company</p>
+                                    @if (@Model.Experience_From != null && @Model.Experience_To != null)
+                                    {
+                                        <p class="font-weight-bold">@Convert.ToDateTime(@Model.Experience_From).ToString("dd-MMMM-yyyy") - @Convert.ToDateTime(@Model.Experience_To).ToString("dd-MMMM-yyyy")</p>
+                                    }
+                                </li>
+                        </ul>*@
+                         <ul>
+                           
+                            @foreach(var item in @ViewBag.userexperience)
+                            {
+                           <li>
+                                    @*<p style="float:right; margin-right:10px;"><span><button type="button" class="btn fa fa-pencil" onclick="editfunss()"></button></span> <span><button type="button" class="btn fa fa-trash" onclick="deleduss()"></button></span></p>*@
+                               
+                              <p style="display:inline-block"><b>From</b> : @item.FromDate &nbsp; <b>To</b> :@item.ToDate </p> 
+                              <p><b>Org</b> :@item.Organization &nbsp;<b>Desig</b> : @item.Designation</p>
+                              <p><b>Refer</b> :@item.Organization_Reference &nbsp;<b>Contact</b> : @item.ReferalContact</p>
+                              
+                              <hr/>
+                               
+                           </li>
+
+                          }
+                            
+                        </ul>
+
+                     </div>
+                  </div>
+               </div>
+
+
+               <div class="seller-profile">
+               <div class="tags" style="padding:5px !important;">
+                     <h5>Related tags</h5>
+                     <ul class="d-flex">
+                         @if(@Model.Tags!=null)
+                          @foreach(var x in @Model.Tags)
+                            {
+                                @if(@x.IsActive!=0 )
+                                {
+                            string[] split = @x.TagName.Split(',');
+                            foreach (var y in split)
+                              {
+                                  if(!@String.IsNullOrEmpty(y))
+                                  {
+                               <li>
+                                <a class="overflow-hidden" style="background:#138496 !important; color: white;" href="@Url.Action("Search","Home",new{ search=@y})">@y</a>
+                                </li>
+                                  }
+                                    }
+                                }
+                            }
+                     </ul>
+              </div>
+              </div>
+
+
+
+               <div class="seller-profile">
+               <div style="padding:5px !important;">
+                     <h5>Reviews</h5>
+                     <div>
+                         @if(@ViewBag.Reviews!=null)
+                          @foreach(var x in @ViewBag.Reviews)
+                            {
+                                @if(@x.IsActive!=0)
+                                    {
+                                        <br />
+                                        <p style="font-size:15px;font-weight:bold;">@x.Seller.FirstName @x.Seller.LastName</p>
+                                        <p>@x.BuyerComment</p>
+                                        <p>
+                                        <span class="mr-1">@x.Stars</span>
+                                        @for (int i = 0; i < @x.Stars; i++)
+                                        {
+                                            <span style="color:gold;" class="fa fa-star checked"></span>
+                                        }
+                                         
+                                        </p>
+                                       
+                                        <hr />
+                                    }
+
+                            }
+                     </div>
+              </div>
+              </div>
+
+
+                
+
+                @if(loggedinUser.Role==4)
+                {
+                    <div class="seller-profile">
+                        <div style="padding:5px !important;">
+                            <h5>Place Order Here</h5>
+                            <form action="@Url.Action("CheckOut","Home")" method="post" id="placeOrd">
+                                <div class="form-row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="mb-1">From Date Time<span class="text-danger">*</span></label>
+                                            <div class="position-relative ">
+                                                <input type="datetime-local" name="FromDateTime" class="form-control" id="from" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="mb-1">To Date Time<span class="text-danger">*</span></label>
+                                            <div class="position-relative">
+                                                <input type="datetime-local" name="ToDateTime" class="form-control" id="to" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3 col-lg-12">
+                                        <label>Project Title<span class="text-danger">*</span></label>
+                                        <div class="input-group mb-2 col-md-12 p-0">
+                                            <input type="text" class="form-control" name="title" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-bottom p-3 col-lg-12">
+                                        <label>Describe the required services - please be as detailed as possible:</label>
+                                        <div class="form-group">
+                                            <textarea class="form-control" id="prodes" name="desc" rows="5" placeholder="I'm looking for..."></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3 d-flex justify-content-center justify-content-md-end">
+
+                                        <input type="text" class="form-control" name="buyerId" value="@loggedinUser.Id" hidden>
+                                        <input type="text" class="form-control" name="RecId" value="@ViewBag.RecId" hidden>
+
+                                        <button type="submit" id="sub" class="btn btn-success">Place Order</button>
+                                        @*<script src="//checkout.stripe.com/v2/checkout.js" id="sub2" class="stripe-button" data-key="@Stripe.Value.PublishableKey" data-label="Place Order"></script>*@
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                }
+
+            </div>
+         </div>
+      </div>
+
+
+      <script>
+
+        $("#alertMsg").fadeOut(6000);
+
+
+        $('#from').attr('min', new Date($.now()).toISOString().slice(0,16));
+        $(document).on("change", "#from", function () {
+            debugger
+            var date = $(this).val();
+            $('#to').val("");
+            $('#to').attr('min', date);
+
+        });
+        
+
+        
+
+          function CopyFunc() {
+  ///* Get the text field */
+  var copyText = document.getElementById("refval");
+
+  ///* Select the text field */
+  //copyText.select();
+  //copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+  // /* Copy the text inside the text field */
+  //navigator.clipboard.writeText(copyText.value);
+
+  copyToClipboard(copyText.value).then(() => console.log('text copied !'))
+    .catch(() => console.log('error'));
+
+    $("#CopyModal").modal("show");
+
+    window.setTimeout(function () {
+        $("#CopyModal").modal("hide");
+    }, 2500);
+
+   
+
+}
+
+        //$(".stripe-button-el").hide();
+        //$("#sub").click(function () {
+            
+        //    var getvalidate = document.getElementById("placeOrd").reportValidity();
+        //    if (getvalidate == true) {
+        //        $("#sub2").click();
+        //    }
+        //    else {
+        //        $(".errMsg").html("Please fill all fields");
+        //    }
+            
+        //});
+      </script>

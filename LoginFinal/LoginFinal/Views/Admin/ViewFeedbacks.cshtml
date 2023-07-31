@@ -1,0 +1,183 @@
+
+@{
+    ViewBag.Title = "View Feedbacks";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="modal fade" id="updateModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-blue-400">
+                <h5 class="text-center text-bold text-underline">Feedbacks</h5>
+                <button type="button" class="close text-danger bg-white" style="font-size:30px;color:red;font-weight:bold" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="panel">
+            <div class="panel-heading">
+
+                <h2 class="panel-title text-center text-bold">Contact Us Responses</h2>
+
+                <div style="font-weight:bold; color:@ViewBag.Color ; margin-left:10px; margin-top:3px" id="alertMsg">
+                    @ViewBag.Message
+                </div>
+
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive datatable-scroll p-10" style="overflow:auto">
+                    <table class="table table-striped table-bordered text-center" id="userTable">
+                        <thead class="bg-indigo-800">
+                            <tr>
+                                <th class="text-bold" hidden>...</th>
+                                <th class="text-bold text-center">
+                                    Name
+                                </th>
+                                <th class="text-bold text-center">
+                                    Contact No
+                                </th>
+                                <th class="text-bold text-center">
+                                    Email
+                                </th>
+                                <th class="text-bold text-center">
+                                    Message
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+    loadTable();
+
+    function loadTable(name, userName)
+    {
+        $('#userTable').DataTable(
+        {
+            "ajax":
+            {
+                "url": '@Url.Action("GetResponses", "Ajax")',
+                "type": "POST",
+                "datatype": "json",
+                "data": { Name: name, UserName: userName }
+                },
+                'columns':
+                    [
+                        { "data": "hidden", "name": "0" },
+                        { "data": "Name", "name": "Name" },
+                        { "data": "Contact_No", "name": "Contact_No" },
+                        { "data": "Email", "name": "Email" },
+                        { "data": "Message", "name": "Message" },
+                    ],
+            'columnDefs':
+                [
+                {
+                    "targets": 0,
+                    "visible": false,
+                    "searchable": false,
+                    "render": function (data, type, full, meta) {
+                        return null;
+                    }
+                },
+               
+                {
+                    "targets":1,
+                    'className': 'col-lg-3',
+                    "render": function (data, type, full, meta) {
+
+                        return full.name;
+                    },
+                },
+
+                {
+                    "targets": 2,
+                    'className': 'col-lg-3',
+                    "render": function (data, type, full, meta) {
+                        return full.contact_No ;
+                    },
+                },
+               
+                {
+                    "targets": 3,
+                    'className': 'col-lg-3',
+                    "render": function (data, type, full, meta) {
+                        return full.email ;
+                    },
+                },
+
+                {
+                    "targets": 4,
+                    'className': 'col-lg-3',
+                        "render": function (data, type, full, meta) {
+
+                            return '<textarea readonly="" style="border:none;" cols="70" rows="5">' +full.message+'</textarea>' ;
+
+                    },
+                },
+
+
+            ],
+            "serverSide": "true",
+            "processing": "true",
+            "language":
+            {
+                "processing": "<i class='icon-spinner spinner icon-2x'></i>",
+                "search": "<span>Search :</span> _INPUT_",
+                "searchPlaceholder": "Filter By Name or Email",
+                "lengthMenu": "<span>Show :</span> _MENU_",
+                "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            },
+            });
+        }
+
+
+
+    function SearchUser()
+    {
+
+        $('#userTable').DataTable().clear();
+        $('#userTable').DataTable().destroy();
+
+        var name = document.getElementById("searchName").value;
+        var userName = document.getElementById("searchUserName").value;
+
+        $('#nameReport').val(name).change();
+        $('#userNameReport').val(userName).change();
+
+
+        loadTable(name, userName);
+    }
+
+
+
+
+    function clearSearch() {
+        $('#searchName').val("").change();
+        $('#searchUserName').val("");
+
+        $('#nameReport').val("").change();
+        $('#userNameReport').val("").change();
+
+        $('#userTable').DataTable().clear();
+        $('#userTable').DataTable().destroy();
+        loadTable();
+    }
+
+</script>
+

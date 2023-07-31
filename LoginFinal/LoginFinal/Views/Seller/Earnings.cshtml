@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewBag.Title = "Manage Earnings";
+    Layout = "~/Views/Shared/_FrontLayout.cshtml";
+}
+
+
+
+<div class="main-page second py-5">
+         <div class="container">
+            <div class="row">
+                
+              @*Start Massam 06-01-23*@
+               <div class="col-md-6 col-6 mb-3">
+                  <h2 class="pull-left m-0 p-0 revenue-title">Revenue Earned</h2>
+               </div>
+                <div class="col-md-6 col-6 mb-3">
+                <p class="d-flex justify-content-end mb-0 mt-1 p-0 withdrawal-price">
+                        Available For Withdrawal: <span class="font-weight-bold text-success"> $ @ViewBag.Balance_Available </span>
+                    </p>
+                </div>
+                @*End Massam 06-01-23*@
+
+
+               <div class="col-md-12">
+                  <div class="mb-3 border-0 bg-white shadow-sm rounded ">
+                     <div class="card-body">
+                        @*Start Massam 06-01-23*@
+                        <center><small class="font-weight-bold" style="font-size:13px;"> 3.4% of order's amount would be deducted by stripe on every order </small></center>
+                        <div class="row pt-3">
+                           <div class="col-md-6 col-6 text-center border-box">
+                              <p> Pending Clearance </p>
+                              <h1 class="font-weight-bold m-0">$ @ViewBag.Balance_Pending</h1>
+                           </div>
+                           <div class="col-md-6 col-6 text-center border-box">
+                              <p> Available Income </p>
+                              <h1 class="font-weight-bold m-0">$ @ViewBag.Balance_Available</h1>
+                           </div>
+                        </div>
+                        @*End Massam 06-01-23*@           
+                    </div>
+                  </div>
+                  <p class="pull-left my-2 mr-2"> Withdraw To: </p>
+                     @if (@ViewBag.Balance_Available != "0")
+                        {
+                    <button title="Withdraw $@ViewBag.Balance_Available" class="btn btn-success ml-2" onclick="PayoutBalance('@ViewBag.Balance_Available')" >
+                        <i class="fa fa-university"></i> Bank Account
+                    </button>
+                    }
+                    else
+                    {
+                     <button title="Balance not availble to withdraw" class="btn btn-success ml-2" disabled >
+                        <i class="fa fa-university"></i> Bank Account
+                    </button>
+                    }
+                <span class="text-success" id="bnkmsg"></span>
+                <div class="table-responsive box-table mt-4 bg-white rounded shadow-sm p-2">
+                     <table class="table table-bordered m-0">
+                        <thead>
+                           <tr>
+                              <th>Date / Time</th>
+                              <th>For</th>
+                              <th>Amount</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(var x in @ViewBag.Orders)
+                            {
+                           <tr>
+                              <td>@x.CreatedAt</td>
+                              <td>
+                                 @x.OrderTitle (<a href="@Url.Action("OrderDetails","Seller", new { id2= LoginFinal.HelpingClasses.StringCipher.EncryptId(@x.Id) })" target="blank" class="text-success"> View Order </a>)
+                              </td>
+                              <td class="text-success"> @x.OrderPrice </td>
+                           </tr>
+                            }
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-lg-12">
+               </div>
+            </div>
+         </div>
+      </div>
+
+<script>
+                                     
+    function PayoutBalance(amount)
+    {
+
+        $.ajax({
+                        type: 'POST',
+                        url: "../Ajax/Payout_User",
+                        data:{Amount:amount,user_id:'@ViewBag.UserId.ToString()'},
+                        dataType: "json",
+                        success:function (response) 
+                        {
+                            $("#bnkmsg").text(" Withdrawl Successful ! Kindly Check Your Bank for further details !");
+                            setTimeout(function() {
+                                $("#bnkmsg").fadeOut();
+                                }, 2500);
+                            location.reload();
+                        },
+                        error: function (response)
+                        {
+                            alert("Error");
+                        },
+                    });
+    }
+
+
+</script>

@@ -1,0 +1,214 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8" />
+        <title>IT Butler | All Services at one place</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="IT Butler, All Services at one place" />
+        <meta name="keywords" content="Startup, Business, Tech Servcies, Modern, Creative" />
+        <!-- favicon -->
+        <link href="images/favicon.ico" rel="shortcut icon">
+        <!-- Bootstrap and other css -->
+        <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="css/swiper.min.css" rel="stylesheet" type="text/css" />
+        <link href="css/tobii.min.css" rel="stylesheet" type="text/css" />
+        <link href="css/tiny-slider.css" rel="stylesheet" type="text/css" />
+        <link href="css/materialdesignicons.min.css" rel="stylesheet" type="text/css" />
+        <link href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" rel="stylesheet">
+        <!-- Main Css -->
+        <link href="css/style.min.css" rel="stylesheet" type="text/css" id="theme-opt" />
+
+    </head>
+    
+    <body>        
+        <!-- Navbar STart -->
+        <header id="topnav" class="defaultscroll sticky">
+            <div class="container">
+                <!-- Logo container-->
+                <a class="logo" href="../">
+                    <span class="logo-light-mode">
+                        <img src="images/butlerlogo.png" class="l-dark" alt="" width="173px;">
+                        @*<img src="images/logo-light.png" class="l-light" alt="" width="135px;">*@
+                        <img src="images/butlerlogo.png" class="l-light" alt="" width="135px;">
+                    </span>
+                    <img src="images/butlerlogo.png" class="logo-dark-mode" alt="" style="width: 135px;">
+                </a>
+                <!-- End Logo container-->
+                <div class="menu-extras">
+                    <div class="menu-item">
+                        <!-- Mobile menu toggle-->
+                        <a class="navbar-toggle" id="isToggle" onclick="toggleMenu()">
+                            <div class="lines">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </a>
+                        <!-- End mobile menu toggle-->
+                    </div>
+                </div>
+
+                @*<ul class="buy-button list-inline mb-0">
+                    <li class="list-inline-item search-icon mb-0">
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-link text-decoration-none dropdown-toggle mb-0 p-0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="uil uil-search h5 text-dark nav-light-icon-dark mb-0"></i>
+                                <i class="uil uil-search h5 text-white nav-light-icon-white mb-0"></i>
+                            </button>
+                            <div class="dropdown-menu dd-menu dropdown-menu-end bg-white shadow rounded border-0 mt-4 py-0" style="width: 300px;">
+                                <form action="@Url.Action("Search", "Home")" class="p-4">
+                                    <input type="search" id="text" name="name" class="form-control border bg-white" placeholder="Search...">
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                </ul>*@
+
+                <div id="navigation">
+                    <!-- Navigation Menu-->
+                    <ul class="navigation-menu nav-light">
+                        <li class="has-submenu parent-parent-menu-item">
+                            <a href="../Home/Index">Home</a><span class="menu-arrow"></span>
+                        </li>
+        
+                        <li class="has-submenu parent-parent-menu-item">
+                            <a href="../Home/Register?value=Customer">Get a Service</a><span class="menu-arrow"></span>
+                        </li>
+
+                        <li class="has-submenu parent-parent-menu-item">
+                            <a href="../Home/Register?value=I.T. Butler">Become an I.T Butler</a><span class="menu-arrow"></span>
+                        </li>
+
+                        <li><a href="../Home/Contact" class="sub-menu-item">Contact us</a></li>
+                    </ul><!--end navigation menu-->
+                </div><!--end navigation-->
+            </div><!--end container-->
+        </header><!--end header-->
+        <!-- Navbar End -->
+
+<!-- btn Success Style Starts -->
+<style type="text/css">
+    .btn-success {
+    background: #2cdd9b !important;
+    background: -webkit-linear-gradient(legacy-direction(to right), #2cdd9b 0%, #1dc8cc 100%) !important;
+    background: -webkit-gradient(linear, left top, right top, from(#2cdd9b), to(#1dc8cc)) !important;
+    background: -webkit-linear-gradient(left, #2cdd9b 0%, #1dc8cc 100%) !important;
+    background: -o-linear-gradient(left, #2cdd9b 0%, #1dc8cc 100%) !important;
+    background: linear-gradient(to right, #2cdd9b 0%, #1dc8cc 100%) !important;
+    border-color: #2cdd9b !important;
+}
+
+.btn-success:hover{
+        background-color: transparent !important;
+        border-color: #fff !important;
+        border-style: solid !important;
+        border-width: 1px !important;
+    }
+
+.shadow-sm {
+    box-shadow: 0 1px 2px rgb(0 0 0 / 20%) !important;
+}
+</style>
+<!-- btn Success Style Ends -->
+
+        <!-- Hero Start -->
+        <section class="swiper-slider-hero position-relative d-block" style="height:94vh !important;">
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide d-flex align-items-center overflow-hidden">
+                        <div class="slide-inner slide-bg-image d-flex align-items-center" data-jarallax='{"speed": 0.5}' style="background: center center;" data-background="images/bg/busi01.jpg">
+                            <div class="bg-overlay" style="background: linear-gradient(to bottom, rgb(22 28 45 / 85%) 0%, rgba(60,72,88,0.3) 25%, rgba(60,72,88,0.3) 35%, #2cdd9bad 100%);"></div>
+                            <div class="container">
+                                <div class="row justify-content-center">
+                                    <div class="col-12">
+                                        <div class="title-heading text-center">
+                                            <h1 class="fw-semibold display-3 text-white title-dark mb-4">Register as Customer</h1>
+                                            <p class="para-desc mx-auto text-white" style="font-size:18px;">Millions of people use I.T Butler to turn their ideas into reality.</p>
+                                            
+                                            <div class="mt-4 pt-2">
+                                              <a href="../Home/Register?value=Customer" class="btn btn-success" style="border: solid #fff 1px;">Get Started</a>
+                                            </div>
+                                        </div>
+                                    </div><!--end col-->
+                                </div><!--end row-->
+                            </div><!--end container-->
+                        </div><!-- end slide-inner --> 
+                    </div> <!-- end swiper-slide -->
+
+                    <div class="swiper-slide d-flex align-items-center overflow-hidden">
+                        <div class="slide-inner slide-bg-image d-flex align-items-center" data-jarallax='{"speed": 0.5}' style="background: center center;" data-background="images/bg/busi02a.jpg">
+                            <div class="bg-overlay" style="background: linear-gradient(to bottom, rgb(22 28 45 / 85%) 0%, rgba(60,72,88,0.3) 25%, rgba(60,72,88,0.3) 35%, #2cdd9bad 100%);"></div>
+                            <div class="container">
+                                <div class="row justify-content-center">
+                                    <div class="col-12">
+                                        <div class="title-heading text-center">
+                                            <h1 class="fw-semibold display-3 text-white title-dark mb-4">Become an I.T Butler</h1>
+                                            <p class="para-desc mx-auto text-white" style="font-size:20px;">Earn More by Selling Your Service as a Freelance.</p>
+                                            
+                                            <div class="mt-4 pt-2">
+                                                 <a href="../Home/Register?value=I.T. Butler" class="btn btn-success" style="border: solid #fff 1px;">Get Started</a>
+                                            </div>
+                                        </div>
+                                    </div><!--end col-->
+                                </div><!--end row-->
+                            </div><!--end container-->
+                        </div><!-- end slide-inner --> 
+                    </div> <!-- end swiper-slide -->
+                </div>
+                <!-- end swiper-wrapper -->
+
+                <!-- swipper controls -->
+                <!-- <div class="swiper-pagination"></div> -->
+                <div class="swiper-button-next border rounded-circle text-center"></div>
+                <div class="swiper-button-prev border rounded-circle text-center"></div>
+            </div><!--end container-->
+        </section><!--end section-->
+        <!-- Hero End -->
+
+
+        <!-- Footer Start -->
+        <footer class="footer bg-footer">
+
+            <div class="footer-bar bg-footer" style="padding: 9px 0 !important;">
+                <div class="container">
+                    <div class="row">
+
+                        <!--Start col-->
+                        <div class="col-md-6 d-flex justify-content-md-start justify-content-center mb-0">
+                                <p class="mb-0 text-muted" style="font-size:13px !important;"><script>document.write(new Date().getFullYear())</script> © I.T. Butler</p>
+                        </div>
+                        <!--end col-->
+
+                        <!--Start col-->
+                        <div class="col-md-6 d-flex justify-content-md-end justify-content-center mb-0">
+                            <ul class="list-inline mb-0" style="font-size:13px;">
+                                <li class="list-inline-item"><a class="text-muted" href="#">Privacy Policy</a> |</li>
+                                <li class="list-inline-item"><a class="text-muted" href="#">Terms of Service</a> |</li>
+                                <li class="list-inline-item"><a class="text-muted" href="../Home/Contact">Help & Support</a></li>
+                            </ul>
+                        </div>
+                        <!--end col-->
+
+                    </div><!--end row-->
+                </div><!--end container-->
+            </div>
+        </footer><!--end footer-->
+        <!-- End -->
+
+        <!-- javascript -->
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script src="js/swiper.min.js"></script>
+        <script src="js/parallax.js"></script>
+        <script src="js/tobii.min.js"></script>
+        <script src="js/tiny-slider.js"></script>
+        <script src="js/feather.min.js"></script>
+        <!-- Main Js -->
+        <script src="js/plugins.init.js"></script><!--Note: All init js like tiny slider, counter, countdown, maintenance, lightbox, gallery, swiper slider, aos animation etc.-->
+        <script src="js/app.js"></script><!--Note: All important javascript like page loader, menu, sticky menu, menu-toggler, one page menu etc. -->
+    </body>
+</html>

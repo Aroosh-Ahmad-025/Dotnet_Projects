@@ -1,0 +1,270 @@
+﻿@using LoginFinal.Models
+@using Microsoft.Data.SqlClient;
+@inject SqlConnection de
+@using LoginFinal.BL
+@inject IOptions<StripeSettings> Stripe
+@using System.Security.Claims;
+@using LoginFinal.HelpingClasses;
+@using Microsoft.Extensions.Options;
+@model CheckOutDTO;
+@{
+    var Userid = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
+    var CurrentUserRecord = new UserBL().GetActiveUserById(Convert.ToInt32(Userid), de);
+    User loggedinUser = CurrentUserRecord;
+    ViewBag.Title = "Checkout";
+    Layout = "~/Views/Shared/_FrontLayout.cshtml";
+}
+
+
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 mb-2">
+                @*<div class="bg-white rounded shadow-sm py-3" id="stripeCard">
+                    <div class="dropdown-menu-show">
+                        <p class="text-muted font-weight-bold h6 dropdown-item py-2">Our Processing Fee: </p>
+                        <p class="dropdown-item pt-2">Stripe Fee : <b class="pull-right">4%</b></p>
+                        <p class="dropdown-item">Platform Fee : <b class="pull-right">20%</b></p>
+                    </div>
+                </div>*@
+
+                @if (Model.sessionCount > 0 && Model.title != "Subscription")
+                {
+                    <div class="bg-white rounded shadow-sm py-3 mt-3" id="paymentMethod">
+                        <div class="dropdown-menu-show">
+                            <p class="dropdown-item pt-2"><input class="mr-2" type="radio" name="subscribtionCharges" value="200" id="defaultCheck1" checked>Pay By Card</p>
+                            <p class="dropdown-item pt-2"><input class="mr-2" type="radio" name="subscribtionCharges" value="200" id="defaultCheck2">Use Free Session (@Model.sessionCount sessions left)</p>
+                        </div>
+                    </div>
+                }
+            </div>
+            
+            <div class="col-lg-9">
+                <div class="bg-white rounded shadow-sm sidebar-page-right">
+                    <div>
+                        <div class="p-3">
+                            <p class="text-muted font-weight-bold h6 mb-3">Pay to Your IT Buttler</p>
+                            <p class="text-muted font-weight-bold mb-0">Project Title : @Model.title</p>
+                            <div class="border mt-4 mb-2 rounded">
+                                @if (Model.title != "Subscription")
+                                {
+                                    <div class="d-flex border-bottom">
+                                        <div class="p-3">
+                                            <p class="text-muted font-weight-bold mb-0" id="p1">Amount You Pay = @Model.wHours * @Model.hourlyRate</p>
+                                        </div>
+                                        <div class="p-3 ml-auto">
+                                            <p class="text-muted font-weight-bold mb-0" id="v1">$@Model.workCharges</p>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-flex border-bottom">
+                                        <div class="p-3">
+                                            <p class="text-muted font-weight-bold mb-0">Amount You Pay</p>
+                                        </div>
+                                        <div class="p-3 ml-auto">
+                                            <p class="text-muted font-weight-bold mb-0">$@Model.subscribtionCharges</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex border-bottom">
+                                        <div class="p-3">
+                                            <p class="text-muted font-weight-bold mb-0">Subscription Duration</p>
+                                        </div>
+                                        <div class="p-3 ml-auto">
+                                            <p class="text-muted font-weight-bold mb-0">@Model.duration</p>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="d-flex border-bottom">
+                                    <div class="p-3">
+                                        <p class="text-muted font-weight-bold mb-0" id="p2">Credit card processing fee (4 %)</p>
+                                    </div>
+                                    <div class="p-3 ml-auto">
+                                        <p class="text-muted font-weight-bold mb-0" id="v2">$@Model.stripeFee</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex border-bottom">
+                                    <div class="p-3">
+                                        <p class="text-muted font-weight-bold mb-0" id="p3">HST (13 %)</p>
+                                    </div>
+                                    <div class="p-3 ml-auto">
+                                        <p class="text-muted font-weight-bold mb-0" id="v3">$@Model.platformFee</p>
+                                    </div>
+                                </div>
+                                @if (Model.title != "Subscription")
+                                {
+                                    <div class="d-flex border-bottom">
+                                        <div class="p-3">
+                                            <p class="text-muted font-weight-bold mb-0" id="p4">Butler Service Charges</p>
+                                        </div>
+                                        <div class="p-3 ml-auto">
+                                            <p class="text-muted font-weight-bold mb-0" id="v4">$@Model.butlerServiceCharges</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex" id="Reimbursements">
+                                        <div class="p-3">
+                                            <p class="text-muted font-weight-bold mb-0">Your Reimbursements <span data-toggle="tooltip" data-placement="right" title="Funds credited back to your account for canceled orders."><i class="fa fa-question-circle" aria-hidden="true"></i></span></p>
+                                            <p class="mb-0 text-muted">Funds that were credited back to your account for canceled orders.</p>
+                                        </div>
+                                        <div class="p-3 ml-auto">
+                                            <p class="text-muted font-weight-bold mb-0">$@Model.workCharges</p>
+                                        </div>
+                                    </div>
+                                }
+
+                                <div class="bg-light d-flex border-bottom">
+                                    <div class="p-3">
+                                        <p class="text-muted font-weight-bold mb-0">PAYING</p>
+                                    </div>
+                                    <div class="border-left p-3 ml-auto">
+                                        @if (Model.title != "Subscription")
+                                        {
+                                            <p class="text-muted font-weight-bold mb-0" id="v5">TOTAL $@Model.workCharges</p>
+                                        }
+                                        else
+                                        {
+                                            <p class="text-muted font-weight-bold mb-0">TOTAL $@Model.subscribtionCharges</p>
+                                        }
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="d-flex justify-content-end">
+                                @if (Model.title != "Subscription")
+                                {
+                                    <form id="stripe-form" action="@Url.Action("Charge","Seller")" method="post">
+                                        <input type="text" id="wCharges" class="form-control" name="workCharges" value="@Model.workCharges" hidden>
+                                        <input type="text" class="form-control" name="FromDateTime" value="@Model.FromDateTime" hidden>
+                                        <input type="text" class="form-control" name="ToDateTime" value="@Model.ToDateTime" hidden>
+                                        <input type="text" class="form-control" name="title" value="@Model.title" hidden>
+                                        <input type="text" class="form-control" name="desc" value="@Model.desc" hidden>
+                                        <input type="text" class="form-control" name="customerId" value="@loggedinUser.Id" hidden>
+                                        <input type="text" class="form-control" name="butlerId" value="@Model.butlerId" hidden>
+                                        <input type="text" id="sessionUsed" class="form-control" name="wHours" value="@Model.wHours" hidden disabled>
+                                        <input type="text" id="totalSessions" class="form-control" name="sessionCount" value="@Model.sessionCount" hidden disabled>
+
+
+                                        <button id="sub" class="subm btn btn-success btn-lg mt-2 mb-3" value="PAY">PAY NOW</button>
+                                        <p class="text-danger" id="msg"></p>
+                                        <script src="//checkout.stripe.com/v2/checkout.js" id="sub2" class="stripe-button" data-key="@Stripe.Value.PublishableKey" data-label="Place Order" data-description="@Model.title" data-amount="@ViewBag.PayableAmount"></script>
+                                    </form>
+                                }
+                                else 
+                                {
+                                    <form action="@Url.Action("SubscriptonCharge","Seller")" method="post">
+
+                                        <input type="text" class="form-control" name="subscribtionCharges" value="@Model.subscribtionCharges" hidden>
+                                        <input type="text" class="form-control" name="title" value="@Model.title" hidden>
+                                        <input type="text" class="form-control" name="customerId" value="@loggedinUser.Id" hidden>
+                                        <input type="text" class="form-control" name="butlerId" value="@Model.butlerId" hidden>
+
+
+                                        <button id="sub" class="btn btn-success btn-lg mt-2 mb-3" >PAY NOW</button>
+                                        <p class="text-danger" id="msg"></p>
+                                        <script src="//checkout.stripe.com/v2/checkout.js" id="sub2" class="stripe-button" data-key="@Stripe.Value.PublishableKey" data-label="Subscription" data-description="@Model.title" data-amount="@ViewBag.PayableAmount"></script>
+                                    </form>
+                                }
+                            </div>
+
+
+
+                            <!--                            <div class="border my-4 rounded">
+                                                          <div class="bg-light d-flex border-bottom">
+                                                             <div class="p-3">
+                                                                <p class="text-muted font-weight-bold mb-0">MIVER CREDITS <span data-toggle="tooltip" data-placement="right" title="Miver Credits are funds you can only use for buying services on Miver, within a limited period of time. Please note credits data is updated every few minutes"><i class="fa fa-question-circle" aria-hidden="true"></i></span></p>
+                                                             </div>
+                                                             <div class="border-left p-3 ml-auto">
+                                                                <p class="text-muted font-weight-bold mb-0">TOTAL ₹0.00</p>
+                                                             </div>
+                                                          </div>
+                                                          <div class="text-center py-5">
+                                                             <p class="font-weight-bold h6">No Credits Yet</p>
+                                                             <p class="text-muted font-weight-bold">Refer a friend to Miver and get credits to buy the freelance services you need.</p>
+                                                             <a href="#" class="btn btn-success btn-lg my-3">Get Miver Credits</a>
+                                                          </div>
+                                                       </div> -->
+                            <p class="text-muted">Please note it may take a few minutes to update new I.T Butler Credits in your account balance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+
+    $(".stripe-button-el").hide();
+       
+    $("#sub").click(function () {
+        var buttonText = $("#sub").val();
+        console.log(buttonText);
+        console.log(parseInt(@Model.wHours));
+        if (@Model.sessionCount <parseInt(@Model.wHours) && buttonText == "") {
+            $("#msg").text("Insufficient Sessions!");
+        }
+        else{
+            $("#msg").text("");
+            
+            //var sub2 = $("#sub2").text();
+            
+            if (buttonText == "") {
+                $("#stripe-form").submit();
+            }
+            else {
+                $("#sub2").click();
+            }
+        }
+        
+    });
+
+    $("#defaultCheck1").click(function () {
+        //$("#stripeCard").prop('display', 'block');
+        location.reload();
+    });
+
+    $("#defaultCheck2").click(function () {
+       
+        var st = '@Model.wHours';
+        if(st=="")
+        {
+            st="0";
+        }
+        $("#Reimbursements").remove();
+        $("#p1").text("1 session =");
+        $("#v1").text("1 hour");
+        $("#p2").text("Total hours =");
+        $("#v2").text(@Model.wHours);
+        $("#p3").text("Using sessions =");
+        $("#v3").text(@Model.wHours);
+        $("#p4").text("Remaining sessions =");
+        $("#v4").text((@Model.sessionCount-parseInt(st)));
+        $("#v5").text("Total (Free)");
+        $("#sessionUsed").prop('disabled', false);
+        $("#totalSessions").prop('disabled', false);
+        $("#wCharges").remove();
+        $("#sub").val("");
+        $("#sub").text("Proceed");
+        $("#stripeCard").attr('style','display:none');
+        $("#paymentMethod").removeClass('mt-3');
+       
+        $('#sub').prop("type", "button");
+        $(".stripe-button").remove();
+        $(".stripe-button-el").remove();
+        //$(".subm").prop("id","abc");
+
+        //$(".subm").click(function () {
+        //    $("#stripe-form").submit();
+        //});
+
+    });
+
+  
+
+</script>

@@ -1,0 +1,541 @@
+
+@{
+    ViewBag.Title = "Users Under Review";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .table > tbody > tr > td {
+        padding: 5px !important;
+    }
+</style>
+
+
+<div class="modal fade" id="updateModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="text-center text-bold">Update User</h5>
+                <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form action="@Url.Action("PostUpdateUser","Admin")" method="post">
+
+                    <input type="hidden" name="Id" id="updId" />
+                    <input type="hidden" name="way" value="@ViewBag.Way" />
+
+
+                    <div class="form-group">
+                        <label class="text-bold">Full Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="updName" placeholder="Please Enter Full Name" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Contact # </label>
+                        <input type="text" class="form-control" name="Contact" id="updContact" placeholder="Please Enter User Contact Number">
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="text-bold">Email <span class="text-danger">*</span></label>
+                        <input type="email" name="Email" id="updEmail" class="form-control" onkeyup="validateEmail(this.value)" placeholder="Add Email Here" required>
+                        <span class="text-danger" id="updEmailErrMsg"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="text-bold">Password <span class="text-danger">*</span></label>
+                        <input type="password" name="Password" id="updPassword" class="form-control" placeholder="Set Login Password" required>
+                        <div class="input-group-addon">
+                            <input id="toggle" type="checkbox" class="pull-left"> <span id="toggleText" class="ml-5 pull-left">Show</span>
+                        </div>
+                    </div>
+
+                     <div class="form-group">
+                        <label class="text-bold">Country <span class="text-danger">*</span></label>
+                        <input type="text" name="Country" id="updCountry" class="form-control" placeholder="Add Country" required>
+                    </div>
+
+
+                     <div class="form-group">
+                        <label class="text-bold">Gender <span class="text-danger">*</span></label>
+                         <select class="form-control custom-select" required="" name="Gender" id="updGender" data-msg="Please select your gender." data-error-class="u-has-error" data-success-class="u-has-success">
+                           <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                          </select>
+                    </div>
+
+                     <div class="form-group">
+                        <label class="text-bold">City</label>
+                        <input type="text" name="City" id="updCity" class="form-control" placeholder="Set City">
+                      
+                    </div>
+
+                       <div class="form-group">
+                        <label class="text-bold">Organization</label>
+                        <input type="text" name="Organization" id="updOrganization" class="form-control" placeholder="Add Organization">
+                      
+                    </div>
+
+
+                      <div class="form-group">
+                        <label class="text-bold">About</label>
+                        <textarea rows=4 name="Description" id="updDescription" class="form-control" placeholder="Add Description"></textarea>   
+                      </div>
+
+                     <div class="form-group">
+                        <label class="text-bold">Website</label>
+                        <input type="text" name="Website" id="updWebsite" class="form-control" placeholder="Add Website" >   
+                      </div>
+
+
+                     <div class="form-group">
+                        <label class="text-bold">Zip Code<span class="text-danger">*</span></label>
+                        <input type="text" name="ZipCode" required onkeydown="limit(this);" onkeyup="limit(this);" id="updZipCode" class="form-control" placeholder="Add Zip Code" >
+                      
+                    </div>
+
+                    
+
+
+                    <div class="modal-footer">
+                        <button type="submit" value="submit" class="btn btn-primary" id="updSubBtn">Update</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row m-10">
+    <div class="panel panel-flat text-black">
+        <div class="panel-heading" style="background: #E8ECED; padding:1px !important;">
+            <h2 class="text-center text-black">
+                Search
+            </h2>
+            <div class="heading-elements">
+                <ul class="icons-list">
+                    <li><a data-action="collapse" class="rotate-180"></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel-body pt-20 pb-20" style="display: none">
+            <div class="row">
+
+
+                <div class="col-md-6 col-lg-6" style="padding: 20px;padding-top:20px;">
+                    <div class="form-group">
+                        <label><strong>Name:</strong></label>
+                        <input type="text" class="form-control" placeholder="Search User Name Here" id="searchName" style="background-color:white">
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6" style="padding: 20px;padding-top:20px;">
+                    <div class="form-group">
+                        <label><strong>Email:</strong></label>
+                        <input type="text" class="form-control" id="searchEmail" style="background-color:white" placeholder="Search User Email Here">
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <button onclick="clearSearch()" class="btn btn-danger btn-block">Reset</button><br>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12 col-xs-12"></div>
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                    <div class="form-group text-right">
+                        <button onclick="searchTable()" class="btn btn-success btn-block">Search</button><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="panel p-20 m-10">
+
+    <div class="row">
+        @if (ViewBag.category == 4)
+        {
+            <center><u><h3>Customer List</h3></u></center>
+        }
+        else
+        {
+            <center><u><h3>I.T Butler List</h3></u></center>
+        }
+    </div>
+
+    @*<div class="row">
+        <div class="col-md-8"></div>
+        <div class="col-md-2 pull-right btn-block">
+            <a href="@Url.Action("AddUser","Admin", new{ cat= @ViewBag.category})" class="btn btn-primary m-5 pull-right">Add New</a>
+        </div>
+    </div>*@
+
+
+    <input type="hidden" id="way" value="@ViewBag.Way" />
+
+
+    <div class="table-responsive">
+        <table class="table text-md-nowrap table-striped table-bordered text-center no-footer" id="userTable">
+            <thead class="bg-indigo-800">
+                <tr>
+                    <th class="text-bold" hidden>...</th>
+                    <th class="text-bold text-center" style="min-width:140px;">
+                        First Name
+                    </th>
+                    <th class="text-bold text-center" style="min-width:140px;">
+                        Last Name
+                    </th>
+                    <th class="text-bold text-center" style="min-width:140px;">
+                        Username
+                    </th>
+                    <th class="text-bold text-center" style="min-width:150px;">
+                        Email
+                    </th>
+                    
+                    <th class="text-bold text-center" style="min-width:130px">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script>
+
+    var way = $('#way').val();
+
+    loadTable();
+
+    function loadTable(Name, email)
+    {
+        $('#userTable').DataTable(
+        {
+            "ajax":
+            {
+                "url": '@Url.Action("GetUserUndersReviewDataTableList", "Ajax")',
+                "type": "POST",
+                "datatype": "json",
+                "data": {
+                    Name: Name,
+                    email: email,
+                    category: @ViewBag.category
+                }
+            },
+            'columns':
+            [
+                { "data": "hidden", "name": "0" },
+                { "data": "firstName", "name": "FirstName" },
+                { "data": "lastName", "name": "LastName" },
+                { "data": "userName", "name": "Username" },
+                { "data": "email", "name": "Email" },
+                { "data": "Action", "name": "0" },
+            ],
+            'columnDefs':
+            [
+                {
+                    "targets": 0,
+                    "visible": false,
+                    "searchable": false,
+                    "render": function (data, type, full, meta) {
+                        return null;
+                    }
+                },
+                {
+                    "targets": 1,
+                    'className': '',
+                    "render": function (data, type, full, meta)
+                    {
+                        return full.firstName ;
+                    }
+                },
+                {
+                    "targets": 2,
+                    'className': '',
+                    "render": function (data, type, full, meta)
+                    {
+                        return full.lastName;
+                    }
+                },
+                {
+                    "targets": 3,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        return full.userName;
+                    }
+                },
+                {
+                    "targets": 4,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        return full.email;
+                    }
+                },
+                {
+                    "targets": 5,
+                    'className': '',
+                    'sortable': false,
+                    "render": function (data, type, full, meta)
+                    {
+                        //Start massam 10-01-23
+                        var x = '';
+                        var y='<ul class="dropdown-menu dropdown-menu-right" style="min-width:98px;padding-left:5px !important;">';
+                       // var viewprof= '<a class="btn btn-sm bg-primary fa fa-eye" href="../Admin/TakeSS?Email='+full.email+'&Pass='+full.password+'" title="View User Profile"></a>'
+                        return '<ul class="icons-list"> ' +
+                            '<li class="dropdown" >' +
+                            '			<a href="#" class="dropdown-toggle" data-toggle="dropdown">' +
+                            '				<i class="icon-menu9"></i>' +
+                            '			</a>' +
+                                            y +
+                            '				<li>' +
+                            '                   <button class="btn btn-sm bg-info" onclick="enableuser(' + full.id + ')" title="Enable"><i class="fa fa-check" aria-hidden="true"></i></button>' +
+                            '                   <button class="btn btn-sm bg-danger icon-bin mr-5" onclick="deleteFunction(' + full.id + ')" title="Delete"></button>' +
+                                                x +
+                            '               </li>' +
+                            '			</ul>' +
+                            '		</li >' +
+                            '	</ul >';
+                            //End massam 10-01-23
+                    }
+                },
+            ],
+            "serverSide": "true",
+            "processing": "true",
+            "language":
+            {
+                "processing": "<i class='icon-spinner spinner icon-2x'></i>",
+                "search": "<span>Search :</span> _INPUT_",
+                "searchPlaceholder": "Filter Data",
+                "lengthMenu": "<span>Show :</span> _MENU_",
+                "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            }
+        });
+    }
+
+
+    function searchTable()
+    {
+        var name = $('#searchName').val();
+        var email = $('#searchEmail').val();
+
+        $('#userTable').DataTable().clear();
+        $('#userTable').DataTable().destroy();
+
+        loadTable(name, email);
+    }
+
+    function clearSearch()
+    {
+        $('#userTable').DataTable().clear();
+        $('#userTable').DataTable().destroy();
+
+        $('#searchName').val("");
+        $('#searchEmail').val("");
+
+        loadTable();
+    }
+
+
+    function updateFunction(id)
+    {
+        $('#updEmailErrMsg').text("");
+        $('#updSubBtn').attr('disabled', false);
+
+        $("#loadImg").show();
+
+        $.ajax({
+            type: 'POST',
+            url: "../Ajax/GetUserById",
+            dataType: "json",
+            data: {
+                id: id
+            },
+            success: function (response)
+            {
+                if (response == 0) {
+                    alert("Record not found, Please reload the page.");
+                }
+
+                $("#updId").val(response.id);
+
+                $("#updName").val(response.firstName+" "+ response.lastName);
+                $("#updEmail").val(response.email);
+                $("#updContact").val(response.contact);
+                $("#updPassword").val(response.password);
+                $("#updGender").val(response.gender);
+                $("#updCountry").val(response.country);
+                $("#updCity").val(response.city);
+                $("#updOrganization").val(response.organization);
+                $("#updWebsite").val(response.website);
+                $("#updDescription").val(response.description);
+                $("#updZipCode").val(response.zipCode);
+
+
+                $("#loadImg").hide();
+                $("#updateModal").modal('show');
+            },
+            error: function ()
+            {
+                $("#loadImg").hide();
+
+                alert("ajax Failed");
+            }
+        });
+
+    }
+
+    function validateEmail(email)
+    {
+        var id = $('#updId').val();
+        if (email != "" && id != "")
+        {
+            $.ajax({
+                type: 'POST',
+                url: "../Ajax/ValidateEmail",
+                dataType: "json",
+                data: {
+                    email: email, id: id
+                },
+                success: function (response)
+                {
+                    if (response == true)
+                    {
+                        $('#updEmailErrMsg').text("");
+                        $('#updSubBtn').attr('disabled', false);
+                    }
+                    else {
+                        $('#updEmailErrMsg').text("Duplicate Email");
+                        $('#updSubBtn').attr('disabled', true);
+                    }
+                },
+                error: function ()
+                {
+                    $('#updEmailErrMsg').text("");
+                    $('#updSubBtn').attr('disabled', false);
+
+                    alert("Ajax failed");
+                }
+            });
+        }
+
+    }
+
+
+    function deleteFunction(id) {
+        $('#confirmModalHeading').text('Warning!');
+        $('#confirmModalHeader').removeClass('bg-success');
+        $('#confirmModalHeader').addClass('bg-danger');
+        $('#confirmModalText').empty();
+        $('#confirmModalText').append('Do you really want to delete this user?<br />' +
+            'This record is going to permanently delete from the system.<br />' +
+            'The action cannot be undone.');
+
+        $("#confirmModalForm").attr("action","../Admin/DeleteUser?id=" + id + "&way=@ViewBag.Way");
+
+        $('#confirmModal').modal('show');
+    }
+
+    function enableuser(id) {
+        $('#confirmModalHeading').text('Warning!');
+        $('#confirmModalHeader').removeClass('bg-success');
+        $('#confirmModalHeader').addClass('bg-danger');
+        $('#confirmModalText').empty();
+        $('#confirmModalText').append('Do you really want to enable this user?<br />' +
+            'This user is going to enable for now.<br />'
+            );
+
+        $("#confirmModalForm").attr("action","../Admin/enableUser?id=" + id + "&way=@ViewBag.Way");
+
+        $('#confirmModal').modal('show');
+    }
+
+    function PendingApproval(id) {
+        $('#confirmModalHeading').text('Warning!');
+        $('#confirmModalHeader').removeClass('bg-success');
+        $('#confirmModalHeader').addClass('bg-success');
+        $('#confirmModalId').removeClass('btn-danger');
+        $('#confirmModalId').removeClass('btn-success');
+        $('#confirmModalText').empty();
+        $('#confirmModalText').append('Do you really want to approve this user?');
+
+        $("#confirmModalForm").attr("action", "../Admin/ApprovedUser?id=" + id + "&way=@ViewBag.Way");
+
+        $('#confirmModal').modal('show');
+    }
+
+     function AccountActivate(id) {
+        $('#confirmModalHeading').text('Info!');
+        $('#confirmModalHeader').addClass('bg-success');      
+        $('#confirmModalId').removeClass('btn-danger');
+        $('#confirmModalId').addClass('btn-success');
+        $('#confirmModalText').empty();
+        $('#confirmModalText').append('Do you really want to activate this user?');
+
+        $("#confirmModalForm").attr("action", "../Auth/AccountAcctivate?id=" + id + "&way=@ViewBag.Way"+"&ac=1");
+
+        $('#confirmModal').modal('show');
+    }
+</script>
+
+<script>
+    $("#toggle").change(function () {
+
+        // Check the checkbox state
+        if ($(this).is(':checked')) {
+            // Changing type attribute
+            $("#updPassword").attr("type", "text");
+
+            // Change the Text
+            $("#toggleText").text("Hide");
+        } else {
+            // Changing type attribute
+            $("#updPassword").attr("type", "password");
+
+            // Change the Text
+            $("#toggleText").text("Show");
+        }
+
+    });
+</script>
+
+<script>
+    //Used to handle Sidebar links Activeness
+    $('#manageUserTab2').addClass('active');
+
+    
+       $('#updZipCode').on('propertychange input', function () {
+ let plain = $(this).val();
+  let result = $(this).val().replace(/[^0-9a-z]/gi, '');
+   $(this).val(result);
+   
+ 
+    });
+
+    var max_chars = 6;
+
+$('#updZipCode').keydown( function(e){
+    if ($(this).val().length >= max_chars) { 
+        $(this).val($(this).val().substr(0, max_chars));
+    }
+});
+
+$('#updZipCode').keyup( function(e){
+    if ($(this).val().length >= max_chars) { 
+        $(this).val($(this).val().substr(0, max_chars));
+    }
+});
+</script>
+

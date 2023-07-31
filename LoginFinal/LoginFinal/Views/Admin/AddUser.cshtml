@@ -1,0 +1,159 @@
+﻿@{
+    if(ViewBag.cat==3)
+    {
+        ViewBag.Title = "Add I.T. Butler";
+    }
+    else
+    {
+        ViewBag.Title = "Add Customer";
+    }
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="p-20">
+
+    <div class="row">
+        <form action="@Url.Action("PostAddUser", "Admin")" method="post">
+
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="panel panel-flat">
+                        <div class="panel-heading">
+                            @if (ViewBag.cat == 3)
+                            {
+                                <h2 class="panel-title text-center text-bold">Add New I.T. Butler</h2>
+                            }
+                            else if(ViewBag.cat==4)
+                            {
+                                 <h2 class="panel-title text-center text-bold">Add New Customer</h2>
+                            }
+                        </div>
+
+                        <div class="panel-body">
+                            <legend class="text-bold text-uppercase"><span class="text-danger">*</span> Fields are mandatory to fill</legend>
+
+
+                            <div class="form-group">
+                                <label class="text-bold">First Name <span class="text-danger">*</span></label>
+                                <input type="text" onkeyup="limitText(this,40)" class="form-control" required name="FirstName" placeholder="Enter First Name Here">
+                            </div>
+
+                             <div class="form-group">
+                                <label class="text-bold">Last Name <span class="text-danger">*</span></label>
+                                <input type="text" onkeyup="limitText(this,40)" class="form-control" required name="LastName" placeholder="Enter Last Name Here">
+                            </div>
+
+                             <div class="form-group">
+                                <label class="text-bold">User Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" required name="UserName"  onkeydown="limitText(this,40)" onkeyup="validateUsername(this.value)" placeholder="Enter User Name">
+                                 <span name="UserName" id="nameErrMsg" class="text-danger"></span>
+                            </div>
+
+                             <div class="form-group">
+                                <label class="text-bold">Country<span class="text-danger">*</span></label>
+                                <input type="text" onkeyup="limitText(this,40)" class="form-control" name="Country" placeholder="Enter Country" required>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="text-bold">Email <span class="text-danger">*</span></label>
+                                <input type="email" name="Email" onkeydown="limitText(this,40)" class="form-control" onkeyup="validateEmail(this.value)" placeholder="Add Email Here" required>
+                                <span class="text-danger" id="emailErrMsg"></span>
+                            </div>
+
+
+
+                            <div class="form-group">
+                                <label class="text-bold ">Password: <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" autocomplete="new-password" placeholder="Your Password" required name="Password" id="password">
+                                    <span class="input-group-btn" style="padding-left:0px;">
+                                        <button class="btn btn-default" onclick="ShowPasswords(1)" type="button" style="display:block" id="SignupShowPassword">Show</button>
+                                        <button class="btn btn-default" onclick="ShowPasswords(1)" type="button" style="display:none" id="SignupHidePassword">Hide</button>
+                                    </span>
+                                </div>
+                            </div>
+
+                         
+                                 <input type="hidden" name="Role" value="@ViewBag.cat"/>
+
+                            <div class="text-right">
+                                <button type="submit" id="subBtn" class="btn btn-primary">Add <i class="icon-database-insert position-right"></i></button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+
+    function validateEmail(email) {
+        if (email != "") {
+            $.ajax({
+                type: 'POST',
+                url: "../Ajax/ValidateEmail",
+                dataType: "json",
+                data: {
+                    email: email, id: -1
+                },
+                success: function (response) {
+                    if (response == true) {
+                        $('#emailErrMsg').text("");
+                        $('#subBtn').attr('disabled', false);
+                    }
+                    else {
+                        $('#emailErrMsg').text("Email already exsist");
+                        $('#subBtn').attr('disabled', true);
+                    }
+                },
+                error: function () {
+                    $('#emailErrMsg').text("");
+                    $('#subBtn').attr('disabled', false);
+                    alert("Ajax failed");
+                }
+            });
+        }
+
+    }
+
+    function validateUsername(username) {
+            if (username != "") {
+                $.ajax({
+                    type: 'POST',
+                    url: "../Ajax/ValidateUsername",
+                    dataType: "json",
+                    data: {
+                        username: username, id: -1
+                    },
+                    success: function (response) {
+                        if (response == true) {
+                            $('#nameErrMsg').text("");
+                            $('#subBtn').attr('disabled', false);
+                        }
+                        else {
+                            $('#nameErrMsg').text("Username already exsist");
+                            $('#subBtn').attr('disabled', true);
+                        }
+                    },
+                    error: function () {
+                        $('#nameErrMsg').text("");
+                        $('#subBtn').attr('disabled', false);
+                        alert("Ajax failed");
+                    }
+                });
+            }
+
+        }
+</script>
+
+@*<script>
+    //Used to handle Sidebar links Activeness
+    $('#manageUserTab1').addClass('active');
+
+</script>*@

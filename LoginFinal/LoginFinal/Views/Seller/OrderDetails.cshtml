@@ -1,0 +1,1649 @@
+﻿@using LoginFinal.HelpingClasses
+@using Microsoft.Data.SqlClient;
+@inject SqlConnection de
+@using LoginFinal.BL
+@using System.Security.Claims;
+@{
+    ViewData["Title"] = "Order Details";
+    Layout = "~/Views/Shared/_FrontLayout.cshtml";
+    var Userid = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
+    var CurrentUserRecord = new UserBL().GetActiveUserById(Convert.ToInt32(Userid), de);
+    User loggedinUser = CurrentUserRecord;
+   
+}
+
+<head>
+    <style>
+    .rate {
+    float: left;
+    height: 46px;
+    padding: 0 0px;
+}
+
+.rate:not(:checked) > input {
+    position: absolute;
+    top: -9999px;
+}
+
+.rate:not(:checked) > label {
+    float: right;
+    width: 1em;
+    overflow: hidden;
+    white-space: nowrap;
+    cursor: pointer;
+    font-size: 30px;
+    color: #ccc;
+}
+    .rate:not(:checked) > label:before {
+        content: '★ ';
+    }
+
+         .seller-card1{
+                               border: 1px solid #2cdd9b;
+                               border-radius: 12px;
+                               color: #2cdd9b;
+                               display: block;
+                               margin-bottom: 5px;
+                               font-size: 10px;
+                               padding: 3px 10px;
+                               text-transform: capitalize;
+                           }
+
+.rate > input:checked ~ label {
+    color: #FFC700;
+}
+
+.rate:not(:checked) > label:hover,
+.rate:not(:checked) > label:hover ~ label {
+    color: #DEB217;
+}
+
+.rate > input:checked + label:hover,
+.rate > input:checked + label:hover ~ label,
+.rate > input:checked ~ label:hover,
+.rate > input:checked ~ label:hover ~ label,
+.rate > label:hover ~ input:checked ~ label {
+    color: #C59B08;
+}
+
+.pntnone {
+    pointer-events: none;
+}
+</style>
+
+</head>
+
+
+ <div class="main-page second py-5" >
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-lg-8 left">
+                  <div class="profile_info">                   
+                     <div class="d-flex align-items-center p-3 bg-white rounded shadow-sm h5 mb-3">
+                           <div class="user-profile-info mb-5" style="width: 7%;height:0">
+                              <div>
+                                 <div class="user-profile-image">
+                                    <label class="user-pict">
+                                    <img
+                                       src="~/@ViewBag.OrderDetails.Buyer.ImagePath"
+                                       class="img-fluid user-pict-img" style="width:50px;height:50px;" onerror="this.error=null;this.src='/FrontAssets/images/user/s4.png';"  alt="Askbootstrap">
+                                    <a href="#"
+                                       class="user-badge-round user-badge-round-med locale-en-us top-rated-seller"></a></label>
+                                 </div>
+                              </div>
+                           </div>
+                          <div class="user-profile-info mb-5" style="margin-left:-35px; width: 7%;height:0;">
+                              <div>
+                                 <div class="user-profile-image">
+                                    <label class="user-pict">
+                                    <img
+                                       src="~/@ViewBag.OrderDetails.Seller.ImagePath"
+                                       class="img-fluid user-pict-img" alt="Askbootstrap" style="width:50px;height:50px;" onerror="this.error=null;this.src='/FrontAssets/images/user/s4.png';"  style="border-radius: 50%; border: 1px solid #fff;">
+                                    <a href="#"
+                                       class="user-badge-round user-badge-round-med locale-en-us top-rated-seller"></a></label>
+                                 </div>
+                              </div>
+                           </div>
+                         
+                        <div class="ml-auto seller-card1">
+                              <div class="user-online-indicator is-online" data-user-id="1152855">
+                                 online
+                              </div>
+                        </div>
+                     </div>
+                 </div>
+
+
+<!-- Second Card -->
+
+                  <div class="profile_info my-3">                   
+                    <div class="p-3 bg-white rounded shadow-sm m-0">
+                        <div class="filters-body">
+                           <div id="accordion">
+                                 <div class="filters-card">
+                                    <div class="filters-card-header" id="headingOne">
+                                       <h6 class="mb-0">
+                                          <a href="#" class="btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                          Your Order details: <i class="mdi mdi-chevron-down float-right" style="font-size: 12px;"></i>
+                                          </a>
+                                       </h6>
+                                    </div>
+                                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                                       <div class="filters-card-body card-shop-filters">
+                                          <p>Buyer: <span class="text-danger pr-2">@ViewBag.OrderDetails.Buyer.FirstName @ViewBag.OrderDetails.Buyer.LastName</span> | <span  class="pl-2">Date ordered</span> <i>@Convert.ToDateTime(@ViewBag.OrderDetails.CreatedAt).ToString("dd-MM-yyyy")</i></p>
+                                       </div>
+                                       <div class="table">
+                                          <table class="table table-striped">
+                                            <thead>
+                                              <tr>
+                                                <th scope="col">Title</th>
+                                                <th scope="col">Duration</th>
+                                                <th scope="col">Price</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              <tr>
+                                                <th scope="row">@ViewBag.OrderDetails.OrderTitle</th>
+                                                <td><span> @Convert.ToInt32((ViewBag.OrderDetails.EndDate - @DateTime.UtcNow).TotalDays)  </span> days </td>
+                                                <td>$<span>@ViewBag.OrderDetails.OrderPrice</span></td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                       </div>
+                                    </div>
+                                 </div>
+                           </div>
+                        </div>
+                    </div>
+                 </div>
+
+<!-- End Second Card -->
+
+
+
+<!-- Third Card -->
+
+                  <div class="profile_info my-3">                   
+                    <div class="p-3 bg-white rounded shadow-sm m-0">
+                        <div class="filters-body">
+                           <div id="accordion2">
+                                 <div class="filters-card">
+                                    <div class="filters-card-header" id="headingOne">
+                                       <h6 class="mb-0">
+                                          <a href="#" class="btn-link" data-toggle="collapse" data-target="#collapse2" aria-expanded="true" aria-controls="collapse2">
+                                          Current Project Discussion: <i class="mdi mdi-chevron-down float-right" style="font-size: 12px;"></i>
+                                          </a>
+                                       </h6>
+                                    </div>
+                                    <div id="collapse2" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion2">
+                     <div class="comments">
+                         <form id="message-form">
+                         <div class="col-lg-12 col-xl-12 px-0">
+                           <div class="d-flex align-items-center mt-4 mb-2  osahan-post-header">
+                              <div class="font-weight-bold mr-1 overflow-hidden">
+                                 <div class="dropdown-list-image mr-3 mb-auto text-truncate"><img class="rounded-circle" onerror="this.error=null;this.src='/FrontAssets/images/user/s4.png';" src="~/@ViewBag.OrderDetails.Buyer.ImagePath" alt=""></div>
+                                       <div class="filters-card-body card-shop-filters">
+                                          <p>Buyer: <span class="text-danger pr-2">@ViewBag.OrderDetails.Buyer.FirstName @ViewBag.OrderDetails.Buyer.LastName</span><b>Placed Order</b><i class="pl-2">@Convert.ToDateTime(@ViewBag.OrderDetails.CreatedAt).ToString("dd-MM-yyyy")</i></p>
+                                       </div> 
+                              </div>
+
+                           </div>
+                           <div id="scrldn" class="osahan-chat-box p-3 border-top border-bottom bg-light">
+                              
+                            @foreach(var x in @ViewBag.Messages)
+                            {
+                               var extension = System.IO.Path.GetExtension(x.FilePath);      
+                                 <div id="@x.Id" class="d-flex align-items-center osahan-post-header">
+                                 <div class="dropdown-list-image mr-3 mb-auto"><img class="rounded-circle" onerror="this.error=null;this.src='/FrontAssets/images/user/s4.png';"  src="~/@x.Users.ImagePath" alt=""></div>
+                                 <div class="mr-1">
+                                    <div class="text-truncate h6 mb-3"> @x.Users.FirstName @x.Users.LastName
+                                    </div>
+                                    
+
+                                                                  @if(@x.FilePath!=null)
+                                                                    {
+                                                                        <p>@x.Message_Description</p>
+
+                                                                        x.FilePath = x.FilePath.ToLower();
+                                                                        
+                                                                        if(@x.FilePath.Contains("jpg") || @x.FilePath.Contains("jpeg") || @x.FilePath.Contains("png") || @x.FilePath.Contains("svg") || @x.FilePath.Contains("webp"))
+                                                                        {         
+                                                                            <a href="@Url.Action("DownloadFile","Ajax", new{ fileName=@x.FilePath})"><img src="~/@x.FilePath" class="img-fluid" width="250" height="250"/></a><span>@extension</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <p><a href="@Url.Action("DownloadFile","Ajax", new{ fileName=@x.FilePath})"><i style="font-size:70px;" class="fa fas fa-file"></i></a><span>@extension</span></p>
+                                                                        }
+
+                                                                    }
+                                                                    else
+
+                                                                    {
+                                                                        if (@x.Message_Description.Contains("https") || (@x.Message_Description.Contains("http")))
+                                                                        {
+                                                                            @if (!@x.Message_Description.Contains("Invoice_"))
+                                                                            {
+                                                                              
+                                                                                    <a href="@x.Message_Description" target="_blank">@x.Message_Description</a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <a href="@Url.Action("DownloadFile","Ajax", new{ fileName=@x.Message_Description})" target="_blank"><i style="font-size:70px;" class="fa fas fa-file"></i></a><span>@extension</span>
+                                                                            }
+                                                                            <br/>
+                                                                        }                                              
+                                                                        else
+                                                                        {
+                                                                            @if (@x.Message_Description.Contains("box shadow-sm mb-3 rounded bg-white"))
+                                                                            {
+                                                                                if (@x.RecieverId == @loggedinUser.Id)
+                                                                                {
+                                                                                    <div>@Html.Raw(@x.Message_Description)</div>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <div class="changediv">@Html.Raw(@x.Message_Description)</div>
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <p>@x.Message_Description</p>
+                                                                            }
+                                                                        }
+                                                                    }
+                                 </div>
+                                 <span class="ml-auto mb-auto">
+                                    <div class="text-right text-muted pt-1 small">@x.CreatedAt</div>
+                                 </span>
+                              </div>
+                              <br/>
+                            }
+                            <div class="msg21"></div>
+                           </div>
+                                                    @if (ViewBag.OrderDetails.IsDelivered != 2 && ViewBag.OrderDetails.IsAccepted!=-1)
+                                                    {
+                                                        <div class="w-100 border-top border-bottom">
+                                                            <textarea id="messageInput" placeholder="Write a message…" class="form-control border-0 p-3 shadow-none" rows="2"></textarea>
+                                                        </div>
+
+                                                        <div class="p-3 d-flex align-items-center">
+
+                                                            <div class="overflow-hidden">
+
+                                                                <input id="uploadFile" type="file" name="FileUpload" class="btn btn-success btn-sm rounded" style="width: 50%;">
+                                                                </input>
+                                                                <span>
+                                                                    <button type="button" class="btn btn-outline-success btn-sm rounded" onclick="RequestMeeting()">
+                                                                        <i class="mdi mdi-video md-24"></i><span style="padding-left:5px;">Zoom meeting</span>
+                                                                    </button>
+                                                                </span>
+                                                                <p id="FileErr" class="text-danger"></p>
+                                                                <p colspan="2"><progress id="fileProgress" style="display: none"></progress></p>
+                                                            </div>
+
+
+                                                            <span class="ml-auto">
+
+                                                                <button type="submit" id="sendButton" class="btn btn-success btn-sm rounded" style="width:70px;">
+                                                                    <i class="mdi mdi-send mr-2"></i>Send
+                                                                </button>
+
+                                                            </span>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="box-shadow seller-card">Your order is complete. If you need to contact the buyer, <span><a href="@Url.Action("Messages","Home")">Go to Inbox</a></span></div>
+                                                    }
+                                                </div>
+                        </form>
+                                       </div>
+                                    </div>
+                                 </div>
+                           </div>
+                        </div>
+                    </div>
+                 </div>
+
+<!-- End third Card -->
+
+           </div>
+<style type="text/css">
+   .sticky-top {
+  align-self: flex-start;
+      top: 20px;
+    z-index: 2;
+}
+</style>
+           <!-- Side Cards -->
+                <div class="col-lg-4 sticky-top right">
+                    <!-- Fourth Card -->
+
+                    <div class="profile_info">                   
+                        <div class="p-3 bg-white rounded shadow-sm m-0">
+                            <div class="filters-body">
+                                <div id="accordion3">
+                                    <div class="filters-card">
+                                        <div class="filters-card-header" id="headingOne">
+                                            <h6 class="mb-0">
+                                                <a href="#" class="btn-link" data-toggle="collapse" data-target="#collapse3" aria-expanded="true" aria-controls="collapse3">
+                                                    Order details: <i class="mdi mdi-chevron-down float-right" style="font-size: 12px;"></i>
+                                                </a>
+                                            </h6>
+                                        </div>
+                                        <div id="collapse3" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion3">
+                                            <p class="mb-1 mt-2" style="font-size: 15px;">@ViewBag.OrderDetails.OrderTitle</p>
+                                            @if(@ViewBag.OrderDetails.IsAccepted==-1)
+                                            {
+                                                <h6><span class="badge badge-danger p-1 my-1">Cancelled</span></h6>
+                                            }
+                                            else if (@ViewBag.OrderDetails.IsDelivered == 1)
+                                            {
+                                                <h6><span id="deliver" class="badge badge-danger p-1 my-1">DELIVERED</span></h6>
+                                            }
+                                            else if (@ViewBag.OrderDetails.IsDelivered == 2)
+                                            {
+                                                <h6><span class="badge badge-success p-1 my-1">COMPLETED</span></h6>
+                                            }
+                                            else
+                                            {
+                                                <h6><span id="inprogress" class="badge badge-success p-1 my-1">IN PROGRESS</span></h6>
+                                            }
+
+                        <div class="border-top border-bottom py-3">
+                           <div class="d-flex align-items-center py-1">
+                              <h6>Ordered by</h6>
+                              <div class="font-weight-bold ml-auto d-flex align-items-center">    
+                                 <span class="text-danger">@ViewBag.OrderDetails.Buyer.FirstName @ViewBag.OrderDetails.Buyer.LastName</span>
+                              </div>
+                           </div>
+                           <div class="d-flex align-items-center py-1">
+                              <h6>Delivery date</h6>
+                              <div class="font-weight-bold ml-auto d-flex align-items-center">
+                                <span> @Convert.ToDateTime(@ViewBag.OrderDetails.EndDate).ToString("dd-MM-yyyy")</span>
+                              </div>
+                           </div>
+                           <div class="d-flex align-items-center py-1">
+                              <h6>Total price</h6>
+                              <div class="font-weight-bold ml-auto d-flex align-items-center">
+                                 $<span>@ViewBag.OrderDetails.OrderPrice</span>
+                              </div>
+                           </div>
+                           <div class="d-flex align-items-center py-1">
+                              <h6>Order ID</h6>
+                              <div class="msgl font-weight-bold ml-auto d-flex align-items-center">
+                                <span class="msgl">#@ViewBag.OrderDetails.Id</span>
+                              </div>
+                           </div>
+                        </div>
+                                        @if(@ViewBag.OrderDetails.IsAccepted==-1)
+                                        {
+                                            <button id="cancell" class="btn btn-danger w-100 mt-2" disabled>Cancelled</button>
+                                        }
+                                        else if (@loggedinUser.Id == @ViewBag.OrderDetails.Seller.Id && @ViewBag.OrderDetails.IsDelivered==0)
+                                        {
+                                            <button id="delnow" class="btn btn-success w-100 mt-2" data-toggle="modal" data-target="#DelieverModal">DELIVER NOW</button>
+                                        }
+
+                                        else if(@loggedinUser.Id == @ViewBag.OrderDetails.Seller.Id && @ViewBag.OrderDetails.IsDelivered==1)
+                                        {
+                                            <button id="delnow" class="btn btn-success w-100 mt-2" data-toggle="modal" data-target="#DelieverModal">DELIVER AGAIN</button>
+                                        }
+                                        else if(@loggedinUser.Id == @ViewBag.OrderDetails.Buyer.Id && @ViewBag.OrderDetails.IsDelivered==1)
+                                        {
+                                            <button id="acceptorder" class="btn btn-success w-100 mt-2" data-toggle="modal" data-target="#DelieverModal">ACCEPT ORDER</button>
+                                            <button id="revisebtn" class="btn btn-outline-primary w-100 mt-2" data-toggle="modal" data-target="#ReviseModal">REVISE ORDER</button>
+                                            
+                                        }
+                                        else if(@ViewBag.OrderDetails.IsDelivered==2)
+                                        {
+                                            <button id="delnow2" class="btn btn-success w-100 mt-2" disabled>ORDER COMPLETED</button>
+                                        }
+                                       
+
+                                    </div>
+                                 </div>
+                           </div>
+                        </div>
+                    </div>
+                 </div>
+                 <!-- End Fourth Card -->
+
+                 <!--  Resolution Card -->
+                @if (@ViewBag.OrderDetails.IsDelivered != 2 && @ViewBag.OrderDetails.IsAccepted!=-1)
+                {
+                    <div class="profile_info" style="margin-top:4%;">                    
+                        <div class="p-3 bg-white rounded shadow-sm m-0">
+                            <div class="filters-body">
+                                <div id="accordion4">
+                                    <div class="filters-card">
+                                        <div class="filters-card-header" id="headingOne">
+                                            <h6 class="mb-0">
+                                                <a href="#" class="btn-link" data-toggle="collapse" data-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                                                    Resolution Centre :  <i class="mdi mdi-chevron-down float-right" style="font-size: 12px;"></i>
+                                                </a>
+                                            </h6>
+                                        </div>
+                                        <div id="collapse4" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion4">                                                                                    
+                                            <button type="button" data-toggle="modal" data-target="#ExtendModal" class="btn btn-success w-100 mt-2 text-uppercase"><i class="fa fa-repeat mr-2" aria-hidden="true"></i> Extend Deadline Date</button>
+                                            <button id="cancl" type="button" data-toggle="modal" data-target="#CancelModal" class="btn btn-outline-danger w-100 mt-2 text-uppercase">Cancel Order</button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                     <!-- End Resolution Card -->
+                }
+                else
+                {
+
+                     <!-- Seller Review Card -->
+                    @if (@ViewBag.OrderDetails.SellerId == @loggedinUser.Id && @ViewBag.OrderDetails.IsAccepted!=-1)
+                    {
+                       @* <div class="profile_info" style="margin-top:4%;">                    
+                            <div class="p-3 bg-white rounded shadow-sm m-0">
+                                <div class="filters-body">
+                                    <div id="accordion4">
+                                        <div class="filters-card">
+
+                                            <label class="form-label">How was your experience with the buyer ? </label>
+
+                                            @if (@ViewBag.ReviewCount==1)
+                                            {
+                                                <div class="rate mt-1 mb-1" style="margin-top: -15px;">
+                                                    <input type="radio" id="star5" name="rate" value="5" />
+                                                    <label for="star5" title="text">5 stars</label>
+
+                                                    <input type="radio" id="star4" name="rate" value="4" />
+                                                    <label for="star4" title="text">4 stars</label>
+
+                                                    <input type="radio" id="star3" name="rate" value="3" />
+                                                    <label for="star3" title="text">3 stars</label>
+
+                                                    <input type="radio" id="star2" name="rate" value="2" />
+                                                    <label for="star2" title="text">2 stars</label>
+
+                                                    <input type="radio" id="star1" name="rate" value="1" />
+                                                    <label for="star1" title="text">1 star</label>
+                                                </div>
+
+
+
+                                                <textarea id="sellerComment" class="form-control" rows="5"></textarea>
+                                            }
+                                            else
+                                            {
+                                                 @if (@ViewBag.ReviewCount==2)
+                                                    {
+                                                        <p>@ViewBag.SellerReview[1].Stars<i class="ml-2 fa fa-star" style="font-size:14px;color:gold;"></i></p>
+                                                        <p class="font-weight-bold">@ViewBag.SellerReview[1].SellerComment</p>
+                                                    }
+                                            }
+                                        </div>
+
+                                         @if (@ViewBag.ReviewCount==1)
+                                            {
+                                        <div class="mt-2">
+                                            <button id="SelRevBtn" type="button" class="btn btn-block btn-success">Submit</button>
+                                        </div>
+                                            }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>*@
+
+                          <!-- End Seller Review Card -->
+                    }
+                }
+
+               @*internal review*@
+                @if (ViewBag.internalreview != null || (@ViewBag.OrderDetails.IsDelivered == 2 @*&& @ViewBag.OrderDetails.IsAccepted != -1*@ && @loggedinUser.Role == 3))
+                {
+                    <div class="profile_info " style="margin-top:4%">
+                        <div class="p-3 bg-white rounded shadow-sm m-0">
+                            <div class="filters-body">
+                                <div id="accordion7">
+                                    <div class="filters-card">
+                                        <div class="filters-card-header" id="heading2">
+                                            <h6 class="mb-0">
+                                                <a href="#" class="btn-link" data-toggle="collapse" data-target="#collapse7" aria-expanded="true" aria-controls="collapse7">
+                                                    Customer review: <i class="mdi mdi-chevron-down float-right" style="font-size: 12px;"></i>
+                                                </a>
+                                            </h6>
+                                        </div>
+                                        <div id="collapse7" class="collapse show" aria-labelledby="heading2" data-parent="#accordion7">
+                                            <p class="mb-1 mt-2" style="font-size: 15px;"><b>@ViewBag.OrderDetails.OrderTitle</b></p>
+                                            <strong id="review_added" style="color:green"></strong>
+                                            <div class="border-top border-bottom py-3">
+                                                @if (ViewBag.internalreview != null)
+                                                {
+                                                    <p class="text-justify mb-0" id="show_review1">@ViewBag.internalreview.Sellerreview</p>
+                                        <p>
+                                        <span class="mr-1">@ViewBag.internalreview.Stars</span>
+                                        @for (int i = 0; i < @ViewBag.internalreview.Stars; i++)
+                                        {
+                                            <span style="color:gold;" class="fa fa-star checked"></span>
+                                        }
+                                        </p>
+                                                }
+                                                else
+                                                {
+                                                     <p class="text-justify" id="show_review"></p>
+                                                }
+                                                @* else
+                                                {
+                                                    <textarea class="form-control" id="customer_review"></textarea>
+                           <span class="ml-auto" id="button_spanid">
+                           <button type="submit" id="addreview" onclick="Addcustomerreview()" class="btn btn-success btn-sm rounded" style="width:70px;margin-left:80%;margin-top:5%">
+                            <i class="mdi mdi-send mr-2"></i>Add
+                            </button>
+                             </span>
+                             <p class="text-justify" id="show_review"></p>
+                                                }*@
+                                                <input hidden id="customer_id" value="@ViewBag.OrderDetails.Buyer.Id">
+                                                <input hidden id="order_id" value="@ViewBag.OrderDetails.Id">
+                                            </div>
+                                            @if (@ViewBag.getCustomerCurrentReview == null && @ViewBag.OrderDetails.IsDelivered == 2 @*&& @ViewBag.OrderDetails.IsAccepted != -1*@ && @loggedinUser.Role == 3)
+                                            {
+                                                <!-- Review Input Field -->
+                                                <div class="border-bottom py-3">
+                                                    <textarea class="form-control" id="customer_review" placeholder="Write a review about your customer"></textarea>
+                                                    <div class="rate">
+                                            <input type="radio" id="star5" name="rate" value="5" />
+                                            <label for="star5" title="text">5 stars</label>
+                                            <input type="radio" id="star4" name="rate" value="4" />
+                                            <label for="star4" title="text">4 stars</label>
+                                            <input type="radio" id="star3" name="rate" value="3" />
+                                            <label for="star3" title="text">3 stars</label>
+                                            <input type="radio" id="star2" name="rate" value="2" />
+                                            <label for="star2" title="text">2 stars</label>
+                                            <input type="radio" id="star1" name="rate" value="1" />
+                                            <label for="star1" title="text">1 star</label>
+                                        </div>
+                                                    <span class="ml-auto" id="button_spanid">
+                                                        <button type="submit" id="addreview" onclick="Addcustomerreview()" class="btn btn-success btn-sm rounded" style="width:70px;margin-left:80%;margin-top:5%">
+                                                            <i class="mdi mdi-send mr-2"></i>Add
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                                <!-- End Review Input Field -->
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+          @*End internal review*@
+
+               </div>
+               <!-- End Side Cards -->
+            </div>
+         </div>
+      </div>
+      
+ <input type="hidden" id="sndid" value="@ViewBag.SenderId"/>
+ <input type="hidden" id="recid" value="@ViewBag.RecieverId"/>
+ <input type="hidden" id="ordid" value="@ViewBag.OrderDetails.Id"/>
+      
+<!-- Modal Extend -->
+<div class="container">
+  <!-- Modal -->
+  <div class="modal fade" id="ExtendModal" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <!-- Modal content-->
+      <div class="modal-content">
+           <div class="modal-header px-4">
+             <h5 class="font-weight-bold">Extend Deadline Date !</h5>
+             <button type="button" class="close" data-dismiss="modal">&times;</button>
+           </div>
+           <div class="modal-body">
+              <p class="form-label">Extending Reason</p>
+              <textarea id="extendres" rows="5" class="form-control"></textarea>
+
+              <p class="mt-2">Extending for</p>
+              <select id="extenddays" class="form-select w-100">
+                  <option>1 Day</option>
+                  @for(int i=2;i<90;i++)
+                  {
+                      <option>@i Days</option>
+                  }
+              </select>
+
+              <span class="text-danger" id="extenderror"></span>
+           </div>
+           <div class="modal-footer">
+           <button id="extendbtn" onclick="ExtendOrCancel($('#extendres').val(),$('#extenddays :selected').text(),1)" class="btn btn-success w-100">SEND REQUEST</button>
+           </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<!-- End Extend modal -->
+
+
+
+
+<div class="container">
+  <!-- Modal -->
+  <div class="modal fade" id="CancelModal" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <!-- Modal content-->
+      <div class="modal-content">
+
+          <div class="modal-header px-4">
+             <h5 class="font-weight-bold">Order Cancellation Request !</h5>
+             <button type="button" class="close" data-dismiss="modal">&times;</button>
+           </div>
+           
+           <div class="modal-body">
+          
+           <label class="form-label">Cancellation Reason</label>
+           <textarea id="cancelres" class="form-control" rows="5" name="Cancellation_Reason"></textarea>
+
+           <span class="text-danger" id="cancelerror"></span>
+           </div>
+
+           <div class="modal-footer">
+               <button id="cancelbtn" onclick="ExtendOrCancel($('#cancelres').val(),-1,2)" type="button" class="btn btn-danger btn-block">Send Request</button>
+           </div>
+
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<!-- Review Modal -->
+
+<div class="modal fade" id="DelieverModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+                @if(loggedinUser.Role==3)
+                {
+                    <h5 class="modal-title" id="exampleModalLongTitle">Deliver Your Project Now!</h5>
+                }
+                else
+                {
+                     <h5 class="modal-title" id="exampleModalLongTitle">Accept your Order!</h5>
+                }
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    
+      <div class="modal-body">
+                  @if(@loggedinUser.Role==3)
+                  {
+                    <div class="form-group">
+                        <label>Please enter description (max 2000 characters) : </label>
+                        <textarea class="form-control" id="description" rows="4" required></textarea>
+                        <button type="button" class="btn btn-outline-success btn-sm rounded mt-3">
+                            <i class="mdi mdi-paperclip"></i><input class="pl-2" type="file" id="upload_work" required>
+                        </button>
+                        
+                    </div>
+                    <span id="ErrMsg" class="text-danger"></span>
+                    }
+                   else
+               {
+                    <div class="row px-3 mt-4">
+                        <label class="mb-0" for="exampleFormControlTextarea1">Rate Seller : </label>
+          
+            <div class="rate ml-3" style="margin-top: -15px;">
+            
+             <input type="radio" id="star5" name="rate" value="5" />
+             <label for="star5" title="text">5 stars</label>
+
+             <input type="radio" id="star4" name="rate" value="4" />
+             <label for="star4" title="text">4 stars</label>
+
+             <input type="radio" id="star3" name="rate" value="3" />
+             <label for="star3" title="text">3 stars</label>
+
+             <input type="radio" id="star2" name="rate" value="2" />
+             <label for="star2" title="text">2 stars</label>
+
+             <input type="radio" id="star1" name="rate" value="1" />
+             <label for="star1" title="text">1 star</label>
+          </div>
+          <textarea class="form-control" placeholder="Enter your experience with seller..." id="exp" rows="2"></textarea>
+          
+      </div>
+      }
+                 
+                <div class="modal-footer">
+                   @if (@loggedinUser.Role == 3)
+                    {
+                        
+                        <button type="submit" id="btnupld" class="btn btn-success">UPLOAD WORK</button>
+                    }
+                    else
+                    {
+                        <button type="button" id="btnacpt" class="btn btn-success">ACCEPT!</button>
+                    }
+
+      </div>
+      
+            
+      </div>
+      </div>
+      </div>
+      </div>
+
+<!--End Review Modal-->
+
+
+<!-- Modal Start here-->
+<div class="modal fade bs-example-modal-sm" id="myPleaseWait" role="dialog" aria-hidden="true" data-backdrop="static" style="position:fixed; top:33% !important;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <span class="glyphicon glyphicon-time">
+                    </span>Uploading... Please Wait...!
+                 </h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info
+                    progress-bar-striped active"
+                    style="width: 100%">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal ends Here -->
+
+
+<!--Revise Modal-->
+<div class="container">
+  <!-- Modal -->
+  <div class="modal fade" id="ReviseModal" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <!-- Modal content-->
+      <div class="modal-content">
+           <div class="modal-header px-4">
+             <h5 class="font-weight-bold">Revise Order</h5>
+             <button type="button" class="close" data-dismiss="modal">&times;</button>
+           </div>
+           <div class="modal-body">
+              <p class="form-label">Revision Reason</p>
+              <textarea id="revres" rows="5" class="form-control"></textarea>
+             
+              <span class="text-danger" id="reverror"></span>
+           </div>
+           <div class="modal-footer">
+           <button onclick="Revise_Order($('#revres').val())" class="btn btn-success w-100">SEND REVISION</button>
+           </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<!--End Revise Modal-->
+
+
+
+
+      <script>
+  
+   
+    var LoggedinId = @loggedinUser.Id;
+    var sndid=  $('#sndid').val();
+    var recid= $('#recid').val();
+    var curr= '';
+    var strt=0;
+    var ordid= $('#ordid').val();
+    var commentcount=0;
+    
+
+    var messageForm =  document.getElementById('message-form');
+    var messageBox = document.getElementById('messageInput');
+    var img= '';  
+        
+    $("#btnupld").click(function()
+    {
+        
+        
+                var des= $("#description").val();
+                var exp= "";
+                var str= "";
+                var uploadw= document.getElementById("upload_work");
+   
+   
+   
+   
+     if(uploadw.value!="")
+     {
+    
+                        uploadimage(uploadw,des,sndid.toString(),$("#recid").val(),ordid.toString());
+    
+                        DeliverNow(@ViewBag.OrderDetails.Id,-1,"",str,exp,des);
+
+                        $("#ErrMsg").text("");
+                        }
+                        else
+                        {
+                            $("#ErrMsg").text("Please attach a file");
+                            uploadw.val("");
+                        }
+                        var message = des;
+                        message= message.trim();
+                        recid=$('#recid').val();
+       
+       
+        if(LoggedinId==sndid && recid!='')
+        {
+        if(message!="" && message.includes("http"))
+        {
+            var txt= ('<a href="'+message+'">'+message+'</a>').toString();
+            message= txt;
+        }
+            var dtn= Date.parse("@DateTime.UtcNow").toLocaleTimeString();
+            var img=  '<div class="dropdown-list-image mr-3 mb-auto"><img id="curimg" class="rounded-circle" src="/'+"@loggedinUser.ImagePath"+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';" alt=""></div>';
+                
+            
+            var avatarchat= 
+                              '<div class="d-flex align-items-center osahan-post-header">'+
+
+                                 img+
+                                 '<div class="mr-1">'+
+                                    '<div class="text-truncate h6 mb-3" class="gtn">'+`${"@loggedinUser.FirstName @loggedinUser.LastName"}`
+                                    +'</div>'+
+                                    '<p id="msgl">'+`${message}`+ '</p>'+
+                                 '</div>'+
+                                 '<span class="ml-auto mb-auto">'+
+                                    '<div class="text-right text-muted pt-1 small" class="msgtime">'+dtn+'</div>'+
+                                 '</span>'+
+                              '</div>';
+
+                            
+                               var guestdiv= document.createElement('div');
+                               guestdiv.setAttribute("class","guestdiv mt-2");
+                               guestdiv.innerHTML= avatarchat;
+
+
+                              
+                               $('.msg21').append(guestdiv);
+                              
+                              
+                               
+                              if(isHTML(message) && !message.includes('http'))
+                               {
+                                   message= "Offer Requested";
+                               }        
+                            
+    
+        
+      }
+
+       
+      });
+   
+
+
+    $("#btnacpt").click(function()
+    {
+    var des= $("#description").val();
+    var exp= $("#exp").val();
+    var str= $("input[type='radio']:checked").val();
+    
+    var upl="";
+
+    DeliverNow(@ViewBag.OrderDetails.Id,2,upl,str,exp,des);
+    });
+
+
+    connection.on('newMessage', (sender, messageText,reciever,imgt, msg_id,ordid,filen) => {
+          if(reciever==LoggedinId && ordid!="")
+            {   
+        recid=reciever;
+
+        if(LoggedinId!=reciever)
+        {
+          img=  '<div class="dropdown-list-image mr-3"><img id="curimg" class="rounded-circle" src="/'+"@loggedinUser.ImagePath"+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';" alt=""></div>';
+        }
+        else
+        {
+            img=  '<div class="dropdown-list-image mr-3"><img id="curimg1" class="rounded-circle" src="/'+imgt+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';" alt=""></div>';
+        }
+       
+
+        var timenow= Date.parse("@DateTime.UtcNow").toLocaleTimeString();
+        console.log(`${sender}:${messageText}`);
+
+        if(messageText.includes("http") || messageText.includes("https") )
+        {
+            var txt= ('<a href="'+messageText+'">'+messageText+'</a>').toString();
+            messageText= txt;
+        }
+          var avatarchat= 
+                              '<div class="d-flex align-items-center osahan-post-header">'+
+
+                                 img+
+                                 '<div class="mr-1">'+
+                                    '<div class="text-truncate h6 mb-3" class="gtn">'+`${sender}`
+                                    +'</div>'+
+                                    '<p id="msgl">'+`${messageText}`+ '</p>'+
+                                 '</div>'+
+                                 '<span class="ml-auto mb-auto">'+
+                                    '<div class="text-right text-muted pt-1 small" class="msgtime">'+timenow+'</div>'+
+                                 '</span>'+
+                              '</div>';
+
+                            
+                               var guestdiv= document.createElement('div');
+                               guestdiv.setAttribute("class","guestdiv mt-2");
+                               guestdiv.setAttribute("id",msg_id);
+                               guestdiv.innerHTML= avatarchat;
+
+
+                               $('.msg21').append(guestdiv);
+
+                                if(filen!=null && filen!="")
+                               {
+                                   var file2='';
+                                   if(filen.toLowerCase().includes("jpeg") || filen.toLowerCase().includes("jpg") || filen.toLowerCase().includes("png") ||filen.toLowerCase().includes("webp"))
+                                   {
+                                       file2= document.createElement('img');
+                                       file2.setAttribute("style","margin-left:6%;");
+                                       file2.src='/'+filen;
+                                       file2.width=150;
+                                       file2.height=150;
+                                   }
+                                   else
+                                   {
+                                       file2= document.createElement('a');
+                                       file2.setAttribute("class","ml-4");
+                                       var icon= document.createElement('i');
+                                       icon.setAttribute("style",'font-size:70px');
+                                       icon.setAttribute("class","ml-4 fa fas fa-file");
+                                       file2.append('     ');
+
+                                       file2.append(icon);
+                                       
+                                       file2.setAttribute("href","/"+filen+"");
+                                   }
+
+                                   
+                                   $('.msg21').append(file2);
+                                  
+                                   
+                                   
+                               }
+                              if(isHTML(messageText) && !messageText.includes('http'))
+                               {
+
+                                   messageText= "Offer Requested";
+                               }
+                                $('#abc'+curr).html("");
+                                $('#abc'+curr).html(`${sender}: ${messageText}`);
+                               
+                            }  
+                              $("#scrldn").scrollTop( $("#scrldn").prop('scrollHeight') - $("#scrldn").outerHeight() );
+                         });
+                   
+ 
+
+    messageForm.addEventListener('submit', ev => {
+        ev.preventDefault();
+        
+        var message = messageBox.value;
+        message= message.trim();
+        recid=$('#recid').val();
+        
+       
+        var file= document.getElementById("uploadFile");
+
+        if(message!=null && message!="")
+        {
+        if(file.value!="" && file.value!=null)
+        {
+        
+           uploadimage(file,message,sndid,recid,ordid);
+         
+           file.value="";
+        
+        }
+        else
+        {
+        connection.invoke('SendMessage',"@loggedinUser.FirstName @loggedinUser.LastName", message,sndid.toString(),recid.toString(),ordid.toString());
+        }
+        }
+        else
+        {
+            $("#FileErr").text("Please type a file related message and try sending again !");
+            return;
+        }
+       
+        if(LoggedinId==sndid && recid!='' && message!=null && message!="")
+        {
+        if(message.includes("http"))
+        {
+            var txt= ('<a href="'+message+'">'+message+'</a>').toString();
+            message= txt;
+        }
+            var dtn= Date.parse("@DateTime.UtcNow").toLocaleTimeString();
+            var img=  '<div class="dropdown-list-image mr-3 mb-auto"><img id="curimg" class="rounded-circle" src="/'+"@loggedinUser.ImagePath"+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';" alt=""></div>';
+          var avatarchat= 
+                              '<div class="d-flex align-items-center osahan-post-header">'+
+
+                                 img+
+                                 '<div class="mr-1">'+
+                                    '<div class="text-truncate h6 mb-3" class="gtn">'+`${"@loggedinUser.FirstName @loggedinUser.LastName"}`
+                                    +'</div>'+
+                                    '<p id="msgl">'+`${message}`+ '</p>'+
+                                 '</div>'+
+                                 '<span class="ml-auto mb-auto">'+
+                                    '<div class="text-right text-muted pt-1 small" class="msgtime">'+dtn+'</div>'+
+                                 '</span>'+
+                              '</div>';
+
+                            
+                               var guestdiv= document.createElement('div');
+                               guestdiv.setAttribute("class","guestdiv mt-2");
+                               guestdiv.innerHTML= avatarchat;
+
+
+                              
+                               $('.msg21').append(guestdiv);
+                              
+                              
+                               
+                              if(isHTML(message) && !message.includes('http'))
+                               {
+                                   message= "Offer Requested";
+                               }
+                               $('#abc'+curr).html("");
+                                $('#abc'+curr).html(`${"@loggedinUser.FirstName @loggedinUser.LastName"}: ${message}`);
+                            
+         }
+        
+        messageBox.value = '';
+        messageBox.value = messageBox.value.trim();
+
+       
+    });
+
+
+
+
+    function UnreadComments(id, cnt,uid) {
+    $.ajax({
+        type: 'POST',
+        url: "../Ajax/UnreadComments",
+        data: { id: id, cnt: cnt, UserId : uid },
+        dataType: "json",
+        success: function (response) {
+        },
+        error: function (response) {
+            alert("Error");
+        },
+    });
+}
+
+  function uploadimage(file,msg,sndid,recid,ordid)
+{
+     var formData = new FormData();
+    formData.append('file', file.files[0]);
+   
+    if(file.files[0].size / 1024 / 1024 >  99)
+    {
+        $("#FileErr").text("Max File Upload Limit is 100 MB ! Please Try Again!");
+        return;
+    }
+    else
+    {
+         $("#FileErr").text("");
+    }
+   $('#myPleaseWait').modal('show');
+   
+   $.ajax({        
+                        type: 'POST',
+                        url: "../Ajax/fileUpload",
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        //async:false,
+                        success: function (response) 
+                        {
+                            
+                            
+                            //filename= response;
+                            connection.invoke('SendMessage',"@loggedinUser.FirstName @loggedinUser.LastName", msg+" file:::"+response,sndid.toString(),recid.toString(),ordid.toString());
+                            setTimeout(function(){
+                              $('#myPleaseWait').modal('hide')
+                            }, 1000);
+
+                            var filename= response;
+                            
+                            if(filename!=null && filename!="")
+                               {
+                                   var file2='';
+                                   if(filename.toLowerCase().includes("jpeg") || filename.toLowerCase().includes("jpg") || filename.toLowerCase().includes("png") ||filename.toLowerCase().includes("webp"))
+                                   {
+                                       file2= document.createElement('img');
+                                       file2.setAttribute("style","margin-left:6%;");
+                                       file2.src='/'+filename;
+                                       file2.width=150;
+                                       file2.height=150;
+                                   }
+                                   else
+                                   {
+                                       file2= document.createElement('a');
+                                       file2.setAttribute("class","ml-4");
+                                       var icon= document.createElement('i');
+                                       icon.setAttribute("style",'font-size:70px');
+                                       icon.setAttribute("class","ml-4 fa fas fa-file");
+                                        file2.append('     ');
+
+                                       file2.append(icon);
+                                       
+                                       file2.setAttribute("href","/"+filename+"");
+                                   }
+
+                                   
+                                   $('.msg21').append(file2);
+                                  
+                               }
+
+           
+                        },
+                    
+                        error: function (response)
+                        {
+
+                        },
+
+                        });
+                        
+                        
+                    
+}
+
+      $("#messageInput").keydown(function(event){
+    if(event.keyCode == 13){
+         if($("#messageInput").val()!="")
+         {
+        $("#sendButton").click();
+         $("#messageInput").val("");
+         $("#uploadFile").val("");
+         }
+    }
+     $("#sendButton").click(function(){
+          $("#scrldn").scrollTop( $("#scrldn").prop('scrollHeight') - $("#scrldn").outerHeight() );
+     });
+      
+});
+   
+$("[type=file]").on("change",function(){
+    var file= (this).files[0];
+    if(file.size/1024/1024>99)
+    {
+        $("#FileErr").text("Max File Size Allowed is 100 MB ! Please Try Again!");
+        $("[type=file]").val("");
+        $("#sendButton").prop("disabled",true);
+        $("#btnupld").prop("disabled",true);
+        return;
+    }
+    else
+    {
+         $("#sendButton").prop("disabled",false);
+         $("#btnupld").prop("disabled",false);
+         $("#FileErr").text("");
+         $("#ErrMsg").text("");
+    }
+});
+
+function DeliverNow(id,acp,upl,str,exp,des)
+{
+     $.ajax({
+                        type: 'POST',
+                        url: "../Ajax/Delivery",
+                        data:{id:id,acp:acp,upl:upl,exp:exp,des:des,str:str},
+                        dataType: "json",
+                        success: function (response) 
+                        {
+                            if(acp==-1)
+                            {
+                            $("#delnow").html("DELIVER AGAIN");
+                            $("#inprogress").html("DELIVERED");
+                            $("#inprogress").removeClass("badge-success");
+                            $("#inprogress").addClass("badge-danger");
+
+                            }
+                           connection.invoke('PlcOrder','@ViewBag.OrderDetails.Buyer.Id');
+
+                           if(acp==2)
+                           {
+                           connection.invoke('PlcOrder','@ViewBag.OrderDetails.Seller.Id');
+                           }
+                           
+                            $("#DelieverModal").modal('hide');
+                            
+                        },
+                        error: function (response)
+                        {
+                            alert("Something went wrong");
+                        },
+                    });
+
+                     
+                   
+}
+
+ connection.on('OrderPlace', (reciver) => {
+                                 if(LoggedinId==reciver)
+                                 {
+                                     location.reload();
+                                 }
+                             });
+             
+                             
+                             
+     
+function RequestMeeting()
+{
+              $.ajax({
+                        type: 'POST',
+                        url: "../Ajax/ZoomMeeting",
+                        data:{},
+                        dataType: "json",                 
+                        success: function (response) 
+                        {
+                           
+                            window.open(response[0], '_blank');
+                            
+                            sndlink=response[1];
+
+                            connection.invoke('SendMessage',"@loggedinUser.FirstName @loggedinUser.LastName",response[1].toString(),"@ViewBag.SenderId","@ViewBag.RecieverId","@ViewBag.OrderDetails.Id");
+                            
+                        },
+                        error: function (response)
+                        {
+                            alert("Error");
+                        },
+                    
+                    });
+                    
+                    
+ }
+
+function Revise_Order(rev)
+{
+     var send_text=      `<div class='box shadow-sm mb-3 rounded bg-white'>
+                     <div class='p-3 border-bottom'>
+                        <h6 class='text-dark'><span class='font-weight-bold'> Order Revision: </span></h6>
+                        <p class='mb-0 text-muted mb-3'><span><b>Reason:</b></span> ${rev}</p>
+                            </div>
+                            <div class='p-1'>
+                       
+                     <div id='extra'><button type="button" class="btn btn-success btn-block" disabled>Order Revision Sent</button></div>
+                   
+                  </div>
+              </div>`;
+
+              var img=  '<div class="dropdown-list-image mr-3 mb-auto"><img id="curimg" class="rounded-circle" src="/'+"@loggedinUser.ImagePath"+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';" alt=""></div>';
+   var avatarchat= 
+                              '<div class="d-flex align-items-center osahan-post-header">'+
+
+                                img+
+                                 '<div class="mr-1">'+
+                                    '<div class="text-truncate h6 mb-3" class="gtn">'+`${"@loggedinUser.FirstName @loggedinUser.LastName"}`
+                                    +'</div>'+
+                                    '<p id="msgl">'+`${send_text}`+ '</p>'+
+                                 '</div>'+
+                                 '<span class="ml-auto mb-auto">'+
+                                    '<div class="text-right text-muted pt-1 small" class="msgtime">'+"@DateTime.UtcNow.ToString()"+'</div>'+
+                                 '</span>'+
+                              '</div>';
+
+                            
+                               var guestdiv= document.createElement('div');
+                               guestdiv.setAttribute("class","guestdiv");
+                               guestdiv.innerHTML= avatarchat;
+              
+              
+            
+              
+              $('.msg21').append(avatarchat);
+              
+              connection.invoke('SendMessage',"@loggedinUser.FirstName @loggedinUser.LastName", send_text ,"@loggedinUser.Id.ToString()","@ViewBag.RecieverId.ToString()","@ViewBag.OrderDetails.Id.ToString()");
+
+              $("#ReviseModal").modal('hide');
+}
+
+function ExtendOrCancel(rev,day,typeres)
+{
+    var rev_res= rev;
+    var rev_days= day;
+
+    var reason_type= typeres;
+    var selectedText= 'Extend';
+    var extra_text= "<br/>"+"<i>"+"<b><span class='ml-3 text-danger'>On accept, the order date will be extended for "+rev_days+"</span>"+"</b>"+"</i>"; 
+    if(reason_type=="2")
+    {
+        selectedText= "Cancellation";
+        extra_text= "<br/>"+"<i>"+"<b><span class='ml-3 text-danger'>If you do not respond, the order would be cancelled within next 48 hours</span>"+"</b>"+"</i>"; 
+    }
+    
+    var card_text=      `<div class='box shadow-sm mb-3 rounded bg-white'>
+                     <div class='p-3 border-bottom'>
+                        <h6 class='text-dark'><span class='font-weight-bold'> ${selectedText} Request: </span></h6>
+                        <p class='mb-0 text-muted mb-3'><span><b>Reason:</b></span> ${rev_res}</p>
+                            </div>
+                            <div class='p-3'>
+                        <div class='row'>
+                        <div class='col-6'>
+                        <button type='button' id='accept' onclick='UpdateStatus("${rev_res}","${reason_type}","${rev_days}",1,this)' class='btn btn-success btn-sm pl-4 pr-4 font-weight-bold w-100'>Accept</button>
+                        </div>
+                        <div class="col-6">
+                         <button type='button' id='reject' onclick='UpdateStatus("${rev_res}","${reason_type}","${rev_days}",-1,this)' class='btn btn-outline-danger w-100 btn-sm pl-4 pr-4 font-weight-bold'>Reject</button>
+                    </div>
+                     <div id='extra'>${extra_text}</div>
+                  </div>
+                  </div>
+              </div>`;
+
+     var send_text=      `<div class='box shadow-sm mb-3 rounded bg-white'>
+                     <div class='p-3 border-bottom'>
+                        <h6 class='text-dark'><span class='font-weight-bold'> ${selectedText} Request: </span></h6>
+                        <p class='mb-0 text-muted mb-3'><span><b>Reason:</b></span> ${rev_res}</p>
+                            </div>
+                            <div class='p-3'>
+                       
+                     <div id='extra'><button type="button" class="ml-1 btn btn-success btn-block" disabled>Requested</button></div>
+                   
+                  </div>
+              </div>`;
+           
+            var img=  '<div class="dropdown-list-image mr-3 mb-auto"><img id="curimg" class="rounded-circle" src="/'+"@loggedinUser.ImagePath"+'" onerror="this.onerror=null; this.src='+"'/FrontAssets/images/user/s4.png'"+';" alt=""></div>';
+            var avatarchat= 
+                              '<div class="d-flex align-items-center osahan-post-header">'+
+
+                                img+
+                                 '<div class="mr-1">'+
+                                    '<div class="text-truncate h6 mb-3" class="gtn">'+`${"@loggedinUser.FirstName @loggedinUser.LastName"}`
+                                    +'</div>'+
+                                    '<p id="msgl">'+`${send_text}`+ '</p>'+
+                                 '</div>'+
+                                 '<span class="ml-auto mb-auto">'+
+                                    '<div class="text-right text-muted pt-1 small" class="msgtime">'+"@DateTime.UtcNow.ToString()"+'</div>'+
+                                 '</span>'+
+                              '</div>';
+
+                            
+                               var guestdiv= document.createElement('div');
+                               guestdiv.setAttribute("class","guestdiv");
+                               guestdiv.innerHTML= avatarchat;
+              
+               
+                
+                if(rev_res!="" && rev_days!="")
+                     {
+                   $('#ExtendModal').modal('hide');
+                   $('#CancelModal').modal('hide');
+                
+                    
+                    connection.invoke('SendMessage',"@loggedinUser.FirstName @loggedinUser.LastName", card_text ,"@loggedinUser.Id.ToString()","@ViewBag.RecieverId.ToString()","@ViewBag.OrderDetails.Id.ToString()" );             
+                   
+                    $('.msg21').append(avatarchat);
+                    connection.invoke('PlcOrder','@ViewBag.RecieverId.ToString()');
+                     }
+               else
+                {
+                    if(reason_type=="1")
+                    {
+                    $("#extenderror").text("Please fill all feilds");
+                    }
+                    else
+                    {
+                    $("#cancelerror").text("Please fill all feilds");
+                    }
+                 }
+                 //location.reload();
+                 $("#scrldn").scrollTop( $("#scrldn").prop('scrollHeight') - $("#scrldn").outerHeight() );          
+
+                   
+                  
+}                  
+            
+
+               
+
+ function isHTML(str) {
+  var a = document.createElement('div');
+  a.innerHTML = str;
+
+  for (var c = a.childNodes, i = c.length; i--; ) {
+    if (c[i].nodeType == 1) return true; 
+  }
+
+ 
+  return false;
+}
+
+
+
+$("#SelRevBtn").click(function()
+{
+    var getReview= $("#sellerComment").val();
+    var getRate= $("[name='rate']:checked").val();
+
+    $.ajax({
+                type: 'POST',
+                url: "../Ajax/AddSellerReview",
+                data: { OrderId: @ViewBag.OrderDetails.Id, stars: getRate, review:getReview },
+                dataType: "json",  
+                
+                success: function(response)
+                {
+
+                },
+                
+                error: function(response)
+                {
+                alert("Error");
+                },
+
+                     });
+
+    location.reload();
+});
+
+
+
+function UpdateStatus(rev_res,res_type,rev_days,decision,btn)
+{
+            var getmsg= $(btn).parent().parent().parent().parent().parent().parent().parent();
+            
+            //console.log(getmsg);
+           
+            var getmsgid= getmsg.attr('id');
+                           
+            var txt= getmsg.find("[class='p-3']");
+            if(decision==1)
+            {
+            txt.html('Accepted');
+            }
+            else
+            {
+            txt.html('Rejected');
+            }
+           
+           var txt2= getmsg.find("[id^='extra']");
+           txt2.remove();
+
+           var junk1= getmsg.find('[class="text-truncate h6 mb-3"]');
+           junk1.remove();
+           
+           var junk2= getmsg.find('[class="dropdown-list-image mr-3 mb-auto"]');
+           junk2.remove();
+ 
+           var junk3= getmsg.find('[class="text-right text-muted pt-1 small"]');
+           junk3.remove();
+           
+           var junk4= getmsg.find('[id^="curimg"]');
+           junk4.remove();
+           
+           UpdateChat(getmsgid,getmsg.html());
+
+           $.ajax({
+                type: 'POST',
+                url: "../Ajax/updateOrder",
+                data: { id: @ViewBag.OrderDetails.Id, reason: rev_res, reason_type: res_type, End_Date: rev_days, decision: decision },
+                dataType: "json",                 
+                success: function(response)
+                {
+                    if(response==false)
+                    {
+                           alert('Stripe Payment Error !');
+                    }
+                    connection.invoke('PlcOrder','@ViewBag.SenderId.ToString()');
+                    connection.invoke('PlcOrder','@ViewBag.RecieverId.ToString()');
+                },
+                
+                error: function(response)
+                {
+                alert("Error");
+                },
+
+                     });
+           
+            
+}
+
+
+function UpdateChat(id,msg)
+{
+      $.ajax({
+                        type: 'POST',
+                        url: "../Ajax/UpdateChat",
+                        data:{id:id,modified_msg:msg},
+                        dataType: "json",
+                        success:function (response) 
+                        {
+                        },
+                        error: function (response)
+                        {
+                            alert("Error");
+                        },
+                    });
+}
+
+
+
+
+ $('.modal').on('hidden.bs.modal', function (e) {
+  $(this)
+    .find("input,textarea,select")
+       .val('')
+       .end()
+    .find("input[type=checkbox], input[type=radio]")
+       .prop("checked", "")
+       .end()
+      ;
+});
+
+
+
+$(window).on('load', function() {
+                 $("#scrldn").scrollTop( $("#scrldn").prop('scrollHeight') - $("#scrldn").outerHeight() );    
+                 
+                 $('.toast').toast('show');
+                    var changed= $(".changediv");
+                    changed.find('[id^="accept"]').remove();
+                    changed.find('[id^="reject"]').remove();
+                   
+                    UnreadComments(@ViewBag.OrderDetails.Id,0,@loggedinUser.Id);
+                    //readcom.html("");
+                    if(@ViewBag.OrderDetails.IsDelivered==2 || @ViewBag.OrderDetails.IsAccepted==-1)
+                    {
+                            $("#scrldn").addClass('pntnone');
+                    }
+                    var changedselect= changed.find('[id^="extra"]');
+                   if(changedselect.length != 0  && !changedselect.includes("Order Revision Sent"))
+                   {
+                    changed.find('[id^="extra"]').html('<button type="button" class="btn btn-success btn-block" style="display: flex;justify-content: center;" disabled>Requested</button>');
+                   }
+            });
+
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
+
+<script>
+  
+  function Addcustomerreview()
+  {
+      debugger;
+      
+     var customerreview=$("#customer_review").val();
+     var customerid=$("#customer_id").val();
+     var orderid=$("#order_id").val();
+     var str= $("input[type='radio']:checked").val();
+
+       $.ajax({
+                type: "post",
+                     //url: "../Ajax/updatenotification?id=" + id +"isdelete="+isdelete,
+                     url: "../Ajax/AddInternalreview",
+
+                     data:{
+                            customerid: customerid,
+                            review:customerreview,
+                            orderid:orderid,
+                            str:str
+                        },
+                     cache: false,
+                success: function(data) 
+                {
+                    debugger
+                    if(data!="" || data!=null)
+                    {
+                    
+                        @*$("#review_added").html("Your review added against this order.");*@
+                        //$("#customer_review").hide();
+                       // $("#button_spanid").hide();
+                       $("#customer_review").css("display", "none");
+                        $("#button_spanid").css("display", "none");
+                        @*var existing_review = $("#show_review1").val("");
+                        if(existing_review != "")
+                        {
+                            $("#show_review1").html(data);
+                        }
+                        
+                        $("#show_review").html(data);*@
+                    
+                        window.location.reload();
+
+                    }
+                    
+
+
+                },
+                error: function() 
+                {
+
+                },
+                complete:function()
+                {
+                    $("#review_added").fadeOut(5000);
+                    $("#customer_review").val("");
+
+                }
+            });
+
+  }
+
+</script>

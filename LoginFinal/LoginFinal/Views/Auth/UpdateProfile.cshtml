@@ -1,0 +1,140 @@
+﻿
+@{
+    ViewBag.Title = "Update Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content bg-white m-10">
+    <br />
+    <br />
+
+    <div class="row" style="height:700px;">
+        <form action="@Url.Action("PostUpdateUser", "Admin")" method="post">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+
+                    <div class="panel panel-flat">
+                        <div class="panel-heading">
+                            <h3 class="text-bold text-center"><u>Update Profile</u></h3>
+
+                        </div>
+
+                        <div class="panel-body">
+
+
+                            <input type="hidden" class="form-control" required name="Id" placeholder="" value="@ViewBag.User.Id">
+                            <div class="form-group">
+                                <label class="text-bold">First Name <span class="text-danger">*</span></label>
+                                <input type="text" onkeyup="limitText(this,40)" class="form-control" required name="FirstName" placeholder="Enter your First Name Here" value="@ViewBag.User.FirstName">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Last Name <span class="text-danger">*</span></label>
+                                <input type="text" onkeyup="limitText(this,40)" class="form-control" required name="LastName" placeholder="Enter your Last Name Here" value="@ViewBag.User.LastName">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Username<span class="text-danger">*</span></label>
+                                <input type="text" onkeydown="limitText(this,40)" class="form-control"  required name="Username" placeholder="Enter your Username" onkeyup="validateUsername(this.value)" value="@ViewBag.User.Username">
+                                <span class="text-danger" id="nameErrMsg"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Email <span class="text-danger">*</span></label>
+                                <input type="email" onkeydown="limitText(this,40)" onkeyup="validateEmail(this.value)" class="form-control" onkeyup="validateEmail(this.value)" required name="Email" placeholder="Please Enter your Email" value="@ViewBag.User.Email">
+                                <span class="text-danger" id="updErrMsg"></span>
+                            </div>
+
+
+                            <div class="text-right">
+                                <button type="submit" id="updSubBtn" class="btn btn-primary">Update <i class="icon-database-insert position-right"></i></button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+
+    function validateEmail(email) {
+        var id = '@ViewBag.User.Id';
+
+
+        if (email != "") {
+            $.ajax({
+                type: 'POST',
+                url: "../Ajax/ValidateEmail",
+                dataType: "json",
+                data:
+                {
+                    email: email, id: id
+                },
+                success: function (response)
+                {
+                    if (response == true)
+                    {
+                        $('#updErrMsg').text("");
+                        $('#updSubBtn').prop('disabled', false);
+                    }
+                    else {
+                        if('@ViewBag.User.Email.ToLower()' != email.toLowerCase())
+                        {
+                        $('#updErrMsg').text("Email already exsist");
+                        $('#updSubBtn').prop('disabled', true);
+                        }
+                    }
+                },
+                error: function ()
+                {
+                    $('#updErrMsg').text("");
+                    $('#updSubBtn').prop('disabled', false);
+                    alert("Email Validation Ajax Failed");
+                }
+            });
+        }
+
+    }
+
+</script>
+
+<script>
+
+        function validateUsername(username) {
+            if (username != "") {
+                $.ajax({
+                    type: 'POST',
+                    url: "../Ajax/ValidateUsername",
+                    dataType: "json",
+                    data: {
+                        username: username, id: -1
+                    },
+                    success: function (response) {
+                        if (response == true) {
+                            $('#nameErrMsg').text("");
+                            $('#updSubBtn').attr('disabled', false);
+                        }
+                        else {
+
+                              if('@ViewBag.User.Username.ToLower()' != username.toLowerCase())
+                        {
+                            $('#nameErrMsg').text("Username already exsist");
+                            $('#updSubBtn').attr('disabled', true);
+                        }
+                        }
+                    },
+                    error: function () {
+                        $('#nameErrMsg').text("");
+                        $('#updSubBtn').attr('disabled', false);
+                        alert("Ajax failed");
+                    }
+                });
+            }
+
+        }
+</script>
+

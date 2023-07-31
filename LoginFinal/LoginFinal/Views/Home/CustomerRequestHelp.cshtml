@@ -1,0 +1,741 @@
+﻿
+@{
+    ViewData["Title"] = "CustomerRequestHelp";
+    Layout = "~/Views/Shared/_FrontLayout.cshtml";
+}
+
+<!-- Register -->
+
+<div class="bg-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 my-auto videonone">
+                <center><lottie-player class="video-tablet" src="https://assets4.lottiefiles.com/packages/lf20_zw0djhar.json" background="transparent" speed="1" style="width: 500px; height: 500px;" loop autoplay></lottie-player></center>
+            </div>
+            <div class="col-lg-6 mx-auto">
+                <div class="osahan-login py-4">
+                    <div class="text-center mb-4">
+                        <a href="@Url.Action("Index","Home")"><img src="~/images/butlerlogo.png" alt="" style="width: 139.22px; height: 38px;"></a>
+                        <h5 class="font-weight-bold mt-3">Request Service</h5>
+                        @*<p style="font-size: 15px;font-weight: bold;">Register as @ViewBag.Category </p>*@
+                    </div>
+
+                    @*@if (ViewData["acr"] != null)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            Registered Successfully ! An Activation Email is Sent To Your Email ! You can Login to Your Account !
+                        </div>
+                    }*@
+                <form action="@Url.Action("PostCustomerRequestHelp","Home")" method="post">
+
+                    <div class="form-row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="mb-1">Request Title<span class="text-danger">*</span></label>
+                                <div class="position-relative ">
+                                    <input type="text" name="Title" class="form-control" required>
+                                </div>
+
+                            </div>
+                        </div>
+                            @*<div class="col">
+                            <div class="form-group">
+                                <label class="mb-1">Budget&nbsp;($)<span class="text-danger">*</span></label>
+                                <div class="position-relative">
+                                    <input type="number" min="1" name="budget" class="form-control" required>
+                                </div>
+
+                            </div>
+                        </div>*@
+                    </div>
+
+                     <div class="form-group" >
+                         <input  hidden id="requesttype" value="" name="requesttype"/>
+                        <label class="mb-1">Request Type<span class="text-danger">*</span></label>
+                        <div class="position-relative">
+                         <select name="" id="request_type" onchange="showrequesttype(this.value)" style="width:100% !important"  class="custom-select" required>
+
+
+                                                 <option value="" disabled selected>Please select your request type</option>
+
+                                                <option value="Livenow">Live now request</option>
+
+                                                <option value="Schedule">Schedule Request</option>
+
+
+
+
+                         </select>
+
+
+                        </div>
+                    </div>
+
+                      <div class="form-group" id="prefertimeid" style="display:none" >
+                        <label class="mb-1">Preffered Service Time<span class="text-danger">*</span></label>
+                        <div class="position-relative">
+                         <select name="preferservicetime" id="service_time" style="width:100% !important"  class="custom-select"  multiple>
+                                                <option value="08,09,10,11,12">Morning(8AM-12PM) </option>
+                                    @*<option value="Noon">Noon </option>*@
+                                                <option value="12,13,14,15,16,17">Afternoon(12PM-5PM) </option>
+                                                <option value="17,18,19,20,21,22">Evening(5PM-10PM)</option>
+                                                <option value="22,23,00,01,02,03,04,05,06,07">Night(10PM-7AM)</option>
+
+
+
+                         </select>
+
+
+                        </div>
+                    </div>
+
+
+                    <div class="form-row" id="from_todiv" style="display:none">
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="mb-1">From Date Time<span class="text-danger">*</span></label>
+                                <div class="position-relative ">
+                                    <input type="datetime-local"  id="frm_date"  name="FromDateTime" class="form-control" required>
+                                        @*onchange="checkservicetime()"*@
+                                </div>
+                                <strong id="frm_lbl" style="color:red"></strong>
+
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="mb-1">To Date Time<span class="text-danger">*</span></label>
+                                <div class="position-relative">
+                                    <input type="datetime-local" id="to_date"  name="ToDateTime" class="form-control" required>
+                                        @*onchange="checkToservicetime()"*@
+                                </div>
+                                <strong id="to_lbl" style="color:red"></strong>
+
+                                    @*<span name="LastName" class="text-danger"></span>*@
+                            </div>
+                        </div>
+                    </div>
+
+
+                      <div class="form-row">
+                            @*<div class="col">
+                            <div class="form-group">
+                                <label class="mb-1">Skills<span class="text-danger">*</span></label>
+                                <div class="position-relative ">
+                                    <input type="text" name="multiskills" id="multiskill" class="form-control" data-role="tagsinput" multiple required>
+                                </div>
+                                <span style="font-size:11px;">7 tags maximum.</span>
+                            </div>
+                        </div>*@
+                        <div class="col-md-6 col-12" style="overflow-x:hidden">
+                            <div class="form-group">
+                                <label class="mb-1">Categories of Skills<span class="text-danger">*</span></label>
+
+
+                                <select name="budget" id="skillcategories" onchange="SubcategoriesDropDown(this.value)" style="width:100% !important"  class="custom-select"  >
+                                                <option value="" selected disabled>Please Select a skill category</option>
+                                                <option value="ComputerDesktopLaptopTablet">Computer - Desktop / Laptop / Tablet</option>
+                                                <option value="Smartphone">Smartphone</option>
+                                                <option value="PrinterScannerCopiers">Printer / Scanner / Copiers</option>
+                                                <option value="watch">Smartwear - watch</option>
+                                                @*<option value="Printer/Scanner/Copiers">Printer / Scanner / Copiers</option>*@
+                                                <option value="Server">Server</option>
+                                                <option value="Email">Email</option>
+                                                <option value="Internet">Internet</option>
+                                                <option value="Website">Website</option>
+                                                <option value="Others">Others</option>
+
+
+                         </select>
+                                    @*<span style="font-size:11px;">7 tags maximum.</span>*@
+                            </div>
+                        </div>
+
+                         <div class="col-md-6 col-12" id="subcategory_div" style="overflow-x:hidden">
+                            <div class="form-group" >
+                                <label class="mb-1">Sub Categories of Skills<span class="text-danger">*</span>
+
+
+
+                                </label>
+
+                                    @*<i  id="categoryLoader" style="margin-left:64%" class="fa-li fa fa-spinner fa-spin" ></i>*@
+
+
+                                <select name="multiskills"  id="subcategoriesskill"  style="width:100% !important"  class="custom-select" multiple required>
+                                         <option value=""  disabled>please select skils</option>
+
+
+
+                         </select>
+                                    @*<span style="font-size:11px;">7 tags maximum.</span>*@
+                            </div>
+                        </div>
+
+                        
+                            @* <div  class="col">
+                            <div class="form-group">
+                                <label class="mb-1">Zip code<span class="text-danger">*</span></label>
+                                <div class="position-relative">
+                                    <input type="text" name="Zipcodes" class="form-control" required>
+                                </div>
+
+                            </div>
+                        </div>*@
+                    </div>
+
+                     <div class="form-group" id="categories_issue_div">
+                        <label class="mb-1">Issue<span class="text-danger">*</span></label>
+                        <div class="position-relative">
+                         <select name="issuecategory" id="categories_issues" onchange="" style="width:100% !important"  class="custom-select" required>
+
+
+                          <option value="" disabled selected>Please select your request type</option>
+
+                                                
+
+
+
+
+                         </select>
+
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="mb-1">Preffered Language@*<span class="text-danger">*</span>*@</label>
+                        <div class="position-relative">
+                         <select name="language" style="width:100% !important"  class="custom-select" multiple >
+                                                <option value="English">English</option>
+                                                <option value="French">French</option>
+                                                <option value="Deutsch">Deutsch</option>
+                                                <option value="Portuguêse">Portuguêse</option>
+                                                <option value="Mandarin">Mandarin</option>
+
+                                                <option value="Cantonese">Yue(Cantonese)</option>
+                                                <option value="Spanish">Spanish</option>
+                                                <option value="Filipino">Tagalog(Filipino)</option>
+
+                                                <option value="Russian">Russian</option>
+                                                <option value="Chinese">Chinese</option>
+                                                <option value="Korean">Korean</option>
+                                                 <option value="Persian">Persian</option>
+                                                <option value="Italian">Italian</option>
+
+                                                <option value="Vietnamese">Vietnamese</option>
+                                                <option value="Dutch">Dutch</option>
+
+                         </select>
+
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="mb-1">Custom Tags</label>
+                        <div class="position-relative">
+
+                            <input type="text" name="multitags" id="multitags" class="form-control" data-role="tagsinput"  multiple >
+                        </div>
+
+                        <span style="font-size:11px;">7 tags maximum.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="mb-1">Description</label>
+                        <div class="position-relative">
+                                @* <i class="mdi mdi-key-variant position-absolute"></i>*@
+                            <textarea type="text" name="Description" id="Descriptionss" class="form-control" ></textarea>
+                        </div>
+                    </div>
+
+
+
+
+                        <button id="submit_request" class="btn btn-success btn-block text-uppercase" type="submit">Submit Request </button>
+
+                        @*<div class="py-3 d-flex align-item-center">
+                        <span class="mr-0"> Already on IT Butler? <a href="@Url.Action("Login","Auth")">Sign in</a></span>
+                    </div>*@
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Register -->
+
+<!-- Thank you modal -->
+
+<input hidden id="thankyou_msg" value="@ViewBag.messg"/>
+
+<div class="modal fade" id="AccountActivated_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 style="margin-left:141px;font-weight:bold;" class="modal-title text-success" id="exampleModalLabel">Thank You</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>@ViewBag.messg</p>
+                @*<p>Kindly check your email.</p>*@
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+<!--End Thank you modal -->
+<script src="https://unpkg.com/@@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
+<script src="http://www.datejs.com/build/date.js" type="text/javascript"></script>
+ <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.full.min.js"></script>
+
+           <script>
+
+               
+  //  $('#multiskill').tagsinput({
+  //maxTags: 7,
+  //maxChars: 15,
+  //confirmKeys: [13, 44]
+  //      });
+
+  //       $('#multitags').tagsinput({
+  //maxTags: 7,
+  //maxChars: 15,
+  //confirmKeys: [13, 44]
+  //      });
+
+
+        //$(window).on('load', function () {    changes in redirect to 
+        //    debugger
+        //     var isactivated = $('#thankyou_msg').val();
+
+        //if (isactivated == "" || isactivated==null) {
+        //    $('#AccountActivated_modal').modal('hide');
+
+        //}
+        //else
+        //{
+        //    $('#AccountActivated_modal').modal('show');
+        //       //$('#AccountActivated_modal').fadeOut(1000);
+        //        $("#AccountActivated_modal").fadeOut("slow");  
+
+        //}
+        //});
+
+    </script>
+
+
+   
+
+        <script>
+
+
+        // multiple time selection restriction
+
+        $('#frm_date').attr('min', new Date($.now()).toISOString().slice(0,16));
+        //var a = new Date('@DateTime.Now').toLocaleString();
+        
+        $(document).on("change", "#frm_date", function () {
+
+            debugger;
+
+           var servicetime =new Array();
+           servicetime=$('#service_time').val();
+
+           console.log(servicetime);
+           //input date time 
+
+
+            var fromdate=  new Date(document.getElementById('frm_date').value);
+
+           var hours = fromdate.getHours(); //returns 0-23
+               var minutes = fromdate.getMinutes(); //returns 0-59
+                var seconds = fromdate.getSeconds(); //returns 0-59
+
+                var lenth =new Array();
+                lenth=servicetime.length;
+
+              
+                var flag=0;
+            
+                if(lenth==0)
+                {
+                    flag=1;
+                      $("#frm_lbl").html("").html("Kindly select your preffered service time first!");
+                       $("#frm_lbl").fadeOut(6000);  
+                      document.getElementById("frm_date").value = "";
+                       return
+                }
+                for(var i =0; i<lenth;i++)
+                {
+                    if(!servicetime[i].includes(hours))
+                    {
+                        console.log("does not match");
+                        flag=1;
+                    }
+                    else
+                    {
+                        console.log("does match");
+                        flag=0;
+                        break;
+                    }
+                }
+
+                if(flag==1)
+                {
+                      $("#frm_lbl").html("").html("select a time according to your preffered service time!");
+
+                      document.getElementById("frm_date").value = "";
+
+                      $("#frm_lbl").fadeOut(6000);  
+                }
+                
+
+            // end restriction
+            var date = $(this).val();
+
+            $('#to_date').val("");
+            $('#to_date').attr('min', date);
+
+            //
+        });
+
+         $(document).on("change", "#to_date", function () {
+
+            debugger;
+
+           var servicetime =new Array();
+           servicetime=$('#service_time').val();
+
+           console.log(servicetime);
+           //input date time 
+
+
+            var todate=  new Date(document.getElementById('to_date').value);
+
+             var hours = todate.getHours(); //returns 0-23
+               var minutes = todate.getMinutes(); //returns 0-59
+                var seconds = todate.getSeconds(); //returns 0-59
+
+                var lenth =new Array();
+                lenth=servicetime.length;
+
+              
+                var flag=0;
+            
+                if(lenth==0)
+                {
+                    flag=1;
+                      $("#to_lbl").html("").html("Kindly select your preffered service time first!");
+                       $("#to_lbl").fadeOut(6000);  
+                       document.getElementById("to_date").value = "";
+                       return
+                }
+                for(var i =0; i<lenth;i++)
+                {
+                    if(!servicetime[i].includes(hours))
+                    {
+                        console.log("does not match");
+                        flag=1;
+                    }
+                    else
+                    {
+                        console.log("does match");
+                        flag=0;
+                        break;
+                    }
+                }
+
+                if(flag==1)
+                {
+                      $("#to_lbl").html("").html("select a time according to your preffered service time!");
+
+                      document.getElementById("to_date").value = "";
+
+                      $("#to_lbl").fadeOut(6000);  
+                }
+                
+
+            // end restriction
+            
+
+           
+        });
+</script>
+
+
+
+            <script>
+            function SubcategoriesDropDown(value) 
+    {
+
+        //$("#categoryLoader").show();
+        debugger;
+        if (value == "") {
+            $("#subcategoriesskill").empty().append("<option value=''>please Select a category first</option>");
+
+            return;
+        }
+       else if(value=="ComputerDesktopLaptopTablet")
+       {
+
+          var Itsupport=  `<option value="PC">PC</option>
+                            <option value="Mac">Mac</option>
+                            `
+
+            $("#subcategoriesskill").prop('required',true);
+            
+            $("#subcategoriesskill").empty().append(Itsupport);
+            $("#subcategory_div").show();
+
+            //category issues
+
+             var subcategoryissues=  `<option value="Slow/Delayed">Slow / Delayed</option>
+                            <option value="Virus/Malware">Virus / Malware</option>
+                            <option value="Update Software">Update Software</option>
+                            <option value="Install Software">Install Software</option>
+                            <option value="Password/Login">Password/Login</option>
+                            <option value="Email">Email</option>
+                            <option value="Internet">Internet</option>
+                            <option value="Software-Office">Software - Office</option>
+                            <option value="Software-Windows">Software - Windows</option>
+                            <option value="Specific Software Problem">Specific Software Problem</option>
+                            <option value="Backup Issues">Backup Issues</option>
+                            <option value="Computer Move/Setup">Computer Move / Setup</option>
+                            <option value="File Restore">File Restore</option>
+                            <option value="Format">Format</option>
+                            `
+
+            $("#subcategoriesskill").prop('required',true);
+            
+            $("#categories_issues").empty().append(subcategoryissues);
+            $("#categories_issue_div").show();
+
+
+
+       }
+       else if(value=="Smartphone")
+       {
+           var Homeservice=  `<option value="Apple">Apple</option>
+                            <option value="Android">Android</option>`
+                            
+                            //<option value="Other">Other</option>
+                            
+           $("#subcategoriesskill").prop('required',true);
+            
+            $("#subcategoriesskill").empty().append(Homeservice);
+            $("#subcategory_div").show();
+
+
+            //sub categoryissues
+      var subcategoryissues=`<option value="Slow/Delayed">Slow / Delayed</option>
+                            <option value="Voicemail">Voicemail</option>
+                            <option value="Update Software">Update Software</option>
+                            <option value="Install Software">Install Software</option>
+                            <option value="Password/Login">Password/Login</option>
+                            <option value="Email">Email</option>
+                            <option value="WiFi connection">WiFi connection</option>
+                            <option value="Bluetooth Connection">Bluetooth Connection</option>
+                            <option value="Specific App Problem">Specific App Problem</option>
+                            <option value="Specific Software Problem">Specific Software Problem</option>
+                            <option value="Virus/Malware">Virus / Malware</option>
+                            <option value="Backup Issues">Backup Issues</option>
+                            <option value="File Restore">File Restore</option>
+                            <option value="Format">Format</option>`
+                            //<option value="Other">Other</option>
+                            
+                            
+           $("#categories_issues").prop('required',true);
+            
+            $("#categories_issues").empty().append(subcategoryissues);
+            $("#categories_issue_div").show();
+
+       }
+       else if(value=="PrinterScannerCopiers")
+       {
+           //var Cleaning=  `<option value="Connection">Connection</option>
+           //                 <option value="Labels">Labels</option>
+           //                 <option value="Other">Other</option>`
+
+           var Cleaning=  `<option value="Printer">Printer</option>
+                            <option value="Scanner">Scanner</option>
+                            <option value="Copiers">Copiers</option>`
+                    
+                            
+           $("#subcategoriesskill").prop('required',true);
+
+            $("#subcategoriesskill").empty().append(Cleaning);
+            $("#subcategory_div").show();
+
+            //subcategoryissues
+
+            $("#categories_issues").removeAttr('required');
+
+            $("#categoryissue_div").hide();
+       } 
+       
+       else if(value=="watch")
+       {
+           //var Cleaning=  `<option value="Connection">Connection</option>
+                            
+           //                 <option value="Other">Other</option>`
+           var Cleaning=  `<option value="watch">Smartwear - watch</option>`
+                            
+                           
+                            
+             
+            $("#subcategoriesskill").empty().append(Cleaning);
+            $("#subcategory_div").show();
+           $("#subcategoriesskill").prop('required',true);
+
+           //subcategoryissues
+
+            $("#categories_issues").removeAttr('required');
+
+            $("#categories_issue_div").hide();
+
+       }
+       else if(value=="Server")
+       {
+           
+                            
+           
+              var server =  `<option value="Server">Server</option>`
+                            
+                            
+                            
+             
+            $("#subcategoriesskill").empty().append(server);
+            $("#subcategory_div").show();
+           $("#subcategoriesskill").prop('required',true);
+
+            //subcategoryissues
+
+            $("#categories_issues").removeAttr('required');
+
+            $("#categories_issue_div").hide();
+            
+
+       }
+       else if(value=="Email")
+       {
+              var Email =  `<option value="Email">Email</option>`
+
+
+           $("#subcategoriesskill").empty().append(Email);
+            $("#subcategory_div").show();
+           $("#subcategoriesskill").prop('required',true);
+
+            //subcategoryissues
+
+            $("#categories_issues").removeAttr('required');
+
+            $("#categories_issue_div").hide();
+
+       }
+
+        else if(value=="Internet")
+       {
+           
+           var Internet =  `<option value="Internet">Internet</option>`
+
+           $("#subcategoriesskill").empty().append(Internet);
+            $("#subcategory_div").show();
+           $("#subcategoriesskill").prop('required',true);
+
+            //subcategoryissues
+
+            $("#categories_issues").removeAttr('required');
+
+            $("#categories_issue_div").hide();
+
+       }
+        else if(value=="Website")
+       {
+           var Website =  `<option value="Website">Website</option>`
+
+           $("#subcategoriesskill").empty().append(Website);
+            $("#subcategory_div").show();
+           $("#subcategoriesskill").prop('required',true);
+
+            //subcategoryissues
+
+            $("#categories_issues").removeAttr('required');
+
+            $("#categories_issue_div").hide();
+
+       }
+
+       else if(value=="Others")
+       {
+            var other =  `<option value="Others">Others</option>`
+           $("#subcategoriesskill").empty().append(other);
+           var subvalue=$("#subcategoriesskill").val(value);
+           console.log(subvalue);
+            $("#subcategory_div").hide();
+           $("#subcategoriesskill").removeAttr('required');
+
+            //subcategoryissues
+
+            $("#categories_issues").removeAttr('required');
+            $("#categories_issues").empty();
+
+            $("#categories_issue_div").hide();
+
+       }
+
+        //$("#workTaskLoader").show();
+
+        //$("#categoryLoader").hide();
+
+    }
+
+
+            function showrequesttype(value) 
+    {
+        if(value=="Livenow")
+        {
+            //hide
+            $("#requesttype").val("");
+            $("#requesttype").val(value);
+
+            document.getElementById("frm_date").value = "";
+            document.getElementById("to_date").value = "";
+
+            $("#from_todiv").hide();
+            $("#prefertimeid").hide();
+
+            $("#prefertimeid").removeAttr('required');
+            $('#frm_date').removeAttr('required');
+            $('#to_date').removeAttr('required');
+
+
+        }
+        else if(value=="Schedule")
+        {
+            $("#requesttype").val("");
+            $("#requesttype").val(value);
+
+            $("#from_todiv").show();
+            $("#prefertimeid").show();
+           
+          $("#prefertimeid").prop('required',true);
+
+            $('#frm_date').prop('required',true);
+            $('#to_date').prop('required',true);
+
+        }
+
+    }
+    
+            </script>

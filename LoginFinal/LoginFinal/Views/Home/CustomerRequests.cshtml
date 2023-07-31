@@ -1,0 +1,989 @@
+﻿
+@model List<RequesthelpDto> 
+@using System.Security.Claims;
+@using LoginFinal.HelpingClasses
+@{
+    ViewData["Title"] = "CustomerRequests";
+    Layout = "~/Views/Shared/_FrontLayout.cshtml";
+   // string LoggedinUserRole = User.Claims.FirstOrDefault(c => c.Type == "Role")?.Value;
+
+}
+<style>
+
+    .dropdown-toggle::after{
+        display:none!important;
+    }
+</style>
+
+
+  <div class="main-page second py-5">
+         <div class="container">
+            <div class="row">
+               <div class="col-md-12">
+                  <h2 class="mb-3">Manage Requests
+                  </h2>
+                  <div class="osahan-table bg-white rounded shadow-sm px-3 pt-1">
+                      <strong id="confirm_message" style="color:@ViewBag.color">@ViewBag.message</strong>
+
+                     <div class="tab-pane" id="all">
+                        <div class="table-responsive box-table mt-3">
+                           <table class="table table-bordered">
+                              <thead>
+                                 <tr>
+                                    <th>Request Title</th>
+                                    <th>Request Created At</th>
+                                    @*<th>Customer Budget</th>
+                                    <th>From Date Time</th>
+                                    <th>To Date Time</th>*@
+                                    @*<th>Service Time</th>*@
+                                    <th>Skills</th>
+                                    <th>Tags</th>
+                                    <th>Request Description</th>
+                                    
+                                   @* @if(ViewBag.userrole!="3")
+                                        {*@
+                                          <th>Actions</th> 
+                                        @*}*@
+                                        
+                                 </tr>
+                              </thead>
+                              <tbody>
+                                  @if(Model!=null)
+                                    {
+                                        @foreach(var item in Model)
+
+                                    {
+                                      
+                                          
+                                            
+                                               <tr>
+
+                                        <td>@item.Title</td>
+                                        <td>@item.CreatedAt</td>
+                                        @*<td>@item.budget</td>
+                                        <td>@item.FromDateTime</td>
+                                        <td>@item.ToDateTime</td>*@
+                                        @*<td>@item.servicetime</td>*@
+                                        <td>@item.skills</td>
+                                        <td>@item.Tags</td>
+                                        <td>@item.Description</td>
+                                        
+
+                                        @if(ViewBag.userrole!="3")
+                                            {
+                                               
+                                                
+                                                 <td>
+
+
+
+                                            @*Start Massam 06-01-23*@
+                                            <ul class="icons-list text-center"> <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-menu9"></i> </a> <ul class="dropdown-menu dropdown-menu-right" style="padding:10px;">
+                                     <li><a class="text-onfo" onclick="Getrequestbyid('@item.Requestid')" data-toggle="modal" data-target="#BankModal"  href=""><i class="icon-pencil mr-2" style="font-size:14px;color:Black"></i>Update Request</a></li>
+                                     <li><a class="text-danger" onclick="deleterequest('@item.Requestid')" href=""  data-toggle="modal" data-target="#Confirmdelete_modal"><i class="fa fa-trash-o" style="font-size:16px;color:red"></i>&nbsp; Delete Request</a></li>
+                                     <li><a class="text-onfo" style="color:black" href="@Url.Action("ViewRequestDetail","Home", new{reqid= @item.Requestid})"><i class="fa fa-eye" style="color:blue" aria-hidden="true"></i>&nbsp; View Request</a></li>
+                                    </ul></li>
+                                </ul>
+                                @*End Massam 06-01-23*@
+
+
+                                                </td>
+                                            }
+
+                                            else if (@ViewBag.userrole=="3")
+                                            {
+                                                <td>
+
+
+
+                                            <ul class="icons-list text-center"> <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-menu9"></i> </a> <ul class="dropdown-menu dropdown-menu-right">
+                                   
+                                     <li><a class="text-onfo"  href="@Url.Action("Messages","Home", new{rec= @StringCipher.EncryptId(Convert.ToInt32(item.userid) ) })"><i class="fa fa-envelope" style="color:grey" aria-hidden="true"></i>Message Customer</a></li>
+                                     
+                                    </ul></li>
+                                    
+                                </ul>
+
+
+                                                </td>
+
+                                            }
+
+                                            </tr> 
+                                            
+
+                                           
+
+
+                                    }
+
+                                    }
+
+                                    
+
+
+
+                              </tbody>
+                           </table>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+
+      @*Thank you modal *@
+
+@*<input hidden id="thankyou_msg" value="@ViewBag.messg"/>*@
+
+<div class="modal fade" id="Confirmdelete_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                     
+                        <h5 style="margin-left:141px;font-weight:bold;" class="modal-title text-danger text-center" id="exampleModalLabel">Warning...!!!</h5>
+                        
+
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are You Sure You Want To Delete This Record </p>
+                        @*<p>Kindly check your email.</p>*@
+                    </div>
+
+                   
+                    <div class="modal-footer">
+                        <form  action="@Url.Action("DeleteRequest","Home")">
+
+
+                        <button type="submit" class="btn btn-success" @*href="@Url.Action("DeleteRequest","Home", new{reqid= @item.Requestid})"*@>Delete</button>
+
+                        <input hidden id="confirm_delete" name="reqid" value=""/>
+                         <input hidden id="userrole" name="userrole" value=""/>
+                        </form>
+
+                        <button type="submit" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        
+
+
+        
+      
+<!--End Thank you modal -->
+
+     <!--Add External Account Modal-->
+        <div class="modal fade" id="BankModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 style="margin-left:95px;font-weight:bold;" class="modal-title text-primary" id="exampleModalLabel">Modify Your Request</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                       <div class="form-group">
+                          
+                                
+                              @* <input type="text" class="mt-2 form-control form-block" id="Acc_Holder" placeholder="Enter Account Holder Name"/>
+                                <input type="text" class="mt-2 form-control form-block" id="Acc_No" placeholder="Enter Account Number"/>
+                                <input type="text" class="mt-2 form-control form-block" id="Routing_No" placeholder="Enter Routing Number"/>*@
+                          
+                                 <div class="col-lg-12 mx-auto">
+                <div class="osahan-login py-4">
+                    <div class="text-center mb-4">
+                        <a href="@Url.Action("Index","Home")"><img src="~/images/butlerlogo.png" style="width: 139.22px; height: 38px;" alt="">@*<img src="~/FrontAssets/images/fav.svg" alt="">*@</a>
+                        <h5 class="font-weight-bold mt-3">Update Request Help</h5>
+                        @*<p style="font-size: 15px;font-weight: bold;">Register as @ViewBag.Category </p>*@
+                    </div>
+
+                    @*@if (ViewData["acr"] != null)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            Registered Successfully ! An Activation Email is Sent To Your Email ! You can Login to Your Account !
+                        </div>
+                    }*@
+                <form action="@Url.Action("UpdateRequest","Home")" method="post">
+                    <input hidden id="updrequest_id" name="Id" value=""/>
+                     <input hidden id="updrequest_userid" name="userid" value=""/>
+                      <input hidden id="updrequest_createdat" name="CreatedAt" value=""/>
+                       <input hidden id="updrequest_isactive" name="Isactive" value=""/>
+                        
+
+                   
+                            <div class="form-group">
+                                <label class="mb-1">Title<span class="text-danger">*</span></label>
+                                <div class="position-relative ">
+                                    <input type="text" id="title" name="Title" class="form-control" required>
+                                </div>
+                               
+                            </div>
+                         <div class="form-group" >
+                        <label class="mb-1">Request Type<span class="text-danger">*</span></label>
+                        <div class="position-relative">
+                         <select name="" id="request_type" onchange="showrequesttype(this.value)" style="width:100% !important"  class="custom-select" required>
+
+
+                                                 <option value="" disabled selected>Please select your request type</option>
+
+                                                <option value="Livenow">Live now request</option>
+
+                                                <option value="Schedule">Schedule Request</option>
+
+
+
+
+                         </select>
+
+
+                        </div>
+                    </div>
+                    
+                            <div class="form-group" id="prefertimeid" style="display:none">
+                                <label class="mb-1">Preffered Service Time<span class="text-danger">*</span></label>
+                        <div>
+                         <select name="preferservicetime" style="width:100 % !important" id="service_time" class="custom-select" multiple  required>
+                                                @*<option value="Morning(8AM-12PM)">Morning(8AM-12PM)</option>
+                                                
+                                                <option value="Afternoon(12PM-5PM)">Afternoon(12PM-5PM) </option>
+                                                <option value="Evening(5PM-10PM)">Evening (5PM-10PM) </option>
+                                                <option value="Night(10PM-7AM)">Night(10PM-7AM)</option>*@
+
+                                                <option value="08,09,10,11,12">Morning(8AM-12PM) </option>
+                                                <option value="12,13,14,15,16,17">Afternoon(12PM-5PM) </option>
+                                                <option value="17,18,19,20,21,22">Evening(5PM-10PM)</option>
+                                                <option value="22,23,00,01,02,03,04,05,06,07">Night(10PM-7AM)</option>
+                                                
+                                                
+
+                         </select>
+                           
+                            
+                        </div>
+                                
+                            </div>
+                       
+                     
+                 
+
+                    <div class="form-row" id="from_todiv" style="display:none">
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="mb-1">From Date Time<span class="text-danger">*</span></label>
+                                <div class="position-relative ">
+                                    <input type="datetime-local" id="from_date" name="FromDateTime" class="form-control" required>
+                                </div>
+                               <strong id="frm_lbl" style="color:red"></strong>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="mb-1">To Date Time<span class="text-danger">*</span></label>
+                                <div class="position-relative">
+                                    <input type="datetime-local" id="To_date" name="ToDateTime" class="form-control" required>
+                                </div>
+                                 <strong id="to_lbl" style="color:red"></strong>
+                               @* <span name="LastName" class="text-danger"></span>*@
+                            </div>
+                        </div>
+                    </div>
+                     @*<div class="form-group">
+                                <label class="mb-1">Skills<span class="text-danger">*</span></label>
+                                <div class="position-relative ">
+                                    <input type="text"  name="multiskills" id="multiskill" class="form-control" data-role="tagsinput" multiple required>
+                                
+                                </div>
+                            </div>*@
+                            <div class="form-group">
+                                <label class="mb-1">Categories of Skills<span class="text-danger">*</span></label>
+
+
+                                <select name="" id="skillcategories" onchange="SubcategoriesDropDown(this.value)" style="width:100% !important"  class="custom-select"  >
+                                                <option value="" selected disabled>Please Select a skill category</option>
+                                                <option value="ComputerDesktopLaptopTablet">Computer - Desktop / Laptop / Tablet</option>
+                                                <option value="Smartphone">Smartphone</option>
+                                                <option value="PrinterScannerCopiers">Printer / Scanner / Copiers</option>
+                                                <option value="watch">Smartwear - watch</option>
+                                                @*<option value="Printer / Scanner / Copiers">Printer / Scanner / Copiers</option>*@
+                                                <option value="Server">Server</option>
+                                                <option value="Email">Email</option>
+                                                <option value="Internet">Internet</option>
+                                                <option value="Website">Website</option>
+                                               
+                         </select>
+                                @*<span style="font-size:11px;">7 tags maximum.</span>*@
+                            </div>
+                             <div class="form-group">
+                        <label class="mb-1">Skills sub category<span class="text-danger">*</span></label>
+                        <div class="position-relative">
+                         <select name="multiskills"  id="subcategoriesskill" style="width:100% !important"  class="custom-select" multiple required>
+                                         <option value=""  disabled>please select skils</option>
+                                                
+                                                
+                                                
+                         </select>
+                           
+                            
+                        </div>
+                    </div>
+
+                     <div class="form-group" id="categories_issue_div">
+                        <label class="mb-1">Issue<span class="text-danger">*</span></label>
+                        <div class="position-relative">
+                         <select name="issuecategory" id="categories_issues" onchange="" style="width:100% !important"  class="custom-select" required>
+
+
+                          <option value="" disabled selected>Please select your request type</option>
+
+                                 
+                         </select>
+
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="mb-1">Other Tags</label>
+                        <div class="position-relative">
+                            
+                            <input type="text" name="multitags" id="multitags" class="form-control" data-role="tagsinput"  multiple>
+                        </div>
+                    </div>
+
+                     <div class="form-group">
+                        <label class="mb-1">Preffered Language@*<span class="text-danger">*</span>*@</label>
+                        <div class="position-relative">
+                         <select name="language" id="multipleLangs" style="width:100 % !important"  class="select" multiple >
+                                                <option value="English">English</option>
+                                                <option value="French">French</option>
+                                                <option value="Deutsch">Deutsch</option>
+                                                <option value="Portuguêse">Portuguêse</option>
+                                                <option value="Mandarin">Mandarin</option>
+                                                
+                                                <option value="Cantonese">Yue(Cantonese)</option>
+                                                <option value="Spanish">Spanish</option>
+                                                <option value="Filipino">Tagalog(Filipino)</option>
+                                                
+                                                <option value="Russian">Russian</option>
+                                                <option value="Chinese">Chinese</option>
+                                                <option value="Korean">Korean</option>
+                                                 <option value="Persian">Persian</option>
+                                                <option value="Italian">Italian</option>
+                                                 
+                                                <option value="Vietnamese">Vietnamese</option>
+                                                <option value="Dutch">Dutch</option>
+
+                         </select>
+                           
+                            
+                        </div>
+                    </div>
+                     
+
+                    <div class="form-group">
+                        <label class="mb-1">Description</label>
+                        <div class="position-relative">
+                           @* <i class="mdi mdi-key-variant position-absolute"></i>*@
+                            <textarea type="text" name="Description" id="Descriptionss" class="form-control"  ></textarea>
+                        </div>
+                    </div>
+
+                   
+
+                        
+                        <button id="submit_request" class="btn btn-success btn-block text-uppercase" type="submit">Update Request </button>
+
+                    @*<div class="py-3 d-flex align-item-center">
+                        <span class="mr-0"> Already on IT Butler? <a href="@Url.Action("Login","Auth")">Sign in</a></span>
+                    </div>*@
+                </form>
+                </div>
+            </div>
+
+
+                                @*end data*@
+                       </div>
+                       <span class="text-danger" id="ErrBank"></span>
+                    </div>
+
+                    <div class="modal-footer">
+                        @*<button type="button" id="btnstripe" onclick="Add_Bank($('#Acc_Holder').val(),$('#Acc_No').val(),$('#Routing_No').val())" class="btn btn-success">Add</button>*@
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+       <!-- End External Account Modal-->
+
+
+
+                        <script>
+
+
+                            function deleterequest(id)
+                            {
+                                debugger
+                                var name = $('#confirm_delete').val(id);
+                            }
+                        </script>
+
+                        <script>
+                            function Getrequestbyid(id)
+    {
+        debugger;
+       // $('#loadImg').show();
+        $.ajax({
+            type: 'POST',
+            url: "../Home/Getuserrequestbyid",
+            dataType: "json",
+            data: {
+                reqid: id
+            },
+            success: function (response)
+            {
+                debugger
+                //masam code 
+                if (response.requestType != "") {
+                    $('#request_type').find("[value=" + response.requestType + "]").attr("selected", true).change();
+                }
+
+                if (response.budget != "") {
+                    $('#skillcategories').find("[value=" + response.budget + "]").attr("selected", true).change();
+                }
+                //masam code
+
+
+                //multilangsappend 
+                if(response.language!= "")
+    {
+        var langs = response.language.split(",");
+        var length = $('#multipleLangs > option').length;
+        var dropDownOptions = document.getElementById('multipleLangs').getElementsByTagName("option");;
+
+        console.log(dropDownOptions);
+
+        for(var i in dropDownOptions)
+        {
+            //var op = langs.includes(dropDownOptions.options[i].value);
+            @*console.log("value:",skills);*@
+            console.log("value = ",dropDownOptions[i].innerHTML);
+            if(langs.includes(dropDownOptions[i].innerHTML))
+            {
+                @*console.log(op);*@
+                dropDownOptions[i].selected = "selected";
+            }
+        }
+
+        //$("#multipleLangs option").each(function()
+        //{
+        //    var op = $(this);
+        //    @*console.log("value:",skills);*@
+        //    if(langs.includes(op.val()))
+        //    {
+        //        @*console.log(op);*@
+        //        op.attr("selected","selected");
+        //    }
+        //});
+    }
+                
+                //multilangsappend
+
+                //console.log(response);
+                $('#updrequest_id').val(response.id);
+                $('#title').val(response.title);
+                //request_type
+                //$('#budget').val(response.budget);
+                //$('#city').val(response.city);
+                //$('#modal-Type').find("[value=" + response.InstituteId + "]").attr("selected",true).change();
+                $('#from_date').val(response.fromDateTime);
+                $('#To_date').val(response.toDateTime);
+                 $('#multitags').val(response.tags);
+                  $('#multiskill').val(response.skills);
+                   //$('#zpcode').val(response.zipcodes);
+                    $('#Descriptionss').html(response.description);
+
+                    $('#updrequest_userid').val(response.userid);
+                  $('#updrequest_createdat').val(response.createdAt);
+                   $('#updrequest_isactive').val(response.isactive);
+
+            },
+            error: function () {
+                alert("ajax Failed");
+            }
+        });
+    }
+
+
+
+    $("#confirm_message").fadeOut(5000);  
+
+                        </script>
+                        <script>
+                            $('#multiskill').tagsinput({
+  maxTags: 7,
+  maxChars: 15,
+  confirmKeys: [13, 44]
+        });
+
+         $('#multitags').tagsinput({
+  maxTags: 7,
+  maxChars: 15,
+  confirmKeys: [13, 44]
+        });
+
+                        </script>
+
+            <script>
+                function SubcategoriesDropDown(value) 
+    {
+
+        $("#categoryLoader").show();
+        debugger;
+        if (value == "") {
+            $("#subcategoriesskill").empty().append("<option value=''>please Select a category first</option>");
+
+            return;
+        }
+       else if(value=="ComputerDesktopLaptopTablet")
+       {
+
+          var Itsupport=  `<option value="PC">PC</option>
+                            <option value="Mac">Mac</option>
+                            <option value="Other">Other</option>`
+
+            $("#subcategoriesskill").prop('required',true);
+            
+            $("#subcategoriesskill").empty().append(Itsupport);
+            $("#subcategory_div").show();
+
+            //category issues
+
+             var subcategoryissues=  `<option value="Slow/Delayed">Slow / Delayed</option>
+                            <option value="Virus/Malware">Virus / Malware</option>
+                            <option value="Update Software">Update Software</option>
+                            <option value="Install Software">Install Software</option>
+                            <option value="Password/Login">Password/Login</option>
+                            <option value="Email">Email</option>
+                            <option value="Internet">Internet</option>
+                            <option value="Software-Office">Software - Office</option>
+                            <option value="Software-Windows">Software - Windows</option>
+                            <option value="Specific Software Problem">Specific Software Problem</option>
+                            <option value="Backup Issues">Backup Issues</option>
+                            <option value="Computer Move/Setup">Computer Move / Setup</option>
+                            <option value="File Restore">File Restore</option>
+                            <option value="Format">Format</option>
+                            <option value="Other">Other</option>`
+
+            $("#subcategoriesskill").prop('required',true);
+            
+            $("#categories_issues").empty().append(subcategoryissues);
+            $("#categories_issue_div").show();
+
+
+
+       }
+       else if(value=="Smartphone")
+       {
+           var Homeservice=  `<option value="Apple">Apple</option>
+                            <option value="Android">Android</option> 
+                            <option value="Other">Other</option>`
+                            
+           $("#subcategoriesskill").prop('required',true);
+            
+            $("#subcategoriesskill").empty().append(Homeservice);
+            $("#subcategory_div").show();
+
+
+            //sub categoryissues
+      var subcategoryissues=`<option value="Slow/Delayed">Slow / Delayed</option>
+                            <option value="Voicemail">Voicemail</option>
+                            <option value="Update Software">Update Software</option>
+                            <option value="Install Software">Install Software</option>
+                            <option value="Password/Login">Password/Login</option>
+                            <option value="Email">Email</option>
+                            <option value="WiFi connection">WiFi connection</option>
+                            <option value="Bluetooth Connection">Bluetooth Connection</option>
+                            <option value="Specific App Problem">Specific App Problem</option>
+                            <option value="Specific Software Problem">Specific Software Problem</option>
+                            <option value="Virus/Malware">Virus / Malware</option>
+                            <option value="Backup Issues">Backup Issues</option>
+                            <option value="File Restore">File Restore</option>
+                            <option value="Format">Format</option>
+                            <option value="Other">Other</option>`
+                            
+           $("#categories_issues").prop('required',true);
+            
+            $("#categories_issues").empty().append(subcategoryissues);
+            $("#categories_issue_div").show();
+
+       }
+       else if(value=="PrinterScannerCopiers")
+       {
+           //var Cleaning=  `<option value="Connection">Connection</option>
+           //                 <option value="Labels">Labels</option>
+           //                 <option value="Other">Other</option>`
+
+           var Cleaning=  `<option value="Printer">Printer</option>
+                            <option value="Scanner">Scanner</option>
+                            <option value="Copiers">Copiers</option>`
+                    
+                            
+           $("#subcategoriesskill").prop('required',true);
+
+            $("#subcategoriesskill").empty().append(Cleaning);
+            $("#subcategory_div").show();
+
+            //subcategoryissues
+
+            $("#categories_issues").removeAttr('required');
+
+            $("#categoryissue_div").hide();
+       } 
+       
+       else if(value=="watch")
+       {
+           //var Cleaning=  `<option value="Connection">Connection</option>
+                            
+           //                 <option value="Other">Other</option>`
+           var Cleaning=  `<option value="watch">Smartwear - watch</option>`
+                            
+                           
+                            
+             
+            $("#subcategoriesskill").empty().append(Cleaning);
+            $("#subcategory_div").show();
+           $("#subcategoriesskill").prop('required',true);
+
+           //subcategoryissues
+
+            $("#categories_issues").removeAttr('required');
+
+            $("#categories_issue_div").hide();
+
+       }
+       else if(value=="Server")
+       {
+           
+                            
+           
+              var server =  `<option value="Server">Server</option>`
+                            
+                            
+                            
+             
+            $("#subcategoriesskill").empty().append(server);
+            $("#subcategory_div").show();
+           $("#subcategoriesskill").prop('required',true);
+
+            //subcategoryissues
+
+            $("#categories_issues").removeAttr('required');
+
+            $("#categories_issue_div").hide();
+            
+
+       }
+       else if(value=="Email")
+       {
+              var Email =  `<option value="Email">Email</option>`
+
+
+           $("#subcategoriesskill").empty().append(Email);
+            $("#subcategory_div").show();
+           $("#subcategoriesskill").prop('required',true);
+
+            //subcategoryissues
+
+            $("#categories_issues").removeAttr('required');
+
+            $("#categories_issue_div").hide();
+
+       }
+
+        else if(value=="Internet")
+       {
+           
+                            
+           var Internet =  `<option value="Internet">Internet</option>`
+
+           $("#subcategoriesskill").empty().append(Internet);
+            $("#subcategory_div").show();
+           $("#subcategoriesskill").prop('required',true);
+
+            //subcategoryissues
+
+            $("#categories_issues").removeAttr('required');
+
+            $("#categories_issue_div").hide();
+
+       }
+        else if(value=="Website")
+       {
+           var Website =`<option value="Website">Website</option>`
+
+           $("#subcategoriesskill").empty().append(Website);
+            $("#subcategory_div").show();
+           $("#subcategoriesskill").prop('required',true);
+
+            //subcategoryissues
+
+            $("#categories_issues").removeAttr('required');
+
+            $("#categories_issue_div").hide();
+
+       }
+
+        //$("#workTaskLoader").show();
+
+        $("#categoryLoader").hide();
+
+    }
+
+
+    //       function SubcategoriesDropDown(value) 
+                  
+    //       {
+      
+    //    $("#categoryLoader").show();
+    //    debugger;
+    //    if (value == "") {
+    //        $("#subcategoriesskill").empty().append("<option value=''>please Select a category first</option>");
+            
+    //        return;
+    //    }
+    //   else if(value=="IT Support")
+    //   {
+
+    //      var Itsupport=  `<option value="Wi fi">Wi fi</option>
+    //                        <option value="pc setting">Pc setting</option>
+    //                        <option value="window installation">pc window installation</option>`
+
+    //        $("#subcategoriesskill").empty().append(Itsupport);
+
+
+    //   }
+    //    else if(value=="Home services")
+    //   {
+    //       var Homeservice=  `<option value="homedecor">Home Decoration</option>
+    //                        <option value="Luggage">Luggage Shifting</option>
+    //                        `
+
+    //        $("#subcategoriesskill").empty().append(Homeservice);
+
+    //   }
+    //   else if(value=="Cleaning")
+    //   {
+    //       var Cleaning=  `<option value="homecleaning">Home Cleaning</option>
+    //                        <option value="Commercial">Commercial Cleaning</option>
+    //                        <option value="Vacum Cleaning">Vacum Cleaning</option>
+    //                        `
+
+    //        $("#subcategoriesskill").empty().append(Cleaning);
+
+    //   }
+
+    //    //$("#workTaskLoader").show();
+
+    //    $("#categoryLoader").hide();
+        
+    //}
+
+ //   $(document).ready(function(){
+ //       if()
+ //       {
+ //           $("#li_"+id).remove();
+ //            $(this).css("background-color", "#000000");
+ //       });
+ //});
+
+
+            </script>
+
+                            <script>
+         function showrequesttype(value) 
+                       {
+                 if(value=="Livenow")
+                 {
+                     //hide
+                     document.getElementById("from_date").value = "";
+                     document.getElementById("To_date").value = "";
+            
+                     $("#from_todiv").hide();
+                     $("#prefertimeid").hide();
+            
+                     $("#service_time").removeAttr('required');
+                     $('#from_date').removeAttr('required');
+                     $('#To_date').removeAttr('required');
+            
+            
+                 }
+                 else if(value=="Schedule")
+                 {
+                     $("#from_todiv").show();
+                     $("#prefertimeid").show();
+                    
+                   $("#service_time").prop('required',true);
+            
+                     $('#from_date').prop('required',true);
+                     $('#To_date').prop('required',true);
+            
+                 }
+            
+             }
+            
+                                     </script>
+
+                      <script>
+
+
+        // multiple time selection restriction
+
+        $('#from_date').attr('min', new Date($.now()).toISOString().slice(0,16));
+        $(document).on("change", "#from_date", function () {
+
+
+
+            debugger;
+
+            //start restriction
+
+             var servicetime =new Array();
+           servicetime=$('#service_time').val();
+
+           console.log(servicetime);
+           //input date time 
+
+
+            var fromdate=  new Date(document.getElementById('from_date').value);
+
+            var hours = fromdate.getHours(); //returns 0-23
+               var minutes = fromdate.getMinutes(); //returns 0-59
+                var seconds = fromdate.getSeconds(); //returns 0-59
+
+                var lenth =new Array();
+                lenth=servicetime.length;
+
+              
+                var flag=0;
+            
+                if(lenth==0)
+                {
+                    flag=1;
+                      $("#frm_lbl").html("").html("Kindly select your preffered service time first!");
+                       $("#frm_lbl").fadeOut(6000);  
+                      document.getElementById("from_date").value = "";
+                       return
+                }
+                for(var i =0; i<lenth;i++)
+                {
+                    if(!servicetime[i].includes(hours))
+                    {
+                        console.log("does not match");
+                        flag=1;
+                    }
+                    else
+                    {
+                        console.log("does match");
+                        flag=0;
+                        break;
+                    }
+                }
+
+                if(flag==1)
+                {
+                      $("#frm_lbl").html("").html("select a time according to your preffered service time!");
+
+                      document.getElementById("from_date").value = "";
+
+                      $("#frm_lbl").fadeOut(6000);  
+                }
+                
+
+
+            // end validation
+
+            var date = $(this).val();
+
+            $('#To_date').val("");
+            $('#To_date').attr('min', date);
+
+            //
+        });
+
+
+
+        //for to date
+
+        $(document).on("change", "#To_date", function () {
+
+            debugger;
+
+           var servicetime =new Array();
+           servicetime=$('#service_time').val();
+
+           console.log(servicetime);
+           //input date time 
+
+
+            var todate=  new Date(document.getElementById('To_date').value);
+
+             var hours = todate.getHours(); //returns 0-23
+               var minutes = todate.getMinutes(); //returns 0-59
+                var seconds = todate.getSeconds(); //returns 0-59
+
+                var lenth =new Array();
+                lenth=servicetime.length;
+
+              
+                var flag=0;
+            
+                if(lenth==0)
+                {
+                    flag=1;
+                      $("#to_lbl").html("").html("Kindly select your preffered service time first!");
+                       $("#to_lbl").fadeOut(6000);  
+                       document.getElementById("To_date").value = "";
+                       return
+                }
+                for(var i =0; i<lenth;i++)
+                {
+                    if(!servicetime[i].includes(hours))
+                    {
+                        console.log("does not match");
+                        flag=1;
+                    }
+                    else
+                    {
+                        console.log("does match");
+                        flag=0;
+                        break;
+                    }
+                }
+
+                if(flag==1)
+                {
+                      $("#to_lbl").html("").html("select a time according to your preffered service time!");
+
+                      document.getElementById("To_date").value = "";
+
+                      $("#to_lbl").fadeOut(6000);  
+                }
+                
+
+            // end restriction
+            
+
+           
+        });
+</script>

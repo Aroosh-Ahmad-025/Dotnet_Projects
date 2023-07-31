@@ -1,0 +1,1754 @@
+﻿@using LoginFinal.Models
+@using Microsoft.Data.SqlClient;
+@inject SqlConnection de
+@using LoginFinal.BL
+@using System.Security.Claims;
+@using LoginFinal.HelpingClasses
+@using Microsoft.AspNetCore.Http.Extensions
+@{
+    var Userid = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
+    var LoggedinUserRole = User.Claims.FirstOrDefault(c => c.Type == "Role")?.Value;
+    var CurrentUserRecord = new UserBL().GetActiveUserById(Convert.ToInt32(Userid), de);
+    var GetOrder = new List<Order>();
+    int GetBuyerComments = 0, GetSellerComments = 0;
+
+    if (CurrentUserRecord != null)
+    {
+        GetOrder = new UserBL().GetAllOrders(de).Where(a => a.BuyerId == CurrentUserRecord.Id || a.SellerId == CurrentUserRecord.Id).ToList();
+        GetBuyerComments = GetOrder.Sum(a => Convert.ToInt32(a.BuyerCommentsCount));
+        GetSellerComments = GetOrder.Sum(a => Convert.ToInt32(a.SellerCommentsCount));
+        if (CurrentUserRecord.Role == 3)
+        {
+            GetBuyerComments = 0;
+        }
+        else
+        {
+            GetSellerComments = 0;
+        }
+    }
+
+
+
+    User loggedinUser = CurrentUserRecord;
+    
+   
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>IT Butler - @ViewData["Title"]</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <link href="~/assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
+    @*calendar link*@
+    
+    @*end calendar link*@
+
+   <script src="~/FrontAssets/vendor/jquery/jquery.min.js"></script>
+    <!-- Favicon Icon -->
+    <link rel="icon" type="image/png" href="~/FrontAssets/images/fav.svg">
+    <!-- Bootstrap core CSS -->
+    <link href="~/FrontAssets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome-->
+    <link href="~/FrontAssets/vendor/fontawesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Material Design Icons -->
+    <link href="~/FrontAssets/vendor/icons/css/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css">
+    <!-- Slick -->
+    <link href="~/FrontAssets/vendor/slick-master/slick/slick.css" rel="stylesheet" type="text/css">
+    <!-- Lightgallery -->
+    <link href="~/FrontAssets/vendor/lightgallery-master/dist/css/lightgallery.min.css" rel="stylesheet">
+    <!-- Select2 CSS -->
+    <link href="~/FrontAssets/vendor/select2/css/select2-bootstrap.css" />
+    <link href="~/FrontAssets/vendor/select2/css/select2.min.css" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+    <link href="~/FrontAssets/css/style.css" rel="stylesheet">
+
+    <!-- Tags Input -->
+    <link href="~/FrontAssets/css/tagsinput.css" rel="stylesheet">
+
+    <!-- SignalR -->
+    <script src="https://unpkg.com/@@aspnet/signalr@@1.0.0-rc1-final/dist/browser/signalr.js"></script>
+
+
+    <partial name="_ValidationScriptsPartial" />
+
+
+    <script src="~/FrontAssets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Contact form JavaScript -->
+    <!-- Do not edit these files! In order to set the email address and subject line for the contact form go to the bin/contact_me.php file. -->
+    <script src="~/FrontAssets/js/jqBootstrapValidation.js"></script>
+    <script src="~/FrontAssets/js/contact_me.js"></script>
+    <!-- Slick -->
+    <script src="~/FrontAssets/vendor/slick-master/slick/slick.js" type="text/javascript" charset="utf-8"></script>
+    <!-- lightgallery -->
+    <script src="~/FrontAssets/vendor/lightgallery-master/dist/js/lightgallery-all.min.js"></script>
+    <!-- select2 Js -->
+    <script src="~/FrontAssets/vendor/select2/js/select2.min.js"></script>
+    <!-- Custom -->
+    <script src="~/FrontAssets/js/custom.js"></script>
+
+    <script src="~/FrontAssets/js/countrypicker.js"></script>
+
+    <script src="~/FrontAssets/js/tagsinput.js"></script>
+
+    <script src="~/FrontAssets/js/signalr.js"></script>
+
+     <script type="text/javascript" src="~/assets/js/plugins/pickers/daterangepicker.js"></script>
+
+
+    <script type="text/javascript" src="~/assets/js/plugins/tables/datatables/datatables.min.js"></script>
+    <script type="text/javascript" src="~/assets/js/plugins/tables/datatables/extensions/row_reorder.min.js"></script>
+    <script type="text/javascript" src="~/assets/js/plugins/tables/datatables/extensions/responsive.min.js"></script>
+    <script type="text/javascript" src="~/assets/js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js"></script>
+    <script type="text/javascript" src="~/assets/js/plugins/tables/datatables/extensions/buttons.min.js"></script>
+    <script type="text/javascript" src="~/assets/js/pages/datatables_extension_buttons_html5.js"></script>
+    <script type="text/javascript" src="~/assets/js/pages/datatables_extension_row_reorder.js"></script>
+
+    
+
+
+</head>
+
+
+<input hidden id="receive_id" value="" />
+@if (@loggedinUser == null && @Context.Request.GetEncodedUrl().Equals(@ProjectVariables.baseUrl + "/"))
+{
+            <div class="py-1 alert alert-dismissible fade show mb-0" role="alert" style="background: linear-gradient(to left top, #2cdd9bcf, #1DC8CC);">
+                <div class="container-fluid">
+                    <p class="text-center mb-0 py-0 py-md-1" style="font-size:15px;">
+                        Are you looking for Home or Tech services ? Explore our complimentary service options through IT Butler today. <a href="@Url.Action("Register","Home", new{value="Buyer"})" target="_blank">  </a>
+                        <a role="button" href="@Url.Action("Register","Home", new{value="Buyer"})"  class="btn btn-success ml-2" style="border:solid #fff 1px;">Get Started </a>
+                    </p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+}
+
+
+@*Start Massam 06-01-23*@
+
+<nav class="navbar navbar-expand-lg navbar-light topbar static-top shadow-sm bg-white osahan-nav-top px-0 header-block">
+    <div class="container">
+        <!-- Sidebar Toggle (Topbar) -->
+        <a class="navbar-brand" href="@Url.Action("Index", "Home")"><img src="~/images/butlerlogo.png" alt=""></a>
+        <!-- Topbar Search -->
+
+        @if(!string.IsNullOrEmpty(Userid))
+        {
+            <form class="d-none d-sm-inline-block form-inline mr-auto my-2 my-md-0 mw-100 navbar-search" action="@Url.Action("Search", "Home")">
+            <div class="input-group">
+                <input name="search" id="srch" onkeyup="GetSuggestion(this)" type="text" class="form-control bg-white small" placeholder="Find Services..." aria-label="Search" aria-describedby="basic-addon2" required>
+
+                <div class="input-group-append">
+                    <button class="btn btn-success" type="submit">
+                        <i class="fa fa-search fa-sm"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="slctsearch"></div>
+        </form>
+
+        }
+        
+        <!-- Topbar Navbar -->
+        <ul class="navbar-nav align-items-center ml-auto" >
+            @*   <li class="nav-item dropdown no-arrow no-caret mr-3 dropdown-notifications d-sm-none">
+                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-search fa-fw"></i>
+                </a>
+                <!-- Dropdown - Messages -->
+                <div class="dropdown-menu dropdown-menu-right p-3 shadow-sm animated--grow-in" aria-labelledby="searchDropdown">
+                    <form class="form-inline mr-auto w-100 navbar-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light border-0 small" placeholder="Find Services..." aria-label="Search" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fa fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </li>*@
+
+            @*babar request notifications*@
+
+            @*<li class="nav-item dropdown no-arrow no-caret mr-3 dropdown-notifications" id="req_notify">
+                        <span id="customer_reqs" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;z-index: 1;"></span>
+
+                <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
+
+                    <h6 class="dropdown-header dropdown-notifications-header">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell mr-2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+
+                        Alerts Center
+                    </h6>
+                    <a class="dropdown-item dropdown-notifications-item" href="#!">
+
+                        <div class="dropdown-notifications-item-icon bg-warning">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="dropdown-notifications-item-content">
+                            <div class="dropdown-notifications-item-content-details">December 29, 2020</div>
+                            <div class="dropdown-notifications-item-content-text">This is an alert message. It's nothing serious, but it requires your attention.</div>
+                        </div>
+                    </a>
+                    <a class="dropdown-item dropdown-notifications-item" href="#!">
+                        <div class="dropdown-notifications-item-icon bg-info">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart">
+                                <line x1="12" y1="20" x2="12" y2="10"></line>
+                                <line x1="18" y1="20" x2="18" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="16"></line>
+                            </svg>
+                        </div>
+                        <div class="dropdown-notifications-item-content">
+                            <div class="dropdown-notifications-item-content-details">December 22, 2020</div>
+                            <div class="dropdown-notifications-item-content-text">A new monthly report is ready. Click here to view!</div>
+                        </div>
+                    </a>
+                    <a class="dropdown-item dropdown-notifications-item" href="#!">
+                        <div class="dropdown-notifications-item-icon bg-danger">
+                            <svg class="svg-inline--fa fa-exclamation-triangle fa-w-18" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="exclamation-triangle" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg="">
+                                <path fill="currentColor" d="M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"></path>
+                            </svg>
+                            <!-- <i class="fas fa-exclamation-triangle"></i> -->
+                        </div>
+                        <div class="dropdown-notifications-item-content">
+                            <div class="dropdown-notifications-item-content-details">December 8, 2020</div>
+                            <div class="dropdown-notifications-item-content-text">Critical system failure, systems shutting down.</div>
+                        </div>
+                    </a>
+                    <a class="dropdown-item dropdown-notifications-item" href="#!">
+                        <div class="dropdown-notifications-item-icon bg-success">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                                <line x1="20" y1="8" x2="20" y2="14"></line>
+                                <line x1="23" y1="11" x2="17" y2="11"></line>
+                            </svg>
+                        </div>
+                        <div class="dropdown-notifications-item-content">
+                            <div class="dropdown-notifications-item-content-details">December 2, 2020</div>
+                            <div class="dropdown-notifications-item-content-text">New user request. Woody has requested access to the organization.</div>
+                        </div>
+                    </a>
+                    <a class="dropdown-item dropdown-notifications-footer" href="alerts.html">View All Alerts</a>
+                </div>
+            </li>*@
+            @if (loggedinUser != null)
+            {
+                if (loggedinUser.Role != 0)
+                {
+                    if (loggedinUser.Role == 3)
+                    {
+                                                 <li class="nav-item dropdown no-arrow no-caret mr-3 dropdown-notifications">
+                                                      <span id="notifiCount">
+                                                  @*<span id="customer_reqs" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;z-index: 1;">3</span>*@
+
+                                              </span>
+                                          <a title="Request Notifications" class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownAlerts" @*href="javascript:void(0);"*@ role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="getallNotifications()">
+                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell">
+                                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                             </svg>
+                                          </a>
+                                          <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
+                                             <h6 class="dropdown-header dropdown-notifications-header">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell mr-2">
+                                                   <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                                   <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                                </svg>
+                                                Request Notifications
+                                             </h6>
+                                             <i id="notifiLoader" class="fa fa-circle-notch fa-spin" style="display:none"></i>
+                                             <div id="listnotifys">
+
+                                    @*<a class="dropdown-item dropdown-notifications-item" href="#!">
+                        <div class="dropdown-notifications-item-icon bg-warning">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity">
+                              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                           </svg>
+                        </div>
+                        <div class="dropdown-notifications-item-content">
+                           <div class="dropdown-notifications-item-content-details">December 29, 2020</div>
+                           <div class="dropdown-notifications-item-content-text">This is an alert message. It's nothing serious, but it requires your attention.</div>
+                        </div>
+                     </a>*@
+
+
+                                             </div>
+
+
+                                             <a class="dropdown-item dropdown-notifications-footer" href="@Url.Action("viewallnotifications","Home")">View All Notifications</a>
+                                          </div>
+                                       </li>
+
+                                              <li class="nav-item dropdown no-arrow no-caret mr-3">
+                                                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbardropdownEarnings" href="@Url.Action("Earnings","Seller")" title="Manage Earnings" role="button" aria-expanded="false">
+                                                    <i class="fa fa-money" aria-hidden="true"></i>
+
+                                                </a>
+                                                 </li>
+                    }
+                                   <li class="nav-item dropdown no-arrow no-caret mr-3 dropdown-notifications">
+                                     <a class="btn btn-icon btn-transparent-dark dropdown-toggle" href="@Url.Action("Orders", "Seller")" title="Manage Orders">
+                                       <i class="mt-1 fa fa-solid fa-list"></i>
+                            @if (GetBuyerComments != 0)
+                            {
+                                                        <span id="readcom" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;">@GetBuyerComments</span>
+                            }
+                            else if (GetSellerComments != 0)
+                            {
+                                                        <span id="readcom" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;">@GetSellerComments</span>
+                            }
+                            else
+                            {
+                                                        <span id="readcom" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;"></span>
+                            }
+                                        </a>
+                                      </li>
+
+                                    <li class="nav-item dropdown no-arrow no-caret mr-3">
+                                        <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownMessages" href="@Url.Action("Messages","Home")" title="Messages" role="button" aria-expanded="false">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail">
+                                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                                <polyline points="22,6 12,13 2,6"></polyline>
+                                @if (loggedinUser.ConnectionId != "0")
+                                {
+                                                            <span id="readm" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;">@loggedinUser.ConnectionId</span>
+                                }
+                                else
+                                {
+                                                            <span id="readm" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;"></span>
+                                }
+                                            </svg>
+
+                                        </a>
+
+                                    </li>
+                                    <li class="nav-item dropdown no-arrow no-caret dropdown-user">
+                                        <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                                            <img src="~/@loggedinUser.ImagePath" id="previmg" onerror="this.onerror=null; this.src='/FrontAssets/images/user/s4.png';" class="img-fluid" alt="Responsive image">
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
+                                            <h6 class="dropdown-header d-flex align-items-center">
+
+                                                <img src="~/@loggedinUser.ImagePath" id="previmg2" onerror="this.onerror=null; this.src='/FrontAssets/images/user/s4.png';" class="dropdown-user-img" alt="Responsive image">
+
+                                @if (loggedinUser.Role == 3 || loggedinUser.Role == 4)
+                                {
+                                                            <a href ="@Url.Action("Account", "Seller")">
+                                                                <div class="dropdown-user-details">
+                                                                     <div class="dropdown-user-details-name">@loggedinUser.FirstName @loggedinUser.LastName</div>
+                                                                    <div class="dropdown-user-details-email">@loggedinUser.Username</div>
+                                                                </div>
+                                                            </a>
+                                }
+                                else if (loggedinUser.Role == 1)
+                                {
+                                                            <a href ="@Url.Action("Index", "Admin")">
+                                                                <div class="dropdown-user-details">
+                                                                    <div class="dropdown-user-details-name">@loggedinUser.FirstName @loggedinUser.LastName</div>
+                                                                    <div class="dropdown-user-details-email">@loggedinUser.Username</div>
+                                                                </div>
+                                                            </a>
+                                }
+
+                                            </h6>
+                                            <div class="dropdown-divider"></div>
+                            @if (loggedinUser.Role == 1)
+                            {
+                                                        <a class="dropdown-item" href="@Url.Action("Index", "Admin")">
+                                                             <div class="dropdown-item-icon">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 23 23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-monitor"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                                                            </div>
+                                                            Dashboard
+                                                        </a>
+                            }
+                            else if (loggedinUser.Role == 3 || loggedinUser.Role == 4)
+                            {
+                                                        <a class="dropdown-item" href="@Url.Action("Account","Seller")">
+                                                            <div class="dropdown-item-icon">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                                            </div>
+                                                            Profile
+                                                        </a>
+                            }
+
+                            @if (loggedinUser.Role == 3 || loggedinUser.Role == 4)
+                            {
+                                                    <a class="dropdown-item" href="@Url.Action("UpdatePasswordUser","Auth")">
+                                                    <div class="dropdown-item-icon">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings">
+                                                            <circle cx="12" cy="12" r="3"></circle>
+                                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                                        </svg>
+                                                    </div>
+                                                    Account Privacy
+                                                        </a>
+                            }
+                            else if (loggedinUser.Role == 1)
+                            {
+                                                        <a class="dropdown-item" href="@Url.Action("UpdatePassword","Auth")">
+                                                    <div class="dropdown-item-icon">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings">
+                                                            <circle cx="12" cy="12" r="3"></circle>
+                                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                                        </svg>
+                                                    </div>
+                                                    Account Privacy
+                                                        </a>
+                            }
+
+                                            <a href="@Url.Action("Logout", "Auth")" class="dropdown-item">
+                                                <div class="dropdown-item-icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out">
+                                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                                        <polyline points="16 17 21 12 16 7"></polyline>
+                                                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                                                    </svg>
+                                                </div>
+                                                Logout
+                                            </a>
+                                        </div>
+                                    </li>
+                }
+            }
+
+        </ul>
+    </div>
+</nav>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white osahan-nav-mid px-0 border-top shadow-sm header-block">
+    <div class="container">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Index", "Home")" id="navbarDropdownPortfolio" aria-haspopup="true" aria-expanded="false">
+                        Home
+                    </a>
+
+                </li>
+
+
+
+                @*                <li class="nav-item">
+                    <a class="nav-link" href="#" style="visibility:hidden;">About</a>
+                </li>*@
+                @*<li class="nav-item">
+                    <a class="nav-link" href="#" style="visibility:hidden;">Contact</a>
+                </li>*@
+                <li class="nav-item dropdown" style="visibility:hidden;">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPortfolio" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownPortfolio">
+                        <a class="dropdown-item" href="product.html">Product List</a>
+                        <a class="dropdown-item" href="product2.html">Product List 2</a>
+                        <a class="dropdown-item" href="product-detail.html">List Detail</a>
+                        <a class="dropdown-item" href="profile.html">Profile</a>
+                        <a class="dropdown-item" href="company-profile.html">Company Profile</a>
+                        <a class="dropdown-item" href="alerts.html">Alerts</a>
+                        <a class="dropdown-item" href="messages.html">Messages</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown" style="visibility:hidden;">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Other Pages
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownBlog">
+                        <a class="dropdown-item" href="login.html">Login</a>
+                        <a class="dropdown-item" href="register.html">Register</a>
+                        <a class="dropdown-item" href="forgot-password.html">Forgot Password</a>
+                        <a class="dropdown-item" href="faq.html">FAQ</a>
+                        <a class="dropdown-item" href="404.html">404 Page</a>
+                        <a class="dropdown-item" href="blank.html">Blank Page</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown" style="visibility:hidden;">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPortfolio" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Extra Pages
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownPortfolio">
+                        <a class="dropdown-item" href="customer-order.html">Customer Order</a>
+                        <a class="dropdown-item" href="overview.html">Overview</a>
+                        <a class="dropdown-item" href="business.html">Business</a>
+                        <a class="dropdown-item" href="edit-account.html">Edit Account</a>
+                        <a class="dropdown-item" href="edit-security.html">Edit Security</a>
+                        <a class="dropdown-item" href="edit-notifications.html">Edit Notification</a>
+                        <a class="dropdown-item" href="edit-billing.html">Edit Billing</a>
+                        <a class="dropdown-item" href="edit-payment.html">Edit Payment</a>
+                    </div>
+                </li>
+                @*  <li class="nav-item dropdown" style="visibility:hidden;">
+                    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Seller Pages
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="dashboard.html">Dashboard</a>
+                        <a class="dropdown-item" href="orders.html">Orders</a>
+                        <a class="dropdown-item" href="gigs.html">Gigs</a>
+                      <a class="dropdown-item" href="earnings.html">Earnings</a>
+                    </div>
+                </li>*@
+            </ul>
+        </div>
+        <ul class="navbar-nav ml-auto">
+            @if (loggedinUser != null)
+            {
+                if (loggedinUser.Role == 4)
+                {
+                    <li class="nav-item my-auto">
+                        <a class="nav-link" href="@Url.Action("CustomerRequestHelp", "Home")">
+                            <i class="fa fa-tasks" aria-hidden="true"></i>
+                           @* <span>Request Help</span>*@
+                            <span>Request A Service</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item my-auto">
+                        <a class="nav-link" href="@Url.Action("CustomerRequests", "Home",new{ userrole=4})">
+                            <i class="fa fa-envelope"></i>
+                            <span>My Requests</span>
+                        </a>
+                    </li>
+
+                }
+                else if (loggedinUser.Role == 3)
+                {
+                    <li class="nav-item my-auto">
+                        <a class="nav-link" href="@Url.Action("CustomerRequests", "Home",new{ userrole=3})">
+                            @*@if (loggedinUser.ConnectionId != "0")
+                            {
+                                <span id="customer_reqs" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;">@loggedinUser.ConnectionId</span>
+
+                            }
+                            else
+                            {
+                            <span id="customer_reqs" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;"></span>
+
+                            }*@
+
+
+
+                            <i class="fa fa-envelope"></i>
+                            <span>Customer Requests</span>
+
+                        </a>
+                    </li>
+                }
+                
+
+
+                         <li class="nav-item my-auto">
+                                <a class="nav-link" href="@Url.Action("Orders", "Seller")">
+                                    @*<i class="fa fa-fw fa-tasks"></i>*@
+                                    <i class="fa fa-solid fa-list"></i>
+
+                                     
+                                    <span>Manage Orders</span>
+                                </a>
+                            </li>
+
+
+
+                if (loggedinUser.Role != 3)
+                {
+                                    <li class="nav-item my-auto">
+                                        <a class="nav-link" href="@Url.Action("Register", "Home", new { value = "I.T. Butler" })">
+                                            <i class="fa fa-fw fa-trophy"></i>
+                                            <span>Become A I.T. Butler</span>
+                                        </a>
+                                    </li>
+                }
+                if (loggedinUser.Role == 3)
+                {
+
+                                      <li class="nav-item">
+                                        <a class="nav-link" href="@Url.Action("Earnings", "Seller")">
+                                            <i class="fa fa-money"></i>
+                                            <span>Manage Earnings</span>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item my-auto">
+                                        <a class="nav-link" href="@Url.Action("UserProfile", "Home", new { idx = StringCipher.EncryptId(@loggedinUser.Id) , pr=1 })" target="_blank">
+                                        <i class="fa fa-fw fa-thin fa-eye"></i>
+                                        <span>Preview Your Profile</span>
+                                    </a>
+                                    </li>
+                }
+                if (loggedinUser.Role != 1)
+                {
+                                    <button class="btn btn-outline-secondary" style="margin-top:8px;margin-bottom:8px;" data-toggle="modal" data-target="#CopyModal" onclick="CopyFun()" type="button">
+                                        Share Your Refferal
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <div class="col-md-12">
+                                            <input type="text" id="fld" style="width:100%;" class="form-control" value="@ProjectVariables.baseUrl/Home/SignUpRefferal?refferal=@loggedinUser.Refferal_Code" placeholder="Refferal">
+                                        </div>
+                                    </div>
+                }
+
+            }
+            else
+            {
+                        <li class="nav-item my-auto">
+                            <a class="nav-link" href="@Url.Action("Register", "Home", new { value = "I.T. Butler" })">
+                                <i class="fa fa-fw fa-trophy"></i>
+                                <span>Become A I.T. Butler</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item my-auto">
+                            <a class="nav-link" href="@Url.Action("Login", "Auth")">
+                                <i class="fa fa-fw fa-user"></i>
+                                <span>Sign In</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Register", "Home", new { value = "Customer" })">
+                                <button class="btn btn-outline-secondary">Join</button>
+                            </a>
+                        </li>
+            }
+        </ul>
+    </div>
+</nav>
+
+
+
+
+
+@*Mobile Menu*@
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light topbar static-top shadow-sm bg-white osahan-nav-top px-0 header-block-desktop header-block-tab">
+
+    <style>
+        @@media only screen and (max-width: 768px) {
+            .header-block{
+                display:none;
+            }
+        }
+
+        @@media only screen and (min-width: 992px) {
+            .header-block-desktop{
+                display:none;
+            }
+        }
+
+        @@media only screen and (min-width: 768px) {
+            .header-block-tab{
+                display:none;
+            }
+        }
+
+        @@media (min-width: 0px) and (max-width: 767px) {
+            .osahan-nav-mid .navbar-collapse {
+                position: absolute;
+                background: #fff;
+
+                height:286px;
+                top: 55px;
+                right: 0px;
+                left: 0px;
+                padding: 15px;
+                border-top: 1px solid #eaebec;
+                border-bottom: 3px solid #3f424452;
+                z-index: 9;
+            }
+        }
+
+        @@media only screen and (max-width: 768px) {
+            .search-responsiveness{
+                display:none;
+            }
+        }
+    </style>
+
+
+    <div class="container">
+        <!-- Sidebar Toggle (Topbar) -->
+        <a class="navbar-brand" href="@Url.Action("Index", "Home")"><img src="~/images/butlerlogo.png" alt=""></a>
+        <!-- Topbar Search -->
+        @if (!string.IsNullOrEmpty(Userid))
+        {
+            <form class="d-none d-sm-inline-block form-inline mr-auto my-2 my-md-0 mw-100 navbar-search" action="@Url.Action("Search", "Home")">
+                <div class="input-group">
+                    <input name="search" id="srch" onkeyup="GetSuggestion(this)" type="text" class="form-control bg-white small" placeholder="Find Services..." aria-label="Search" aria-describedby="basic-addon2" required>
+
+                    <div class="input-group-append">
+                        <button class="btn btn-success" type="submit">
+                            <i class="fa fa-search fa-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="slctsearch"></div>
+            </form>
+
+        }
+
+        
+        <!-- Start HamBurger -->
+
+    
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul style="height:235px;">
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Index", "Home")" id="navbarDropdownPortfolio" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-home mr-1" aria-hidden="true"></i><span>Home</span>
+                    </a>
+
+                </li>
+
+                @if (loggedinUser != null)
+                {
+                    if (loggedinUser.Role == 4)
+                    {
+                        <li class="nav-item my-auto">
+                            <a class="nav-link" href="@Url.Action("CustomerRequestHelp", "Home")">
+                                <i class="fa fa-tasks" aria-hidden="true"></i>
+                                @* <span>Request Help</span>*@
+                                <span>Request A Service</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item my-auto">
+                            <a class="nav-link" href="@Url.Action("CustomerRequests", "Home",new{ userrole=4})">
+                                <i class="fa fa-envelope"></i>
+                                <span>My Requests</span>
+                            </a>
+                        </li>
+
+                    }
+                    else if (loggedinUser.Role == 3)
+                    {
+                        <li class="nav-item my-auto">
+                            <a class="nav-link" href="@Url.Action("CustomerRequests", "Home",new{ userrole=3})">
+                                @*@if (loggedinUser.ConnectionId != "0")
+                        {
+                        <span id="customer_reqs" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;">@loggedinUser.ConnectionId</span>
+
+                        }
+                        else
+                        {
+                        <span id="customer_reqs" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;"></span>
+
+                        }*@
+
+
+
+                                <i class="fa fa-envelope"></i>
+                                <span>Customer Requests</span>
+
+                            </a>
+                        </li>
+                    }
+
+
+
+                    <li class="nav-item my-auto">
+                        <a class="nav-link" href="@Url.Action("Orders", "Seller")">
+                            @*<i class="fa fa-fw fa-tasks"></i>*@
+                            <i class="fa fa-solid fa-list"></i>
+
+
+                            <span>Manage Orders</span>
+                        </a>
+                    </li>
+
+
+
+                    if (loggedinUser.Role != 3)
+                    {
+                        <li class="nav-item my-auto">
+                            <a class="nav-link" href="@Url.Action("Register", "Home", new { value = "I.T. Butler" })">
+                                <i class="fa fa-fw fa-trophy"></i>
+                                <span>Become A I.T. Butler</span>
+                            </a>
+                        </li>
+                    }
+                    if (loggedinUser.Role == 3)
+                    {
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Earnings", "Seller")">
+                                <i class="fa fa-money"></i>
+                                <span>Manage Earnings</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item my-auto">
+                            <a class="nav-link" href="@Url.Action("UserProfile", "Home", new { idx = StringCipher.EncryptId(@loggedinUser.Id) , pr=1 })" target="_blank">
+                                <i class="fa fa-fw fa-thin fa-eye"></i>
+                                <span>Preview Your Profile</span>
+                            </a>
+                        </li>
+                    }
+                    if (loggedinUser.Role != 1)
+                    {
+                        <button class="btn btn-outline-secondary" style="margin-top:8px;margin-bottom:8px;" data-toggle="modal" data-target="#CopyModal" onclick="CopyFun()" type="button">
+                            Share Your Refferal
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <div class="col-md-12">
+                                <input type="text" id="fld" style="width:100%;" class="form-control" value="@ProjectVariables.baseUrl/Home/SignUpRefferal?refferal=@loggedinUser.Refferal_Code" placeholder="Refferal">
+                            </div>
+                        </div>
+                    }
+
+                }
+                else
+                {
+                    <li class="nav-item my-auto">
+                        <a class="nav-link" href="@Url.Action("Register", "Home", new { value = "I.T. Butler" })">
+                            <i class="fa fa-fw fa-trophy"></i>
+                            <span>Become A I.T. Butler</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item my-auto">
+                        <a class="nav-link" href="@Url.Action("Login", "Auth")">
+                            <i class="fa fa-fw fa-user"></i>
+                            <span>Sign In</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Register", "Home", new { value = "Customer" })">
+                            <button class="btn btn-outline-secondary">Join</button>
+                        </a>
+                    </li>
+                }
+
+
+
+                @*                <li class="nav-item">
+                <a class="nav-link" href="#" style="visibility:hidden;">About</a>
+                </li>*@
+                @*<li class="nav-item">
+                <a class="nav-link" href="#" style="visibility:hidden;">Contact</a>
+                </li>*@
+                <li class="nav-item dropdown" style="visibility:hidden;">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPortfolio" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownPortfolio">
+                        <a class="dropdown-item" href="product.html">Product List</a>
+                        <a class="dropdown-item" href="product2.html">Product List 2</a>
+                        <a class="dropdown-item" href="product-detail.html">List Detail</a>
+                        <a class="dropdown-item" href="profile.html">Profile</a>
+                        <a class="dropdown-item" href="company-profile.html">Company Profile</a>
+                        <a class="dropdown-item" href="alerts.html">Alerts</a>
+                        <a class="dropdown-item" href="messages.html">Messages</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown" style="visibility:hidden;">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Other Pages
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownBlog">
+                        <a class="dropdown-item" href="login.html">Login</a>
+                        <a class="dropdown-item" href="register.html">Register</a>
+                        <a class="dropdown-item" href="forgot-password.html">Forgot Password</a>
+                        <a class="dropdown-item" href="faq.html">FAQ</a>
+                        <a class="dropdown-item" href="404.html">404 Page</a>
+                        <a class="dropdown-item" href="blank.html">Blank Page</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown" style="visibility:hidden;">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPortfolio" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Extra Pages
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownPortfolio">
+                        <a class="dropdown-item" href="customer-order.html">Customer Order</a>
+                        <a class="dropdown-item" href="overview.html">Overview</a>
+                        <a class="dropdown-item" href="business.html">Business</a>
+                        <a class="dropdown-item" href="edit-account.html">Edit Account</a>
+                        <a class="dropdown-item" href="edit-security.html">Edit Security</a>
+                        <a class="dropdown-item" href="edit-notifications.html">Edit Notification</a>
+                        <a class="dropdown-item" href="edit-billing.html">Edit Billing</a>
+                        <a class="dropdown-item" href="edit-payment.html">Edit Payment</a>
+                    </div>
+                </li>
+                @*  <li class="nav-item dropdown" style="visibility:hidden;">
+                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Seller Pages
+                </a>
+                <div class="dropdown-menu">
+                <a class="dropdown-item" href="dashboard.html">Dashboard</a>
+                <a class="dropdown-item" href="orders.html">Orders</a>
+                <a class="dropdown-item" href="gigs.html">Gigs</a>
+                <a class="dropdown-item" href="earnings.html">Earnings</a>
+                </div>
+                </li>*@
+            </ul>
+        </div>
+        @*<ul class="navbar-nav ml-auto">
+            
+        </ul>*@
+
+        <!-- End HamBurger -->
+
+
+
+        
+    </div>
+</nav>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white osahan-nav-mid px-0 border-top shadow-sm header-block-desktop header-block-tab" style="justify-content:center;">
+
+    <!-- Topbar Navbar -->
+    <ul class="navbar-nav align-items-center">
+
+        @if (loggedinUser != null)
+    {
+        if (loggedinUser.Role != 0)
+        {
+            if (loggedinUser.Role == 3)
+            {
+                <li class="nav-item dropdown no-arrow no-caret mr-3 dropdown-notifications">
+                    <span id="notifiCount">
+                        @*<span id="customer_reqs" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;z-index: 1;">3</span>*@
+
+                    </span>
+                    <a title="Request Notifications" class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownAlerts" @*href="javascript:void(0);"*@ role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="getallNotifications()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
+                        <h6 class="dropdown-header dropdown-notifications-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell mr-2">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                            Request Notifications
+                        </h6>
+                        <i id="notifiLoader" class="fa fa-circle-notch fa-spin" style="display:none"></i>
+                        <div id="listnotifys">
+
+                            @*<a class="dropdown-item dropdown-notifications-item" href="#!">
+                <div class="dropdown-notifications-item-icon bg-warning">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                </div>
+                <div class="dropdown-notifications-item-content">
+                <div class="dropdown-notifications-item-content-details">December 29, 2020</div>
+                <div class="dropdown-notifications-item-content-text">This is an alert message. It's nothing serious, but it requires your attention.</div>
+                </div>
+                </a>*@
+
+
+                        </div>
+
+
+                        <a class="dropdown-item dropdown-notifications-footer" href="@Url.Action("viewallnotifications","Home")">View All Notifications</a>
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown no-arrow no-caret mr-3">
+                    <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbardropdownEarnings" href="@Url.Action("Earnings","Seller")" title="Manage Earnings" role="button" aria-expanded="false">
+                        <i class="fa fa-money" aria-hidden="true"></i>
+
+                    </a>
+                </li>
+            }
+            <li class="nav-item dropdown no-arrow no-caret mr-3 dropdown-notifications">
+                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" href="@Url.Action("Orders", "Seller")" title="Manage Orders">
+                    <i class="mt-1 fa fa-solid fa-list"></i>
+                    @if (GetBuyerComments != 0)
+                    {
+                        <span id="readcom" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;">@GetBuyerComments</span>
+                    }
+                    else if (GetSellerComments != 0)
+                    {
+                        <span id="readcom" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;">@GetSellerComments</span>
+                    }
+                    else
+                    {
+                        <span id="readcom" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;"></span>
+                    }
+                </a>
+            </li>
+
+            <li class="nav-item dropdown no-arrow no-caret mr-3">
+                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownMessages" href="@Url.Action("Messages","Home")" title="Messages" role="button" aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                        @if (loggedinUser.ConnectionId != "0")
+                        {
+                            <span id="readm" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;">@loggedinUser.ConnectionId</span>
+                        }
+                        else
+                        {
+                            <span id="readm" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;"></span>
+                        }
+                    </svg>
+
+                </a>
+
+            </li>
+            <li class="nav-item dropdown no-arrow no-caret dropdown-user">
+                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                    <img src="~/@loggedinUser.ImagePath" id="previmg" onerror="this.onerror=null; this.src='/FrontAssets/images/user/s4.png';" class="img-fluid" alt="Responsive image">
+                </a>
+                <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
+                    <h6 class="dropdown-header d-flex align-items-center">
+
+                        <img src="~/@loggedinUser.ImagePath" id="previmg2" onerror="this.onerror=null; this.src='/FrontAssets/images/user/s4.png';" class="dropdown-user-img" alt="Responsive image">
+
+                        @if (loggedinUser.Role == 3 || loggedinUser.Role == 4)
+                        {
+                            <a href="@Url.Action("Account", "Seller")">
+                                <div class="dropdown-user-details">
+                                    <div class="dropdown-user-details-name">@loggedinUser.FirstName @loggedinUser.LastName</div>
+                                    <div class="dropdown-user-details-email">@loggedinUser.Username</div>
+                                </div>
+                            </a>
+                        }
+                        else if (loggedinUser.Role == 1)
+                        {
+                            <a href="@Url.Action("Index", "Admin")">
+                                <div class="dropdown-user-details">
+                                    <div class="dropdown-user-details-name">@loggedinUser.FirstName @loggedinUser.LastName</div>
+                                    <div class="dropdown-user-details-email">@loggedinUser.Username</div>
+                                </div>
+                            </a>
+                        }
+
+                    </h6>
+                    <div class="dropdown-divider"></div>
+                    @if (loggedinUser.Role == 1)
+                    {
+                        <a class="dropdown-item" href="@Url.Action("Index", "Admin")">
+                            <div class="dropdown-item-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 23 23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-monitor"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                            </div>
+                            Dashboard
+                        </a>
+                    }
+                    else if (loggedinUser.Role == 3 || loggedinUser.Role == 4)
+                    {
+                        <a class="dropdown-item" href="@Url.Action("Account","Seller")">
+                            <div class="dropdown-item-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            </div>
+                            Profile
+                        </a>
+                    }
+
+                    @if (loggedinUser.Role == 3 || loggedinUser.Role == 4)
+                    {
+                        <a class="dropdown-item" href="@Url.Action("UpdatePasswordUser","Auth")">
+                            <div class="dropdown-item-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                </svg>
+                            </div>
+                            Account Privacy
+                        </a>
+                    }
+                    else if (loggedinUser.Role == 1)
+                    {
+                        <a class="dropdown-item" href="@Url.Action("UpdatePassword","Auth")">
+                            <div class="dropdown-item-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                </svg>
+                            </div>
+                            Account Privacy
+                        </a>
+                    }
+
+                    <a href="@Url.Action("Logout", "Auth")" class="dropdown-item">
+                        <div class="dropdown-item-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                        </div>
+                        Logout
+                    </a>
+                </div>
+            </li>
+        }
+    }
+
+    </ul>
+    
+</nav>
+
+
+@*Mobile Menu End*@
+
+@*End Massam 06-01-23*@
+
+
+<body>
+
+    @*/*Start massam 06-01-23*/*@
+    <style>
+        @@media only screen and (max-width: 768px) {
+            .footer-margin {
+                margin-left: 0% !important;
+            }
+        }
+    </style>
+    @*/*End massam 06-01-23*/*@
+
+    @RenderBody()
+
+    <!--       footer -->
+    <footer class="bg-white">
+        <div class="container">
+
+
+
+            @*Start massam 06-01-23*@
+            <div class="d-flex justify-content-between footer-margin" style="margin-left:20%;">
+                @*End massam 06-01-23*@
+                <ul class="footer-list">
+                    <h2>Categories</h2>
+                    <ul class="list">
+                        <li><a href="#">Graphics &amp; Design</a></li>
+                        <li><a href="#">Digital Marketing</a></li>
+                        <li><a href="#">Writing &amp; Translation</a></li>
+                        <li><a id="shwmore" data-toggle="collapse" href="#" data-target="#colele">Show More</a></li>
+                    </ul>
+                    <ul class="mb-2 collapse multi-collapse" id="colele" style="margin-top: 6%;">
+                       <li><a href="#">Video &amp; Animation</a></li>
+                        <li><a href="#">Music &amp; Audio</a></li>
+                        <li><a href="#">Programming &amp; Tech</a></li>
+                        <li><a href="#">Business</a></li>
+                        <li><a href="#">Lifestyle</a></li>
+                    </ul>
+                  </ul>
+                <div class="footer-list">
+                    <h2>About</h2>
+                    <ul class="list">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                          <li><a href="@Url.Action("Contact","Home")">Help &amp; Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-list">
+                    <h2>Community</h2>
+                    <ul class="list">
+                        <li><a href="@Url.Action("Register","Home", new { val="I.T. Butler"})">Become a I.T. Butler</a></li>
+                        <li><a href="@Url.Action("Register","Home", new { val="Customer"})">Buy on IT Butler</a></li>
+                    </ul>
+                </div>
+                @* <div class="footer-list" style="visibility: hidden;">
+                    <h2>More From IT Butler</h2>
+                    <ul class="list" style="visibility: hidden;">
+                        <li>
+                            <a href="#">
+                                IT Butler
+                                Pro
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                IT Butler
+                                Studios
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                IT Butler
+                                Logo Maker
+                            </a>
+                        </li>
+                        <li><a href="#">Get Inspired</a></li>
+                        <li><a href="#">ClearVoice<small>Content Marketing</small></a></li>
+                        <li><a href="#">AND CO<small>Invoice Software</small></a></li>
+                        <li><a href="#">Learn<small>Online Courses</small></a></li>
+                    </ul>
+                </div>*@
+            </div>
+            <div class="copyright">
+                <div class="logo">
+                    <a href="@Url.Action("Index","Home")">
+                        <img src="~/images/IT-LOGO-WEB.png">
+                    </a>
+                </div>
+                <p>
+                    © Copyright 2022 It Butler. All Rights Reserved
+                </p>
+                @*<ul class="social">
+                    <li>
+                        <a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-pinterest-p" aria-hidden="true"></i></a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+                    </li>
+                </ul>*@
+            </div>
+        </div>
+    </footer>
+    <!--       footer-->
+
+    <div class="modal" style="color:green;" id="CopyModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+
+
+      <!-- Modal body -->
+      <div class="modal-body" style="text-align:center;">
+        Your Refferal link has been copied to clipboard
+      </div>
+
+                @if (loggedinUser != null)
+                {
+                            <input type="hidden" id="loginid" value="@loggedinUser.Id"/>
+                }
+    </div>
+  </div>
+</div>
+
+
+  <script type="text/javascript">
+
+var fileReader = new FileReader();
+var filterType = /^(?:image\/bmp|image\/cis\-cod|image\/gif|image\/ief|image\/jpeg|image\/jpeg|image\/jpeg|image\/pipeg|image\/png|image\/svg\+xml|image\/tiff|image\/x\-cmu\-raster|image\/x\-cmx|image\/x\-icon|image\/x\-portable\-anymap|image\/x\-portable\-bitmap|image\/x\-portable\-graymap|image\/x\-portable\-pixmap|image\/x\-rgb|image\/x\-xbitmap|image\/x\-xpixmap|image\/x\-xwindowdump)$/i;
+
+fileReader.onload = function (event) {
+  var image = new Image();
+
+  image.onload=function(){
+      document.getElementById("previewImg").src=image.src;
+      var canvas=document.createElement("canvas");
+      var context=canvas.getContext("2d");
+      canvas.width=256;
+      canvas.height=256;
+      context.drawImage(image,
+          0,
+          0,
+          image.width,
+          image.height,
+          0,
+          0,
+          canvas.width,
+          canvas.height
+      );
+
+      document.getElementById("previewImg").src = canvas.toDataURL();
+      document.getElementById("previmg").src=canvas.toDataURL();
+      document.getElementById("previmg2").src=canvas.toDataURL();
+  }
+  image.src=event.target.result;
+};
+var loadImageFile = function () {
+  var uploadImage = document.getElementById("fileAttachmentBtn");
+
+  //check and retuns the length of uploded file.
+  if (uploadImage.files.length === 0) { 
+    return; 
+  }
+
+  //Is Used for validate a valid file.
+  var uploadFile = document.getElementById("fileAttachmentBtn").files[0];
+
+
+  if (!filterType.test(uploadFile.type)) {
+    alert("Please select a valid image."); 
+    return;
+  }
+
+  fileReader.readAsDataURL(uploadFile);
+}
+</script>
+
+
+      <script>
+          $('#srch').val("@ViewBag.srch");
+          $('#searchDropdown').val("@ViewBag.srch");
+
+
+      </script>
+
+
+      <script>
+          function CopyFun() {
+  ///* Get the text field */
+  var copyText = document.getElementById("fld");
+
+  ///* Select the text field */
+  //copyText.select();
+  //copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+  // /* Copy the text inside the text field */
+  //navigator.clipboard.writeText(copyText.value);
+
+  copyToClipboard(copyText.value).then(() => console.log('text copied !'))
+    .catch(() => console.log('error'));
+
+    window.setTimeout(function () {
+        $("#CopyModal").modal("hide");
+    }, 2500);
+
+
+}
+
+
+
+    function copyToClipboard(textToCopy) {
+    // navigator clipboard api needs a secure context (https)
+    if (navigator.clipboard && window.isSecureContext) {
+        // navigator clipboard api method'
+        return navigator.clipboard.writeText(textToCopy);
+    } else {
+        // text area method
+        let textArea = document.createElement("textarea");
+        textArea.value = textToCopy;
+        // make the textarea out of viewport
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        return new Promise((res, rej) => {
+            // here the magic happens
+            document.execCommand('copy') ? res() : rej();
+            textArea.remove();
+        });
+    }
+}
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+
+      </script>
+      <script>
+      function limitText(limitField, limitNum) {
+    if (limitField.value.length > limitNum) {
+        limitField.value = limitField.value.substring(0, limitNum);
+    }
+}
+</script>
+      <script src="~/FrontAssets/js/RecieveMessage.js"></script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
+      <script>
+          $("#shwmore").click(function(){
+              if($(this).text()=="Show More")
+              {
+                  $(this).text("Show Less");
+                  $(this).attr("style","color:blue");
+              }
+              else
+              {
+                  $(this).text("Show More");
+                   $(this).attr("style","color:#7a7d85");
+              }
+          });
+
+      </script>
+
+       <script>
+
+            var logedinuserid='@Userid';
+            var logginuserrole='@LoggedinUserRole';
+
+           function GetSuggestion(element)
+           {
+
+                $.ajax({
+                    type: 'POST',
+                    url: "../Ajax/GetSuggestions",
+                    dataType: "json",
+                        data: {
+                           keyword:  $(element).val(),
+                        },
+                        success: function (response) {
+
+
+                                var st= $(element).parent().parent();
+
+                                if(st.attr("class")=="form-row")
+                                {
+
+                                   st= st.parent();
+
+                                   $(st).find(".slctsearch").attr("style","position:absolute;z-index:1;width: 450px;");
+                                 }
+
+                                 else
+                                  {
+                                   $(st).find(".slctsearch").attr("style","position:absolute;z-index:1;width: 220px;")
+                                  }
+
+
+                                $(st).find(".slctsearch").html("");
+
+                                console.log(response);
+
+                                if(response!=null && response!="")
+                                {
+
+                                    for(let i=0;i<response.length;i++)
+                                    {
+
+
+                                       var link= document.createElement('a');
+
+
+                                       link.setAttribute("href","../Search?search="+response[i]+"");
+                                       link.setAttribute("style","width: -webkit-fill-available!important;padding:0.25rem!important;border-radius:0px!important;padding: 10px!important;color:black;");
+
+                                       link.setAttribute("class","card");
+
+
+                                       link.innerHTML=response[i];
+
+
+
+                                       $(st).find(".slctsearch").append(link);
+
+
+                                    }
+                                    //console.log(slct);
+
+
+
+                                }
+                                else
+                                {
+                                      $(st).find(".slctsearch").html(" ");
+                                }
+
+                        },
+                        error: function () {
+                              $(st).find(".slctsearch").html(" ");
+                            alert("Ajax failed");
+                        }
+                });
+
+            }
+
+           // customerrequest notification
+          // var reqcount=0;
+          // console.log("count= "+reqcount);
+          // var read_req=$('#customer_reqs');
+          // if (read_req.text() != "") {
+          // reqcount = parseInt(read_req.text());
+          // console.log("iff= "+reqcount);
+          //}
+
+
+        //    connection.on('customerrequestnotification', (userid) => {
+        //        debugger
+        //        console.log("startconnection!!");
+        //        if(loggedinUser!=null)
+        //        {
+        //            console.log("hello!!");
+        //            if(userid==loggedinUser.Id)
+        //        {
+        //            //if ($(document).attr('title') != "IT Butler - Messages" && ordid == "") {
+        //    //reqcount++;
+        //    //console.log("incment= "+reqcount);
+        //    //read_req.show();
+        //    //$("#customer_reqs").html("" + reqcount.toString() + "");
+        //    // console.log($("#customer_reqs").html("" + reqcount.toString() + ""));
+        //    //Unreadrequests(userid, reqcount);
+        ////}
+
+
+        //             //var s = document.getElementById('customer_reqs');
+        //             //s.innerHTML = 1;
+        //             //$("#customer_reqs").append(1)
+
+
+
+        //              getNotificationCount(userid);
+
+        //        }
+
+        //        }
+
+
+
+        //                 });
+
+        //var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
+        //connection.start().then(function () 
+        //{
+        //    //getNotificationCount();
+        //}).catch(function (err) 
+        //{
+        //    console.log(err.toString())
+        //});
+
+
+        //   connection.on("customerrequestnotification", function (userid) 
+        //{
+        //    debugger;
+        //            console.log("helloNotify!!");
+
+        //    if(loggedinUser!=null)
+        //        {
+        //            console.log("hello!!");
+        //            if(userid==loggedinUser.Id)
+        //        {
+        //        getNotificationCount(userid);
+        //    }
+        //        }
+        //});
+
+        connection.on('customerrequestnotification', (userid) => {
+
+            //console.log("helloNotify!!");
+            //getNotificationCount(userid)
+    if(logedinuserid==userid)
+    {
+            getNotificationCount(userid)
+            //audio ping
+                        const audio = new Audio("https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3");
+                        audio.play();
+        
+
+    }
+
+
+           });
+
+
+//                         function Unreadrequests(id, cnt) {
+//    $.ajax({
+//        type: 'POST',
+//        url: "../Ajax/Unreadrequests",
+//        data: { id: id, cnt: cnt },
+//        dataType: "json",
+//        success: function (response) {
+//        },
+//        error: function (response) {
+//            alert("Error");
+//        },
+//    });
+//}
+
+    //connection.start().then(function () 
+    //    {
+    //        getNotificationCount(logedinuserid);
+    //    }).catch(function (err) 
+    //    {
+    //        console.log(err.toString())
+    //    });
+
+
+    if(logginuserrole==3)
+    {
+
+     getNotificationCount(logedinuserid);
+                        
+
+    }
+
+
+        function getNotificationCount(userid)                            
+        {
+            debugger;
+            $("#receive_id").val(userid);
+           
+            
+                     $.ajax({
+                type: "GET",
+                url: "../Ajax/GetNotificationsCount?receiverid=" + userid,
+                cache: false,
+                success: function(data) 
+                {
+                    debugger
+                    console.log(data);
+                    $("#notifiCount").empty();
+
+                    if(data != "0")
+                    {
+                        $("#customer_reqs").empty();
+
+                        //$("#req_notify").append('<span class="badge bg-danger rounded-pill badge-notifications" title="'+data+' Unread notifications">'+data+'</span>');
+                        $("#notifiCount").append('<span id="customer_reqss" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left: 15px;margin-bottom:15px;color:white;z-index: 1;">'+data+'</span>');
+                   
+                        ////audio ping
+                        //const audio = new Audio("https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3");
+                        //audio.play();
+
+                    }
+
+                },
+                error: function() 
+                {
+
+                },
+                complete:function()
+                {
+
+                    //getRoleList();
+                }
+            });
+
+
+
+        }
+
+    </script>
+
+    <script>
+        function getallNotifications()                            
+        {
+            debugger;
+            var userid=$("#receive_id").val();
+           //userid= "6013";
+            $('#listnotifys').empty();
+
+
+                     //ajax call
+                    $('#notifiLoader').show();
+                     $.ajax({
+                type: "GET",
+                url: "../Ajax/GetNotifications?receiverid=" + userid,
+                cache: false,
+                success: function(data) 
+                {
+                    debugger
+                    console.log(data);
+                    $('#listnotifys').empty();
+                    var notifylist=null;
+                    for(var i=0;i<data.length;i++)
+                    {
+                        var notifystring ="";
+
+                        if(data[i].isRead == 0)
+                        {
+                            notifystring = `<i class="fa fa-dot-circle-o ml-5" style="color:navy" aria-hidden="true"></i>`;
+                        }
+                        var requestid=data[i].requestid;
+                        notifylist=`<a class="dropdown-item dropdown-notifications-item" onclick="updateNotification('${data[i].id}')" href="@Url.Action("CustomerRequests","Home")">
+                        <div class="dropdown-notifications-item-icon bg-warning">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity">
+                              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                           </svg>
+                        </div>
+                        <div class="dropdown-notifications-item-content">
+                           <div class="dropdown-notifications-item-content-details">${data[i].createdAt}</div>
+                           <div class="dropdown-notifications-item-content-text">${data[i].title}</div>
+                        </div>
+
+                        ${notifystring}
+
+                     </a>`;
+
+                     $('#listnotifys').append(notifylist);
+
+                    }
+
+
+                },
+                error: function() 
+                {
+
+                },
+                complete:function()
+                {
+                    $('#notifiLoader').hide(); 
+                    //getRoleList();
+                }
+            });
+
+
+
+        }
+
+
+        
+
+        function updateNotification(id)                            
+        {
+            debugger;
+           
+           
+            
+                     $.ajax({
+                type: "GET",
+                url: "../Ajax/updatenotification?id=" + id,
+                cache: false,
+                success: function(data) 
+                {
+                    debugger
+                    console.log(data);
+                    if(data==true)
+                    {
+                        getNotificationCount(logedinuserid);
+
+
+                    }
+
+
+                },
+                error: function() 
+                {
+
+                },
+                complete:function()
+                {
+
+                    //getRoleList();
+                }
+            });
+
+
+
+        }
+    </script>
+
+
+</body>
+</html>
+

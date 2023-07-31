@@ -1,0 +1,541 @@
+﻿@using LoginFinal.HelpingClasses
+@using Microsoft.Data.SqlClient;
+@inject SqlConnection de
+@using LoginFinal.BL
+@using System.Security.Claims;
+
+@{
+    var Userid = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
+    var CurrentUserRecord = new UserBL().GetActiveUserById(Convert.ToInt32(Userid), de);
+    User loggedinUser = CurrentUserRecord;
+}
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_FrontLayout.cshtml";
+
+
+}
+
+@*Start massam 06-01-23*@
+<style>
+    @@media only screen and (max-width: 768px) {
+        .card-responsive{
+            width:100% !important;
+        }
+        .service-slider-responsive{
+            margin-left:0px;
+            margin-right:0px;
+        }
+        .service-heading-responsive{
+            font-size:23px !important;
+            text-align:center;
+        }
+    }
+</style>
+@*End massam 06-01-23*@
+
+
+<!-- Begin Page Content -->
+
+<section class="py-5 homepage-search-block position-relative">
+    <div class="container">
+        <div class="row py-lg-5">
+            <div class="col-lg-6">
+                <div class="homepage-search-title">
+                    <h1 class="mb-3 text-shadow text-gray-900 font-weight-bold">Find The Perfect Freelance Services For Your Business</h1>
+                    <h5 class="mb-5 text-shadow text-gray-800 font-weight-normal">
+                        Millions of people use AI Health to turn their ideas into reality.
+                    </h5>
+                </div>
+                @if(loggedinUser!=null)
+                {
+                     <div class="homepage-search-form">
+                    <form class="form-noborder" action="@Url.Action("Search", "Home")">
+                        <div class="form-row">
+                            <div class="col-lg-10 col-md-7 col-sm-12 form-group">
+                                <input name="search" onkeyup="GetSuggestion(this)" type="text" placeholder="Find Services..."
+                                       class="form-control border-0 form-control-lg shadow-sm" required>
+                            </div>
+                           
+                            <div class="col-lg-2 col-md-2 col-sm-12 form-group">
+                                <button type="submit"
+                                        class="btn btn-success btn-block btn-lg btn-gradient shadow-sm">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                         <div class="slctsearch"></div>
+                    </form>
+                </div>
+                <div class="popular">
+                    @if (@Enumerable.Count(@ViewBag.Popular) != 0)
+                    {
+                        <span class="text-body-2">Popular</span>
+                    }
+                    <ul>
+                        @foreach(var x in ViewBag.Popular)
+                        {
+                        <li><a href="@Url.Action("Search","Home",new { search=@x})" class="text-body-2">@x</a></li>
+                        }
+                    </ul>
+                </div>
+
+
+                }
+               
+            </div>
+
+
+            @if (@loggedinUser == null)
+            {
+                <div class="col-lg-3">
+
+
+                    @*Start massam 06-01-23*@
+                    <div class="card box3 card-responsive" style="width: 18rem;  background-position: center; background-size: cover; border-radius: 20px; background: linear-gradient(to left top, #2cdd9bcf, #1DC8CC), url('images/service-02.jpg') no-repeat; background-size: cover;  background-position: center; ">
+                        @*End massam 06-01-23*@
+                        <div class="card-body">
+                            <center><img class="card-img-top" src="~/Images/1.png" alt="Card image cap" style="width:70px;"></center>
+                            <h5 class="card-title text-white text-center">Need Service?</h5>
+                            <p class="card-text text-white text-center">An IT Butler Service Provider who’s already in your area will complete your job at transparent rates you can feel good about.</p>
+                            <center><a href="/Home/Register?value=Buyer" class="btn btn-success" style="border: solid #fff 1px;">Get Started</a></center>
+                            <p class="mb-0 mt-3 text-center text-white">Already a member? <a href="/Auth/Login"><u class="text-white"><b>Login</b></u></a></p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-3">
+                    @*Start massam 06-01-23*@
+                    <div class="card box3 ml-md-4 ml-0 mt-md-0 mt-3 card-responsive" style="width: 18rem;  background-position: center; background-size: cover; border-radius: 20px; background: linear-gradient(to left top, #2cdd9bcf, #1DC8CC), url('images/service-01.jpg') no-repeat; background-size: cover;  background-position: center; ">
+                        @*End massam 06-01-23*@ 
+                        
+                        <div class="card-body">
+                            <center><img class="card-img-top" src="~/Images/2.png" alt="Card image cap" style="width:70px;"></center>
+                            <h5 class="card-title text-white text-center">Offering Service?</h5>
+                            <p class="card-text text-white text-center">IT Butler connects with top qualilty service professionals in real time. IT Butler team handles all the details of each job.</p>
+                            <center><a href="/Home/Register?value=I.T. Butler" class="btn btn-success" style="border: solid #fff 1px;">Join Us</a></center>
+                            <p class="mb-0 mt-3 text-center text-white">Already offering service? <a href="/Auth/Login"><u class="text-white"><b>Login</b></u></a></p>
+                        </div>
+                    </div>
+                </div>
+
+            }
+            else
+            {
+                <div class="col-lg-6">
+                    <img class="img-fluid" src="~/FrontAssets/images/banner.svg" alt='' />
+                    </div>
+            }
+
+            
+        </div>
+    </div>
+</section>
+<!--       social -->
+<ul class="trusted-by bg-white border-bottom">
+    
+    <li><img class="mt-3 mb-3" width="100" src="~/FrontAssets/images/home/2.png"></li>
+    <li><img class="mt-3 mb-3" width="100" src="~/FrontAssets/images/home/3.png"></li>
+    <li><img class="mt-3 mb-3" width="100" src="~/FrontAssets/images/home/4.png"></li>
+    <li><img class="mt-3 mb-3" width="100" src="~/FrontAssets/images/home/5.png"></li>
+</ul>
+
+<div class="services-wrapper bg-white py-5">
+    <div class="container">
+
+        @*Start massam 06-01-23*@
+        <h2 class="service-heading-responsive">Popular Professional Services</h2>
+        <div class="row service-slider service-slider-responsive">
+            @*End massam 06-01-23*@
+            <div class="col">
+                <div class="service">
+                    <img src="~/FrontAssets/images/service-01.jpg">
+                    <h3><span>Build Your Brand</span> Logo Design</h3>
+                </div>
+            </div>
+            <div class="col">
+                <div class="service">
+                    <img src="~/FrontAssets/images/service-02.jpg">
+                    <h3><span>Customize your site</span> Wordpress</h3>
+                </div>
+            </div>
+            <div class="col">
+                <div class="service">
+                    <img src="~/FrontAssets/images/service-03.jpg">
+                    <h3><span>Share your message</span> Voice Over</h3>
+                </div>
+            </div>
+            <div class="col">
+                <div class="service">
+                    <img src="~/FrontAssets/images/service-04.jpg">
+                    <h3><span>Engage your audience</span> Whiteboard</h3>
+                </div>
+            </div>
+            <div class="col">
+                <div class="service">
+                    <img src="~/FrontAssets/images/service-05.jpg">
+                    <h3><span>Reach more customers</span> Social media</h3>
+                </div>
+            </div>
+            <div class="col">
+                <div class="service">
+                    <img src="~/FrontAssets/images/service-01.jpg">
+                    <h3><span>Build Your Brand</span> Logo Design</h3>
+                </div>
+            </div>
+            <div class="col">
+                <div class="service">
+                    <img src="~/FrontAssets/images/service-02.jpg">
+                    <h3><span>Customize your site</span> Wordpress</h3>
+                </div>
+            </div>
+            <div class="col">
+                <div class="service">
+                    <img src="~/FrontAssets/images/service-03.jpg">
+                    <h3><span>Share your message</span> Voice Over</h3>
+                </div>
+            </div>
+            <div class="col">
+                <div class="service">
+                    <img src="~/FrontAssets/images/service-04.jpg">
+                    <h3><span>Engage your audience</span> Whiteboard</h3>
+                </div>
+            </div>
+            <div class="col">
+                <div class="service">
+                    <img src="~/FrontAssets/images/service-05.jpg">
+                    <h3><span>Reach more customers</span> Social Media</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--       services-->
+
+@if (loggedinUser != null)
+{
+    <!-- Recently Viewed Carousal -->
+
+    <section class="py-5 bg-light">
+        <div class="view_slider recommended">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        @if (@Enumerable.Count(@ViewBag.rv)!=0)
+                        {
+                            <h3 class="text-dark">Recently Viewed & More</h3>
+                        }
+                        <div class="view recent-slider recommended-slider">
+
+                            @foreach (var x in ViewBag.rv)
+                            {
+                                @if (@x.Role == 3)
+                                {
+                                    <div>
+                                        <a>
+                                            <img class="img-fluid" src="~/@x.ImagePath" onerror="this.onerror=null; this.src='/FrontAssets/images/user/s4.png';" />
+                                        </a>
+                                        <div class="inner-slider">
+                                            <div class="inner-wrapper">
+                                                <div class="d-flex align-items-center">
+                                                    <span class="seller-image">
+                                                        <img class="img-fluid"
+                                       src="~/@x.ImagePath"
+                                       onerror="this.onerror=null; this.src='/FrontAssets/images/user/s4.png';" alt='' />
+                                                    </span>
+                                                    <span class="seller-name">
+                                                        <a href="@Url.Action("UserProfile","Home", new { id= @x.Id})">@x.FirstName @x.LastName</a>
+                                                    </span>
+                                                </div>
+                                                <h3 class="text-dark" style=" display:inline-block;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 20ch;">@x.Description</h3>
+                                               <br/>
+                                                  <a class="text-dark"  style="text-decoration:none;text-color:black;" href="@Url.Action("UserProfile","Home", new {id=@x.Id})">
+                                                         @x.City
+                                                    </a>
+                                                  <a class="text-dark" href="@Url.Action("UserProfile","Home", new {id=@x.Id})"><p style="font-weight:bold;">@x.Country</p></a>
+                                                <div class="footer">
+                                                    <div class="text-info">
+                                                    <div class="rating-wrapper">
+                                                        <span class="gig-rating text-body-2">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1792 1792" width="15" height="15">
+                                                                <path fill="#FFD700"
+                                                                d="M1728 647q0 22-26 48l-363 354 86 500q1 7 1 20 0 21-10.5 35.5t-30.5 14.5q-19 0-40-12l-449-236-449 236q-22 12-40 12-21 0-31.5-14.5t-10.5-35.5q0-6 2-20l86-500-364-354q-25-27-25-48 0-37 56-46l502-73 225-455q19-41 49-41t49 41l225 455 502 73q56 9 56 46z">
+                                                                </path>
+                                                            </svg>
+                                                           @if(@x.Stars==null)
+                                                                {
+                                                               <span>0</span> 
+                                                                }
+                                                                else
+                                                                {
+                                                                <span>@x.Stars</span> 
+                                                                } 
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                  
+                                                    <div class="price">
+                                                        <a class="stretched-link" href="@Url.Action("UserProfile","Home", new { idx= @StringCipher.EncryptId(@x.Id)})">
+                                                            Starting At $ @x.StartingFrom
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+<!-- Recently Viewed Carousal -->
+}
+
+<!--       testimonials -->
+<div class="testi-wrap pt-5">
+    <div class="container">
+        <div class="testimonial">
+            <div class="video-modal">
+                <div class="picture-wrapper">
+                    <img src="~/FrontAssets/images/1440-haerfest-2x.jpg">
+                </div>
+            </div>
+            <div class="text-content">
+                <p>
+                    "Being a small but growing brand, we have to definitely do a lot more with less. And when you want to create a business bigger than yourself, you’re going to need help. And that’s what AI Health
+                    does"
+                </p>
+                <span>Tim and Dan Joo, Co-founders</span>
+                <img alt="Company logo" src="~/FrontAssets/images/haerfest-logo.png" loading="lazy">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- testimonials -->
+
+
+<div class="market-wrapper py-5 mt-5 bg-white">
+    <div class="container">
+        <h2 class="text-center">Explore the Marketplace</h2>
+        <ul class="categories-list mb-0">
+            <li>
+                <a href="#">
+                    <img src="~/FrontAssets/images/graphics.svg" alt="" loading="lazy">Graphics &amp; Design
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="~/FrontAssets/images/online-marketing.svg" alt="Digital Marketing" loading="lazy">Digital Marketing
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="~/FrontAssets/images/writing-translation.svg" alt="Writing &amp; Translation" loading="lazy">Writing &amp; Translation
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="~/FrontAssets/images/video-animation.svg" alt="Video &amp; Animation" loading="lazy">Video &amp; Animation
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="~/FrontAssets/images/music-audio.svg" alt="Music &amp; Audio" loading="lazy">Music &amp; Audio
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="~/FrontAssets/images/programming.svg" alt="Programming &amp; Tech" loading="lazy">Programming &amp; Tech
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="~/FrontAssets/images/business.svg" alt="Business" loading="lazy">Business
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="~/FrontAssets/images/lifestyle.svg" alt="Lifestyle" loading="lazy">Lifestyle
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+@if (loggedinUser != null)
+{
+    <!-- Recommended Carousal -->
+
+    <section class="py-5 bg-light">
+        <div class="view_slider recommended">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        @if (@Enumerable.Count(@ViewBag.recm) != 0)
+                        {
+                            <h3 class="text-dark">Recommended Profiles</h3>
+                        }
+                        <div class="view recent-slider recommended-slider">
+
+                            @foreach (var x in ViewBag.recm)
+                            {
+                                @if (@x.Role == 3)
+                                {
+                                    <div>
+                                        <a>
+                                            <img class="img-fluid" src="~/@x.ImagePath" onerror="this.onerror=null; this.src='/FrontAssets/images/user/s4.png';" />
+                                        </a>
+                                        <div class="inner-slider">
+                                            <div class="inner-wrapper">
+                                                <div class="d-flex align-items-center">
+                                                    <span class="seller-image">
+                                                        <img class="img-fluid"
+                                                               src="~/@x.ImagePath"
+                                                               onerror="this.onerror=null; this.src='/FrontAssets/images/user/s4.png';" alt='' />
+                                                    </span>
+                                                    <span class="seller-name">
+                                                        <a href="@Url.Action("UserProfile","Home", new { id= @x.Id})">@x.FirstName @x.LastName</a>
+                                                    </span>
+                                                </div>
+                                                <h3 class="text-dark" style=" display:inline-block;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 20ch;">@x.Description</h3>
+                                              <br/>
+                                                <a class="text-dark"  style="text-decoration:none;text-color:black;" href="@Url.Action("UserProfile","Home", new {id=@x.Id})">
+                                                         @x.City
+                                                    </a>
+                                                  <a class="text-dark" href="@Url.Action("UserProfile","Home", new {id=@x.Id})"><p style="font-weight:bold;">@x.Country</p></a>
+                                                <div class="footer">
+                                                     <div class="content-info">
+                                                    <div class="rating-wrapper">
+                                                        <span class="gig-rating text-body-2">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1792 1792" width="15" height="15">
+                                                                <path fill="#FFD700"
+                                                d="M1728 647q0 22-26 48l-363 354 86 500q1 7 1 20 0 21-10.5 35.5t-30.5 14.5q-19 0-40-12l-449-236-449 236q-22 12-40 12-21 0-31.5-14.5t-10.5-35.5q0-6 2-20l86-500-364-354q-25-27-25-48 0-37 56-46l502-73 225-455q19-41 49-41t49 41l225 455 502 73q56 9 56 46z">
+                                                                </path>
+
+                                                            </svg>
+                                                                @if(@x.Stars==null)
+                                                                {
+                                                                    <span style="font-size:14px;color:black;">0</span> 
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>@x.Stars</span> 
+                                                                }
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                    <div class="price">
+                                                        <a class="stretched-link" href="@Url.Action("UserProfile","Home", new { idx= @StringCipher.EncryptId(@x.Id)})">
+                                                            Starting At $<span>@x.StartingFrom</span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+<!-- Recommended Carousal -->
+}
+<!--       guides  -->
+<div class="guide-wrapper py-5">
+    <div class="container">
+        <h2>
+            AI Health
+            Guides
+            <a href="#" class="float-right">See More guides></a>
+        </h2>
+        <div class="row">
+            <div class="col-md-4">
+                <a href="#" class="guide">
+                    <img src="~/FrontAssets/images/guide-01.jpg">
+                    <div class="content">
+                        <h6>Create a Website</h6>
+                        <p>Building a stunning website from A to Z</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="#" class="guide">
+                    <img src="~/FrontAssets/images/guide-02.jpg">
+                    <div class="content">
+                        <h6>Grow With Digital Marketing</h6>
+                        <p>Promoting your business online</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="#" class="guide">
+                    <img src="~/FrontAssets/images/guide-03.jpg">
+                    <div class="content">
+                        <h6>Build a Strong Brand</h6>
+                        <p>Differentiating yourself from the competition</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--       guides  -->
+<!-- get started -->
+<div>
+    <div class="get-started">
+        <div class="content">
+            <h2>Find Freelance Services For Your Business Today</h2>
+            <p>We've got you covered for all your business needs</p>
+            <a href="@Url.Action("Register", "Home", new { value = "Buyer" })" class="c-btn c-fill-color-btn">Get Started</a>
+        </div>
+    </div>
+</div>
+<!-- get started -->
+
+        
+        <div class="modal fade" id="messagemodal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                       <h5 style="margin-left:95px;font-weight:bold;" class="modal-title text-danger" id="exampleModalLabel">Account Activation Required</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please check your email to activate your account!</p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+            </div>
+
+
+@if(loggedinUser !=null)
+{
+ if (loggedinUser.IsActive== 3 && loggedinUser.Role == 4)
+            {
+               <script type="text/javascript">
+                    $(window).on('load', function() {
+                    $('#messagemodal2').modal('show');
+                        });
+                    </script>
+
+            }
+}

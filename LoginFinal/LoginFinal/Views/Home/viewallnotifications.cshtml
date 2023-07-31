@@ -1,0 +1,207 @@
+﻿@model List<Notification> 
+@using System.Security.Claims;
+
+@{
+    ViewData["Title"] = "viewallnotifications";
+    Layout = "~/Views/Shared/_FrontLayout.cshtml";
+}
+
+
+
+<div class="py-5">
+         <div class="container">
+            <div class="row">
+               <div class="col-lg-2 left">
+                @* <div class="box shadow-sm mb-3 rounded bg-white ads-box text-center">
+                     <img src="images/job1.png" class="img-fluid" alt="Responsive image">
+                     <div class="p-3 border-bottom">
+                        <h6 class="font-weight-bold text-dark">Notifications</h6>
+                        <p class="mb-0 text-muted">You’re all caught up! Check back later for new notifications
+                        </p>
+                     </div>
+                     <div class="p-3">
+                        <button type="button" class="btn btn-outline-success btn-sm pl-4 pr-4"> View settings </button>
+                     </div>
+                  </div>
+                  <div class="box mb-3 shadow-sm rounded bg-white profile-box text-center">
+                     <div class="p-5">
+                        <img src="images/clogo2.png" class="img-fluid" alt="Responsive image">
+                     </div>
+                     <div class="p-3 border-top border-bottom">
+                        <h5 class="font-weight-bold text-dark mb-1 mt-0">Envato</h5>
+                        <p class="mb-0 text-muted">Melbourne, AU
+                        </p>
+                     </div>
+                     <div class="p-3">
+                        <div class="d-flex align-items-top mb-2">
+                           <p class="mb-0 text-muted">Posted</p>
+                           <p class="font-weight-bold text-dark mb-0 mt-0 ml-auto">1 day ago</p>
+                        </div>
+                        <div class="d-flex align-items-top">
+                           <p class="mb-0 text-muted">Applicant Rank</p>
+                           <p class="font-weight-bold text-dark mb-0 mt-0 ml-auto">25</p>
+                        </div>
+                     </div>
+                  </div>*@
+               </div>
+               <div class="col-lg-9 right">
+                @*<div class="box shadow-sm rounded bg-white mb-3">
+                     <div class="box-title border-bottom p-3">
+                        <h6 class="m-0">Recent</h6>
+                     </div>
+                     <div class="box-body p-0">
+                        <div class="p-3 d-flex align-items-center bg-light border-bottom osahan-post-header">
+                           <div class="dropdown-list-image mr-3">
+                              <img class="rounded-circle" src="images/user/s4.png" alt="">
+                           </div>
+                           <div class="font-weight-bold mr-3">
+                              <div class="text-truncate">DAILY RUNDOWN: WEDNESDAY</div>
+                              <div class="small">Income tax sops on the cards, The bias in VC funding, and other top news for you</div>
+                           </div>
+                           <span class="ml-auto mb-auto">
+                              <div class="btn-group">
+                                 <button type="button" class="btn btn-light btn-sm rounded" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                 <i class="mdi mdi-dots-vertical"></i>
+                                 </button>
+                                 <div class="dropdown-menu dropdown-menu-right">
+                                    <button class="dropdown-item" type="button"><i class="mdi mdi-delete"></i> Delete</button>
+                                    <button class="dropdown-item" type="button"><i class="mdi mdi-close"></i> Turn Off</button>
+                                 </div>
+                              </div>
+                              <br>
+                              <div class="text-right text-muted pt-1">3d</div>
+                           </span>
+                        </div>
+                        <div class="p-3 d-flex align-items-center osahan-post-header">
+                           <div class="dropdown-list-image mr-3">
+                              <img class="rounded-circle" src="images/user/s1.png" alt="">
+                           </div>
+                           <div class="font-weight-bold mr-3">
+                              <div class="mb-2">We found a job at askbootstrap Ltd that you may be interested in Vivamus imperdiet venenatis est...
+                              </div>
+                              <button type="button" class="btn btn-outline-success btn-sm">View Jobs</button>
+                           </div>
+                           <span class="ml-auto mb-auto">
+                              <div class="btn-group">
+                                 <button type="button" class="btn btn-light btn-sm rounded" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                 <i class="mdi mdi-dots-vertical"></i>
+                                 </button>
+                                 <div class="dropdown-menu dropdown-menu-right">
+                                    <button class="dropdown-item" type="button"><i class="mdi mdi-delete"></i> Delete</button>
+                                    <button class="dropdown-item" type="button"><i class="mdi mdi-close"></i> Turn Off</button>
+                                 </div>
+                              </div>
+                              <br>
+                              <div class="text-right text-muted pt-1">4d</div>
+                           </span>
+                        </div>
+                     </div>
+                  </div>*@
+                  <div class="box shadow-sm rounded bg-white mb-3">
+                     <div class="box-title border-bottom p-3">
+                        <h6 class="m-0">All Request Notifications</h6>
+                     </div>
+                      <strong id="confirm_msg" style="color:Green "></strong>
+
+                     <div class="box-body p-0">
+
+                        @foreach (var item in Model)
+                        {
+
+    <div id="div_@item.Id" class="p-3 d-flex align-items-center border-bottom osahan-post-header">
+                                <a  href="@Url.Action("CustomerRequests","Home")">
+                              <div class="dropdown-list-image mr-3 d-flex align-items-center bg-danger justify-content-center rounded-circle text-white"><i class='fa fa-bell'></i></div>
+                                </a>
+                              <a  href="@Url.Action("CustomerRequests","Home")">
+                               
+                              <div class="font-weight-bold mr-3">
+                                  <div class="text-truncate">@item.Title</div>
+                                  <div class="small">@item.Description</div>
+                                  <div class="small"><b style="color:grey">@item.CreatedAt</b></div>
+
+                               </div>
+                               
+                                </a>
+                               <span class="ml-auto mb-auto">
+                                  <div id="del_@item.Id" class="btn-group">
+                                     <button type="button" class="btn btn-light btn-sm rounded" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                     <i class="mdi mdi-dots-vertical"></i>
+                                     </button>
+                                     <div class="dropdown-menu dropdown-menu-right" style="">
+                                        <button class="dropdown-item" type="button" onclick="deletenotification('@item.Id')"><i class="mdi mdi-delete"></i> Delete</button>
+                                                @*<button class="dropdown-item" type="button"><i class="mdi mdi-close"></i> Turn Off</button>*@
+                                     </div>
+                                  </div>
+                                  <br>
+                                        @*<div class="text-right text-muted pt-1">3d</div>*@
+                               </span>
+                            </div>
+
+                                 
+                           
+
+                        }
+
+
+                     </div>
+                  </div>
+               </div>
+
+               <div class="col-lg-1 right"></div>
+            </div>
+         </div>
+      </div>
+
+                              <script type="text/javascript">
+                                  function deletenotification(id)                            
+        {
+            debugger;
+
+           var isdelete=1;
+
+                     $.ajax({
+                type: "GET",
+                     //url: "../Ajax/updatenotification?id=" + id +"isdelete="+isdelete,
+                     url: "../Ajax/updatenotification",
+
+                     data:{
+            id: id,
+            isdelete: isdelete
+         
+                        },
+                     cache: false,
+                success: function(data) 
+                {
+                    debugger
+                    console.log(data);
+                    if(data==true)
+                    {
+
+                        $("#div_"+id).remove();
+                         //$("#msgg").append();
+                        
+                         $("#confirm_msg").fadeOut(5000);
+                        getNotificationCount(logedinuserid);
+
+                         // $("#del_"+id).remove();
+                        
+                    }
+
+
+                },
+                error: function() 
+                {
+
+                },
+                complete:function()
+                {
+
+                    //getRoleList();
+                }
+            });
+
+
+
+        }
+
+                              </script>
