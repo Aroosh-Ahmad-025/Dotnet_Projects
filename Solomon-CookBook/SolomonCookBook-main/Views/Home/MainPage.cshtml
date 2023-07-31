@@ -1,0 +1,67 @@
+@model RecepieswithCategoryListVM
+@{
+    ViewData["Title"] = "Home Page Title";
+    Layout = "_MainLayout";
+}
+
+
+
+@*<div style="margin:auto;width:80%; display:   flex;">
+     <div style="margin:auto;width:40%;">
+       <h6>Search a Recepie</h6> 
+    </div>
+    <div style="margin:auto;width:40%;" >
+        <h6>Browse by Category</h6> 
+    </div>
+</div>*@
+
+<div style="margin:auto;width:80%; display:flex;">
+     <div style="margin:auto;width:40%;">
+        <h6>Search a Recepie</h6> 
+    </div>
+    <div style="margin:auto;width:40%;" >
+        <form method="post" asp-action="MainPage"> 
+           <div style="display:flex;">
+                <div style="margin:5px;">
+                @*<input type="search" placeholder="Search by Category" name="SearchTerm" class="form-control" style="display:inline-block"/>*@
+                    <select class="form-select" onchange="this.form.submit()" name="category">
+                        <option value="">Select a Category</option>
+                        <option value ="clear">Clear Filter</option>
+                         <option value="Healthy">Healthy</option>
+                        <option value="African">African</option>
+                        <option value="Drinks">Drinks</option>
+                        <option value="Desserts">Desserts</option>
+                        <option value="Chinese">Chinese</option>
+                        @*@foreach(var category in Model.categories)
+                            {
+                                <option value="@category">@category</option>
+                            }*@
+                    </select>               
+            </div>
+  
+           </div>
+        </form> 
+    </div>
+</div>
+<div class="row">
+     @foreach (var item in Model.recepies)
+    {
+         <div class="col-md-3 mb-5">
+              <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="../@item.image_url" alt="Card image cap" height="300px" width="300px"/>
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Recepie_Name</h5>
+                        <a href='@Url.Action("recepieDetails","Home",new{id=@item.Recepie_ID})' >Details</a>
+                    </div>
+                </div>
+         </div>
+    }
+   
+</div>
+
+
+
+
+
+
+

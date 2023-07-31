@@ -1,0 +1,34 @@
+﻿@model RecepieswithCategoryListVM
+
+I am test Page, Test me!
+<br/>
+@ViewBag.email
+<br/>
+
+@Html.ActionLink("Signup", "Signup", "Home")
+
+<form method="post" enctype="multipart/form-data">
+    <label for="Image"></label>
+    <br/>
+    <input type="file" name="Img" />
+    <br/><br/>
+    <input type="submit"/>
+</form>
+
+@foreach(string item in Model.categories)
+{
+    <h1>@item</h1>
+}
+
+@foreach(var item in Model.recepies)
+{
+    <h2>@item.Category</h2>
+}
+
+<h1>
+    @ViewBag.Name
+</h1>
+
+<h2>
+    aa
+</h2>

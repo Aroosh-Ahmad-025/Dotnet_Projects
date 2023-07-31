@@ -1,0 +1,71 @@
+﻿@{
+    Layout = "_MainLayout";
+}
+@model SolomonCookBook.Models.RecepieImg
+
+<div class="mt-3">
+    <h2>
+        Staff Recepie Editing Page
+    </h2>
+</div>
+<div class="row">
+
+        <div class="col-md-6 mb-5" style="align-self: center;">
+
+        <form method="post" asp-action="StaffRecepieEditingPage"  enctype = "multipart/form-data" >
+            <input asp-for="MyRecepie.Recepie_ID" type="hidden"/>
+            <div class=mb-2>
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" asp-for="MyRecepie.Recepie_Name" required/>
+             </div>
+             <div class=mb-2>
+                  <label class="form-label">Category</label>
+                <input type="text" class="form-control" asp-for="MyRecepie.Category" required/>
+             </div>
+                
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <label class="form-label">Country</label>
+                         <input type="text" class="form-control" asp-for="MyRecepie.Country" required/>
+                    </div>
+                     <div class="col-md-6">
+                        <label class="form-label">Type</label>
+                         <input type="text" class="form-control" asp-for="MyRecepie.type" required/>
+                    </div>
+                </div>
+                     <div class=mb-2>
+                         <label class="form-label">Video Url</label>
+                     <input type="text" class="form-control" asp-for="MyRecepie.video_url" required/>
+                     </div>
+                     <div class=mb-2>
+                          <label class="form-label">Image</label>
+                     <input type="file" class="form-control" asp-for="MyImage.Img" required/>
+                     </div>
+                    <div class=mb-2>
+                          <label class="form-label">Directions</label>
+                          @*<input class="form-control"  />*@
+                          <textarea class="form-control" asp-for="MyRecepie.Directions" required></textarea>
+                     </div>
+                     <div class="mb-2">
+                         <input type="submit" rows="4" multiple class="btn btn-primary" value="Edit" />
+                     </div>
+           
+        </form>
+    </div>
+    <div class="col-md-6">
+        <h4>Name : <span>@ViewBag.Recepie.Recepie_Name</span></h3>
+       <h5 >Category : <span>@ViewBag.Recepie.Category</span></h5>
+        <h5>Ingredients</h5>
+        <p id="Ingredients">@ViewBag.Recepie.Ingredients</p>
+        <h5>Directions</h5>
+        <p id="Directions">@ViewBag.Recepie.Directions</p>
+        <h5>Country : @ViewBag.Recepie.Country</h5>
+        <h5>Type : @ViewBag.Recepie.type</h5>
+    </div>
+</div>
+
+<script>
+function handleChange(val, Id) {
+    document.getElementById(Id).innerHTML = val;
+}
+</script>

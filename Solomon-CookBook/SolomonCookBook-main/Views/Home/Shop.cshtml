@@ -1,0 +1,23 @@
+@{
+    Layout="_MainLayout";
+}
+
+<br/>
+<br/>
+<div class="row container">
+    @foreach (var item in Enumerable.Range(0,10))
+    {
+        <div class="col-md-3">
+            <div class="card" style="width: 15rem;">
+                <img class="card-img-top" src="../Images/vegs.jpg" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">Mashrooms</h5>
+                    <p class="card-text">$ 12.99</p>
+                    <a href="#" class="btn btn2">Add to Cart</a>
+                </div>
+            </div>
+            <br/>
+            <br/>
+        </div>
+    } 
+</div>

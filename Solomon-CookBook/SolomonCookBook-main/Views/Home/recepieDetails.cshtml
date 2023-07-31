@@ -1,0 +1,123 @@
+@{
+    Layout = "_MainLayout";
+}
+@model SolomonCookBook.Models.Recepies
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<div class="row container">
+    <div class="col-md-8 mt-3">
+        <div style="margin:auto; width:100%;">
+            <h3>
+            Ingredients
+            </h3>
+            <br/>
+            <label class="h6 d-inline">Serving Size</label>
+            <input id="serving" class="form-control w-25 d-inline" onchange="hangleServing()" type="number"/>
+            <ul>
+                @foreach(string ingredient in @Model.Ingredients?.Split(",")){
+                    <li >
+                        <span id="q">@ingredient.Split("-")[0]</span>
+                        <span style="marginn-left:5px;">@ingredient.Split("-")[1]</span>
+                    </li>
+                }
+            </ul>
+             <h3>
+            Directions
+            </h3>
+            <ul>
+                @Model.Directions
+                @*@foreach(string direction in @Model.Directions?.Split(",")){
+                    <li>@direction</li>
+                }*@
+            </ul> 
+        </div>
+       
+    </div>
+    <div class="col-md-4 mb-5">
+       <div style="margin:auto; width:100%;">
+            <div>
+            <iframe width="420" height="315"
+                     src="@Model.video_url">
+            </iframe>
+        </div>
+         <div><span class="h6">Recepie Type :</span> @Model.type</div>
+        <div><span class="h6">Recepie Country :</span> @Model.Country</div>
+        <div><span class="h6">Recepie Likes :</span> @Model.Likes</div>
+
+        <div class="mt-5">
+            <button class="btn btn-success" onclick="ShowAlert()">Like</button>
+           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Comment</button>
+        </div>
+        <div style="margin-top:40px;">
+            <h5>Comments</h5>
+                @foreach (var item in @ViewBag.Comments)
+                {
+                    <p>@item.Comment</p>
+                    }
+       </div>
+       </div>
+       
+    </div>
+</div>
+
+
+
+    <form method="post" asp-action="CommentonRecepie" asp-controller="Home">
+        <div id="exampleModal" class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Comment Form</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <label>
+                            Comment :  
+                        </label>
+                         <input type="text" name="Comment" placeholder="Comment" class="form-control" required/><br/>
+                         <input type="hidden" value="@Model.Recepie_ID" name="Recepie_ID"/>
+                         
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Submit Comment</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+    <script>
+    //const a = document.getElementById("q").innerHTML;
+        var elms = document.querySelectorAll("[id='q']");
+        var quantities = []
+        for(var i = 0; i < elms.length; i++) {
+        quantities[i]=(elms[i].innerHTML)
+         }
+function hangleServing() {
+    var elms = document.querySelectorAll("[id='q']");
+    var servingval = document.getElementById("serving").value;
+    for(var i = 0; i < elms.length; i++) {
+        elms[i].innerHTML = servingval*parseInt(quantities[i]);
+    }
+    console.log("Serving value is : ", servingval)
+    //document.getElementById("q").innerHTML = servingval*parseInt(a);
+}
+    </script>
+   @* @if (Model != null)
+    {
+        <script type="text/javascript">
+            $(function () {
+                alert("Successfully Commented");
+            });
+        </script>
+    }*@

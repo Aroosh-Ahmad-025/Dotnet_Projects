@@ -1,0 +1,48 @@
+﻿@{
+    Layout = "_MainLayout";
+}
+@model SolomonCookBook.Models.Recepies
+<div class="row mb-5">
+    <div class="col-md-6 mt-3">
+        <div style="margin:auto; width:70%;">
+            <h3>
+            Ingredients
+            </h3>
+            <br/>
+            <ul>
+                @foreach(string ingredient in @Model.Ingredients?.Split(",")){
+                    <li>@ingredient</li>
+                }
+            </ul> 
+            <div style="margin:5px;">
+                    <h5> Current Status : @Model.status</h5>
+            </div>
+            <div style="display: flex;">
+                <div style="margin:5px;">
+                     <a href='@Url.Action("StaffRecepieEditingPage","Home",new{id= @Model.Recepie_ID})' class="btn btn-primary">Edit Recepie</a>
+                </div>
+                <div style="margin:5px;">
+                     @Html.ActionLink("Approve Recepie","ApproveRecepie", new{id = @Model.Recepie_ID} , new {@class="btn btn-success"})
+                </div>
+            </div>
+
+            <div>
+                <h3> Directions</h3>
+                <p>@Model.Directions</p>
+            </div>
+            
+             
+            
+
+        </div>
+       
+    </div>
+    <div class="col-md-6">
+        <div>
+            <iframe width="420" height="315"
+                     src="@Model.video_url">
+            </iframe>
+        </div>
+       
+    </div>
+</div>

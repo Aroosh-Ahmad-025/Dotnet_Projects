@@ -1,0 +1,93 @@
+﻿ @*  @using (Html.BeginForm("CreateRecepie", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+
+                @Html.LabelFor(model => model.MyRecepie.Recepie_Name , htmlAttributes: new{@class = "control-label",@value="aa"})
+                @Html.EditorFor(model => model.MyRecepie.Recepie_Name ,new{htmlAttributes =new {@Value = "5",@class = "form-control"}}) 
+
+            
+                @Html.LabelFor(model => model.MyRecepie.Category , htmlAttributes: new{@class = "control-label"})
+                @Html.EditorFor(model => model.MyRecepie.Category , new{htmlAttributes = new{@class = "form-control"}})
+                
+                <div class="row">
+                    <div class="col-md-6">
+                         @Html.LabelFor(model => model.MyRecepie.Country , htmlAttributes: new{@class = "control-label"})
+                         @Html.EditorFor(model => model.MyRecepie.Country , new{htmlAttributes = new{@class = "form-control"}})
+                    </div>
+                      <div class="col-md-6">
+                         @Html.LabelFor(model => model.MyRecepie.type , htmlAttributes: new{@class = "control-label"})
+                         @Html.EditorFor(model => model.MyRecepie.type , new{htmlAttributes = new{@class = "form-control"}})
+                    </div>
+                </div>
+                @Html.LabelFor(model => model.MyRecepie.video_url , htmlAttributes: new{@class = "control-label"})
+                @Html.EditorFor(model => model.MyRecepie.video_url , new{htmlAttributes = new{@class = "form-control"}})
+
+               @* @Html.LabelFor(model => model.MyImage.Img , htmlAttributes: new{@class = "control-label"})
+                @Html.EditorFor(model => model.MyImage.Img  , new{htmlAttributes = new{@class = "form-control"}})*@
+                
+        
+                @Html.LabelFor(model => model.MyRecepie.Ingredients , htmlAttributes: new{@class = "control-label"})
+                @Html.EditorFor(model => model.MyRecepie.Ingredients , new{htmlAttributes = new{@class = "form-control"}})
+        
+                @Html.LabelFor(model => model.MyRecepie.Directions , htmlAttributes: new{@class = "control-label"})
+                @Html.EditorFor(model => model.MyRecepie.Directions , new{htmlAttributes = new{@class = "form-control"}})
+                    
+            <br/>
+            
+            <input type="submit" class="btn btn-primary" value="Create Recepie" />
+            
+        }
+
+
+
+
+
+        @using(Html.BeginForm("CreateRecepie","Home",FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            
+                @Html.LabelFor(model => model.MyRecepie.Recepie_Name , htmlAttributes: new{@class = "control-label"})
+                @Html.EditorFor(model => model.MyRecepie.Recepie_Name , new{htmlAttributes = new{@class = "form-control"}}) 
+        
+            
+                @Html.LabelFor(model => model.MyRecepie.Category , htmlAttributes: new{@class = "control-label"})
+                @Html.EditorFor(model => model.MyRecepie.Category , new{htmlAttributes = new{@class = "form-control"}})
+                
+                <div class="row">
+                    <div class="col-md-6">
+                         @Html.LabelFor(model => model.MyRecepie.Country , htmlAttributes: new{@class = "control-label"})
+                         @Html.EditorFor(model => model.MyRecepie.Country , new{htmlAttributes = new{@class = "form-control"}})
+                    </div>
+                      <div class="col-md-6">
+                         @Html.LabelFor(model => model.MyRecepie.type , htmlAttributes: new{@class = "control-label"})
+                         @Html.EditorFor(model => model.MyRecepie.type , new{htmlAttributes = new{@class = "form-control"}})
+                    </div>
+                </div>
+                @Html.LabelFor(model => model.MyRecepie.video_url , htmlAttributes: new{@class = "control-label"})
+                @Html.EditorFor(model => model.MyRecepie.video_url , new{htmlAttributes = new{@class = "form-control"}})
+
+                @Html.LabelFor(model => model.MyImage.Img , htmlAttributes: new{@class = "control-label"})
+                @Html.EditorFor(model => model.MyImage.Img  , new{htmlAttributes = new{@class = "form-control"}})
+                
+                @Html.HiddenFor(model => model.MyRecepie.Ingredients, new{@id = "ing"})
+                
+                <div class="row mt-3 mb-3">
+                    <div class="col-md-8">
+                       @* @Html.LabelFor(model => model.MyRecepie.Ingredients , htmlAttributes: new{@class = "control-label"})
+                        @Html.EditorFor(model => model.MyRecepie.Ingredients , new{htmlAttributes = new{@class = "form-control ingredient"}})*@
+                        <input type="text" class="form-control" placeholder="ingredient" id="ingredient"/>
+                        
+                    </div>
+                    
+                    <div class="col-md-4">
+                         <button class="btn btn-warning" type="button" onclick="add()" >Add Ingredient</button>
+                         @*<button class="btn btn-danger" type="button" onclick="show()" >Show</button>*@
+                    </div>
+                </div>
+                           
+                @Html.LabelFor(model => model.MyRecepie.Directions , htmlAttributes: new{@class = "control-label"})
+                @Html.EditorFor(model => model.MyRecepie.Directions , new{htmlAttributes = new{@class = "form-control .multi-line"}})
+
+            <br/>
+            
+            <input type="submit" class="btn btn-primary" value="Create Recepie" />
+            
+        }

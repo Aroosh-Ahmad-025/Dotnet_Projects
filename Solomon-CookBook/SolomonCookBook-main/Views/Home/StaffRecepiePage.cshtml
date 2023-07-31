@@ -1,0 +1,51 @@
+﻿@{
+    Layout = "_MainLayout";
+}
+
+
+@model IEnumerable<SolomonCookBook.Models.Recepies>
+<div class="row container mb-5">
+ @*   @foreach( var i in Enumerable.Range(0,10))
+
+    {   *@
+         <div class="row mb-5" style="background-color:slategrey;color:white;padding-top:12px; padding-bottom:12px">
+               <h5 class="col-md-2">Image </h5>
+               <h5 class="col-md-2">Title</h5>
+               <h5 class="col-md-2">Category</h5>
+               <h5 class="col-md-2">Type</h5>
+                <h5 class="col-md-1">Status</h5>
+               <h5 class="col-md-1">Approve</h5>
+               <h5 class="col-md-1">Delete</h5>
+               <h5 class="col-md-1">Edit</h5>
+            </div>
+        @foreach (var item in Model)
+        {
+            <div class="row mb-3">
+                <img class="col-md-2" src="../@item.image_url" width="30px" height="100px"  />
+                <h4 class="col-md-2"><a href='@Url.Action("StaffrecepieDetails","Home",new{id=@item.Recepie_ID})' class="btn">@item.Recepie_Name</a></h4>
+                <div class="col-md-2"> <span>@item.Category</span> </div>
+                 <div class="col-md-2"> <span>@item.type</span> </div>
+                 <div class="col-md-1"> <span>@item.status</span> </div>
+                 <div class="col-md-1"><a href='@Url.Action("ApproveRecepie","Home",new{id=@item.Recepie_ID})' class="btn btn-outline-success">Approve</a></div>
+                 <div class="col-md-1"><a href='@Url.Action("DeleteRecepie","Home",new{id=@item.Recepie_ID})' class="btn btn-outline-danger">Delete</a></div>
+                 <div class="col-md-1"><a href='@Url.Action("StaffRecepieEditingPage","Home",new{id=@item.Recepie_ID})' class="btn btn-outline-primary">Edit</a></div>
+            </div>
+            @*<div class="col-md-3">
+                <div class="card" style="width: 18rem;">-danger
+                    <img class="card-img-top" src="../@item.image_url" alt="Card image cap">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Recepie_Name</h5>
+                        <a href='@Url.Action("StaffrecepieDetails","Home",new{id=@item.Recepie_ID})' class="btn">Details</a>
+                    </div>
+                </div>
+                <br/>
+                <br/>
+                 
+            </div>*@
+             
+        }
+ @*   }*@
+</div>
+
+
+

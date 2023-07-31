@@ -1,0 +1,53 @@
+@{
+    Layout = "_Layout";
+}
+
+<div>
+    <button onclick="ShowStaffForm()">SignIn as Staff</button>
+    <button onclick="ShowMemberForm()">SignIn as Member</button>
+</div>
+
+
+<div class="row" style="margin:auto; width:60%; display:none;" id="staff" >
+    <div class="col-md-12 col-sm-12">
+        <div style="padding:50px;">
+            <h4>Staff Login</h4>
+            <form method="post" asp-action="AdminSignin">
+                <input type="text" placeholder="Name" class="form-control w-75" name="Name" required/><br/>
+                <input type="password" placeholder="Password" class="form-control w-75" name="Password" required/><br/>
+                <input type="submit" class="submitBtn" style="float: center;" value="SignIn"/>
+            </form><br/>
+            
+        </div>
+    </div>
+</div>
+
+<div class="row" style="margin:auto; width:60%; display:none;" id="member" >
+    <div class="col-md-12 col-sm-12">
+        <div style="padding:50px;">
+            <h4>Member Login</h4>
+            <form method="post" >
+                <input type="text" placeholder="Email" class="form-control w-75" name="Email" required/><br/>
+                <input type="password" placeholder="Password" class="form-control w-75" name="Password" required/><br/>
+                <input type="submit" class="submitBtn" style="float: center;" value="SignIn"/>
+            </form><br/>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    function ShowStaffForm(){
+        var x = document.getElementById("staff");
+        var y = document.getElementById("member");
+        x.style.display = "block";
+        y.style.display = "none";
+    }
+     function ShowMemberForm(){
+       var x = document.getElementById("staff");
+        var y = document.getElementById("member");
+        x.style.display = "none";
+        y.style.display = "block";
+    }
+</script>
+

@@ -1,0 +1,31 @@
+.submitBtn{
+    color:black;
+    background-color: yellow;
+    margin-left: 220px;
+    border-radius: 4px;
+    padding: 0 5px 0 5px;
+}
+
+.submitBtn:hover{
+    color:yellow;
+    background-color: black;
+    margin-left: 220px;
+    border-radius: 4px;
+    padding: 0 5px 0 5px;
+}
+
+.slider{
+    height: 25px;
+}
+
+.slider:hover > p {
+    visibility: hidden;
+}
+
+.slider:hover > i {
+    padding-left:160px;
+}
+
+.slider:hover{
+    height: 25px;
+}

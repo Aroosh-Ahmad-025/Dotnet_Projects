@@ -1,0 +1,153 @@
+﻿body {
+}
+
+    
+
+.topnav-centered {
+    float: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* 
+    #FECB00  # Yellow color Grade
+
+*/
+
+.nav-link-design{
+    color:black;
+}
+
+.nav-link-design:hover{
+    color:#FECB00;
+    background-color:black;
+}
+
+.btn1 {
+    color: #FECB00;
+    background-color: black;
+    outline: 1px #FECB00;
+    border-radius:5px;
+}
+
+.btn2 {
+    color: black;
+    background-color: #FECB00;
+    outline: 1px black;
+    border-radius:5px;
+}
+
+.btn3 {
+    color: black;
+    background-color: #FECB00;
+    outline: none;
+    border-radius:none;
+    padding: 10px 16px;
+}
+
+
+.div1 {
+    text-align: center;
+    align-items: center;
+    background: url('../Images/pexels-devon-rockola-954677.jpg') rgba(0, 0, 0, 0.4 );
+    background-size: cover;
+    bacground-repeat: no-repeat;
+    background-blend-mode: multiply;
+    background-position: 0% 60%;
+}
+
+.ftr-links-social{
+    background-color:black; 
+    color:#FECB00; 
+    display:inline-block; 
+    width:30px; height:30px; 
+    border-radius:100%; 
+    text-align:center;
+    margin-top: ;
+}
+
+
+/* Recepies Styles */
+
+
+.recepie-div1 {
+    text-align: center;
+    align-items: center;
+    background: url('../Images/pexels-rama-khandkar-2113556.jpg') rgba(0, 0, 0, 0.4 );
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-blend-mode: multiply;
+    background-position: 0% 60%;
+}
+
+
+/* Dropdown Category Button */
+
+.dropbtn {
+    background-color:#FECB00;
+    color:black;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+  }
+  
+  /* The container <div> - needed to position the dropdown content */
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* Dropdown Content (Hidden by Default) */
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color:black;
+    color:#FECB00;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  
+  /* Links inside the dropdown */
+  .dropdown-content a {
+    color: #FECB00;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  /* Change color of dropdown links on hover */
+  .dropdown-content a:hover {background-color:#FECB00;}
+  
+  /* Show the dropdown menu on hover */
+  .dropdown:hover .dropdown-content {display: block;}
+  
+  /* Change the background color of the dropdown button when the dropdown content is shown */
+  /* .dropdown:hover .dropbtn {background-color: #3e8e41;} */
+
+
+  /* Search Bar Recepies Detail Page */
+
+  .inp-search{
+    border:none;
+    border-bottom: 1px solid gray;
+  }
+
+  .inp-icon{
+    background-color: black;
+    min-width:25px;
+    min-height: 15px;
+  }
+
+
+.like{
+  margin-top:40px;
+  color:black;
+  font-size:20px;
+}
+
+
+
+
