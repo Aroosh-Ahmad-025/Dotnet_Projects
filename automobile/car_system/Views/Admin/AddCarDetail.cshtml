@@ -1,0 +1,157 @@
+﻿@model CarSystem.Models.CarDetail
+
+@{
+    ViewBag.Title = "Add Car Detail";
+}
+
+
+
+
+<div class="p-20">
+    <div class="row">
+        <form action="@Url.Action("PostAddCarDetail", "Admin")" method="post">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <div class="panel panel-flat">
+                        <div class="panel-heading">
+                            <h2 class="panel-title text-center text-bold">Add Car Detail</h2>
+                            <div class="text-center" id="alertMsg" style="color:@ViewBag.Color ; font-weight:bold">
+                                @ViewBag.Message
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <legend class="text-bold text-uppercase"><span class="text-danger">*</span> Fields are mandatory to fill</legend>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="text-bold">Lot Year <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" name="LotYear" id="updLotYear" placeholder="e.g 2022" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="text-bold">Lot Make <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="LotMake" id="updLotMake" placeholder="e.g Ford" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="text-bold">Lot Model <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="LotModel" id="updLotModel" placeholder="e.g TUNDRA DOU" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="text-bold">Lot Run Condition <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="LotRunCondition" id="updLotRunCondition" placeholder="e.g D - DRIVES / N - No" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="text-bold">Damage Type Description <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="DamageTypeDescription" id="updDamageTypeDescription" placeholder="e.g MN - MINOR DENT/SCRATCHES" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="text-bold">Copart Facility Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="CopartFacilityName" id="updCopartFacilityName" placeholder="e.g LA - BATON ROUGE" required>
+                                    </div>
+                                </div>
+                            </div>
+                                                       
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="text-bold">Sale Title State <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="SaleTitleState" id="updSaleTitleState" placeholder="e.g LA" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="text-bold">Sale Title Type <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="SaleTitleType" id="updSaleTitleType" placeholder="e.g CT" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="text-bold">Damage Type <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="DamageType" id="updDamageType" placeholder="e.g MINOR DENT/SCRATCHES" required>
+                                    </div>
+                                </div>
+                            </div>                          
+
+                            
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="text-bold">Lot Color <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="LotColor" id="updLotColor" placeholder="e.g red" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="text-bold">Has Key <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="HasKey" id="updHasKey" placeholder="e.g Y/N" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="text-bold">Odometer Reading <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" onkeypress="isInputNumber(event)" name="OdometerReading" id="updOdometerReading" placeholder="e.g 316113" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="text-bold">Sale Price <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" onkeypress="isInputNumber(event)" name="SalePrice" id="updSalePrice" placeholder="e.g 2800" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="text-bold">$ RepairCost <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" onkeypress="isInputNumber(event)" name="RepairCost" id="updRepairCost" placeholder="e.g 100" required>
+                                    </div>
+                                </div>
+                                
+                            </div>
+
+                            
+                            
+
+                            <div class="text-right">
+                                 <button type="submit" class="btn btn-primary">Add <i class="icon-database-insert position-right"></i></button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+
+    //       for validate contact no. field ( not take alphabets )
+
+
+    function isInputNumber(evt) {
+        var ch = String.fromCharCode(evt.which);
+        if (!(/[0-9\.]+/.test(ch))) {
+            evt.preventDefault();
+        }
+    }
+
+
+</script>

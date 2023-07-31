@@ -1,0 +1,731 @@
+﻿@{
+    ViewBag.Title = "Offer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<style>
+    * {
+        text-align: left;
+    }
+
+    h6 {
+        float: left;
+    }
+
+    input {
+        float: left;
+    }
+
+    select {
+        float: left;
+    }
+</style>
+
+
+<!-- BREADCRUMB AREA START -->
+<div class="ltn__breadcrumb-area ltn__breadcrumb-area-2 ltn__breadcrumb-color-white bg-overlay-theme-black-90 bg-image" data-bg="/Content/Frontassets/images/car-img-01.png">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ltn__breadcrumb-inner ltn__breadcrumb-inner-2 justify-content-between">
+                    <div class="section-title-area ltn__section-title-2">
+                        <h6 class="section-subtitle ltn__secondary-color">Welcome to Car For You</h6>
+                        <h1 class="section-title white-color">Get an instant offer</h1>
+
+                    </div>
+                    <p>Get your car sold today</p>
+                    <div class="ltn__breadcrumb-list">
+                        <ul>
+
+                            <li>Offer</li>
+                            <li><a href="../">Home</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- BREADCRUMB AREA END -->
+
+
+<form method="post" action="@Url.Action("GenerateOfferPrice","Ajax")">
+
+
+
+
+
+    <div class="ltn__appointment-area">
+        <div class="container">
+
+            <div class="row">
+
+                <div class="col-lg-12">
+                    <div class="ltn__appointment-inner">
+
+                        <h6>Vehicle Information</h6>
+
+
+                        <div class="col-md-9">
+
+
+
+
+                            <input type="text" onkeyup="searchByVin()" id="getVINnumber" class="form-control" placeholder="Enter your VIN" />
+                            <span class="text-success" id="vinTrue"></span>   <span class="text-danger" id="vinFalse"></span>
+                            <img id="loaderForVin" src='~/Content/assets/images/loading.gif' width='40' style="margin-bottom: 2%; display: none" />
+
+
+                        </div>
+
+
+
+
+                        <div class="row mt-3">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="input-item">
+                                    <select type="text" name="Model" id="getModel" class="nice-select" placeholder="Enter your Model" required>
+                                        <option value="">Select a Model</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="input-item">
+                                    <select id="getMake" name="Make" class="nice-select" placeholder="Enter your Make" required>
+                                        <option selected="" value="">Select a Make</option>
+                                        <option>ACURA</option>
+                                        <option>ALFA ROMEO</option>
+                                        <option>AMERICAN GENERAL</option>
+                                        <option>AMERICAN MOTORS</option>
+                                        <option>ASSEMBLY</option>
+                                        <option>ASTON MARTIN</option>
+                                        <option>AUDI</option>
+                                        <option>AUSTIN</option>
+                                        <option>AUTOBIANCHI</option>
+                                        <option>BENTLEY</option>
+                                        <option>BERTONE</option>
+                                        <option>BIG DOG</option>
+                                        <option>BLUEBIRD</option>
+                                        <option>BMW</option>
+                                        <option>BMW Motorrad</option>
+                                        <option>BRICKLAN</option>
+                                        <option>BUICK</option>
+                                        <option>CADILLAC</option>
+                                        <option>CHECKER</option>
+                                        <option>CHEVROLET</option>
+                                        <option>CHRYSLER</option>
+                                        <option>CLASSIC ROADSTER</option>
+                                        <option>COACH</option>
+                                        <option>CODA</option>
+                                        <option>CROSLEY</option>
+                                        <option>DAEWOO</option>
+                                        <option>DAIHATSU</option>
+                                        <option>DATSUN</option>
+                                        <option>DELOREAN</option>
+                                        <option>DESOTO</option>
+                                        <option>DODGE</option>
+                                        <option>DUCATI</option>
+                                        <option>EAGLE</option>
+                                        <option>ELDORADO</option>
+                                        <option>EXCALIBUR</option>
+                                        <option>FERRARI</option>
+                                        <option>FIAT</option>
+                                        <option>FISKER</option>
+                                        <option>FORD</option>
+                                        <option>FREIGHTLINER</option>
+                                        <option>GEM</option>
+                                        <option>GENESIS</option>
+                                        <option>GEO</option>
+                                        <option>GM</option>
+                                        <option>GMC</option>
+                                        <option>GOLF CART</option>
+                                        <option>HARLEY DAVIDSON</option>
+                                        <option>HONDA</option>
+                                        <option>HUMMER</option>
+                                        <option>HYUNDAI</option>
+                                        <option>INFINITI</option>
+                                        <option>INTERNATIONAL</option>
+                                        <option>ISUZU</option>
+                                        <option>JAGUAR</option>
+                                        <option>JEEP</option>
+                                        <option>KAWASAKI</option>
+                                        <option>KIA</option>
+                                        <option>LAFORZA</option>
+                                        <option>LAMBORGHINI</option>
+                                        <option>LANCIA</option>
+                                        <option>LAND ROVER</option>
+                                        <option>LEXUS</option>
+                                        <option>LINCOLN</option>
+                                        <option>LOTUS</option>
+                                        <option>MASERATI</option>
+                                        <option>MAYBACH</option>
+                                        <option>MAZDA</option>
+                                        <option>MCLAREN</option>
+                                        <option>MERCEDES BENZ</option>
+                                        <option>MERCURY</option>
+                                        <option>MERKUR</option>
+                                        <option>MG</option>
+                                        <option>MGB</option>
+                                        <option>MINI</option>
+                                        <option>MITSUBISHI</option>
+                                        <option>MOTO GUZZI</option>
+                                        <option>NASH</option>
+                                        <option>NISSAN</option>
+                                        <option>NISSAN DIESEL</option>
+                                        <option>NORTH AMERICAN BUS</option>
+                                        <option>OLDSMOBILE</option>
+                                        <option>OPEL</option>
+                                        <option>OSHKOSH</option>
+                                        <option>PEUGEOT</option>
+                                        <option>PIERCE</option>
+                                        <option>PLYMOUTH</option>
+                                        <option>PONTIAC</option>
+                                        <option>PORSCHE</option>
+                                        <option>RAM TRUCKS</option>
+                                        <option>RANGE ROVER</option>
+                                        <option>RENAULT</option>
+                                        <option>ROADMASTER RAIL</option>
+                                        <option>ROLLS ROYCE</option>
+                                        <option>ROVER</option>
+                                        <option>SAAB</option>
+                                        <option>SALEEN</option>
+                                        <option>SATURN</option>
+                                        <option>SCION</option>
+                                        <option>SMART CARS</option>
+                                        <option>SPRINTER</option>
+                                        <option>STERLING</option>
+                                        <option>STUDEBAKER</option>
+                                        <option>SUBARU</option>
+                                        <option>SUZUKI</option>
+                                        <option>TESLA</option>
+                                        <option>TOYOTA</option>
+                                        <option>TRIUMPH</option>
+                                        <option>VOLKSWAGEN</option>
+                                        <option>VOLVO</option>
+                                        <option>WHEEGO</option>
+                                        <option>WILLY</option>
+                                        <option>YAMAHA</option>
+                                        <option>YUGO</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+
+                                <div class="input-item">
+
+                                    <select type="text" name="Year" id="getYear" class="nice-select" placeholder="Enter your Year" required>
+                                        <option value="">Select a Year</option>
+                                        @for (int i = 2024; i >= 1940; i--)
+                                        {
+                                            <option>@i</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="input-item" >
+                                    <div id="does70" style="display:none;">
+                                        <h6> ? Does it drives upto 70 miles / hr </h6>
+
+                                        <select name="odometerReading" class="nice-select" placeholder="Select One">
+                                            <option value="50000">---- Select an Option ----</option>
+                                            <option value="50000">YES</option>
+                                            <option value="0">NO </option>
+
+                                        </select>
+                                    </div>
+                                    <div id="doesStartdiv" style="display:none;">
+                                        <h6> ? Does it starts </h6>
+                                        <select name="doesStart" class="nice-select" placeholder="Select One" >
+                                            <option value="Y">---- Select an Option ----</option>
+                                            <option value="Y">YES</option>
+                                            <option value="N">NO </option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="input-item">
+                                    <h6><span class="text-danger">*</span> ? Does it moves forward and backward </h6>
+                                    <select name="driveablestatus" class="nice-select" placeholder="Select One" required>
+                                        <option value="">---- Select an Option ----</option>
+                                        <option value="D">YES</option>
+                                        <option value="N">NO </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+
+                                <div class="input-item">
+                                    <h6>Enter Zip Code</h6>
+                                    <input type="text" onchange="findLocation()" class="form-control" id="ZipCode" name="postalCode" placeholder="Enter Zip Code" />
+
+                                </div>
+                                <img id="loadImg" src='~/Content/assets/images/loading.gif' width='40' style="margin-top: -2%; margin-left: -3%; display: none " />
+                                <span class="text-danger mb-3" id="location1"></span>   <span class="text-success" id="location"></span>
+
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+
+
+                            <div class="col-lg-4 col-md-6">
+                                <div class="input-item">
+                                    
+                                        <h6 class="control-label"><span class="text-danger">*</span> Select Odometer Reading </h6>
+                                        <select id="odometerReadings" name="odometerReadings" class="nice-select" placeholder="Enter odometerReading" required>
+                                            <option value="" selected>-- Select Odometer Reading -- </option>
+                                            <option value="50000">Under 50,000</option>
+                                            <option value="100000">Under 100,000</option>
+                                            <option value="150000">Under 150,000</option>
+                                            <option value="200000">Under 200,000</option>
+                                            <option value="300000">Under 300,000</option>
+                                            <option value="350000">Unknown</option>
+                                        </select>
+                                    
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-6">
+
+                                <div class="input-item">
+                                    <h6 class="control-label"><span class="text-danger">*</span> ? What kind of sale title type do you have</h6>
+                                    <select name="Title" class="nice-select" placeholder="Select One" required>
+                                        <option value="">---- Select an Option ----</option>
+                                        <option value="Clean Title">Clean Title (CT)</option>
+                                        <option value="Salvage Title">Salvage Title (ST) </option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-lg-4 col-md-6">
+
+                                <div class="input-item">
+                                    <h6 class="control-label"><span class="text-danger">*</span> Select Wheel Type </h6>
+                                    <select id="powerTrain" name="powerTrain" class="nice-select" placeholder="Enter Power Train" required>
+                                        <option value="" selected>-- Select Wheel Type -- </option>
+                                        <option value="FWD">Front Wheel Drive</option>
+                                        <option value="RWD">Rear Wheel Drive</option>
+                                        <option value="AWD">All Wheel Drive</option>
+                                        <option value="4x4">4x4</option>
+                                        <option value="4x2">4x2</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6" id="engTransRem" hidden>
+                                <div class="input-item">
+                                    <div>
+                                        <h6> ? Is Car Engine Or Transmission Removed</h6>
+                                        <select name="transRemove" class="nice-select" placeholder="Select One" >
+                                            <option value="MN">---- Select an Option ----</option>
+                                            <option value="ST">YES</option>
+                                            <option value="MN">NO </option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="input-item" id="TransRem" hidden>
+                                   
+                                        <h6 class="control-label"> ? Is Car Transmission Removed</h6>
+                                        <select name="transRemove" class="nice-select" placeholder="Select One" >
+                                            <option value="MN">---- Select an Option ----</option>
+                                            <option value="ST">YES</option>
+                                            <option value="MN">NO </option>
+
+                                        </select>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-wrapper text-center mt-0 mb-3">
+                        <button class="btn theme-btn-1 btn-effect-1 text-uppercase" type="submit"> Get Offer </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</form>
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZXUxsPREgv13fH4iD1_Nmj624kdMvhw4&callback=initAutocomplete&libraries=geometry,places&v=weekly"
+        defer>
+</script>
+
+<script>
+
+
+
+    $("#getYear").change(function () {
+        var year = $(this).val();
+
+    });
+    $("#getMake").change(function () {
+
+        var make = $(this).val();
+
+        $("#MakeofCar").val(make);
+
+        $.ajax({
+            url: "https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/" + make + "?format=json",
+            type: "GET",
+            dataType: "json",
+            success: function (result, status) {
+
+                $('#getModel').html($('<option>', {
+                    value: "",
+                    text: "---- Select a Model ----"
+                }));
+                $.each(result.Results, function (i, item) {
+
+                    $('#getModel').append($('<option>', {
+                        value: item.Model_Name,
+                        text: item.Model_Name
+                    }));
+                });
+            },
+            error: function () {
+
+
+
+
+            }
+        });
+
+    });
+
+    $("#getModel").change(function () {
+        var model = $(this).val();
+        $("#ModelofCar").val(model);
+
+    });
+
+
+    function searchByVin() {
+
+        //        ======>    API     AIzaSyBZXUxsPREgv13fH4iD1_Nmj624kdMvhw4     API      <======
+
+        //  1N4AL3AP4DC295509
+        //  4T1BK1EB6DU056165
+        //  KM8JM12D56U303366
+        //  5NMSH73E88H134350
+        //  1GTHK29U74E341306
+        //  JTLKT324X64085338
+        //  2HGEJ6446YH110899
+        //  JN8AS5MT2DW022816
+        //  3FADP4BJ2FM195587
+        //  1G6AF5SX6D0125409
+
+
+
+        $("#vinTrue").text('');
+        var val = $("#getVINnumber").val();
+
+
+
+
+        if (val != null && val != "") {
+            $("#loaderForVin").show();
+            $.ajax({
+                url: "https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVINValuesBatch/",
+                type: "POST",
+                data: { format: "json", data: val },
+                dataType: "json",
+                success: function (result, status) {
+
+                    console.log("VIN Response", result.Results);
+                    if (result.Results[0].ErrorCode == "0") {
+                        $("#vinFalse").text('');
+
+                        $("#vinTrue").text(result.Results[0].ModelYear + ' ' + result.Results[0].Make + ' ' + result.Results[0].Model);
+
+
+                        $("#getYear").val(result.Results[0].ModelYear).change();
+
+
+                        $("#getMake").val(result.Results[0].Make).change();
+
+
+                        var getModel = result.Results[0].Model;
+
+
+                        $.ajax({
+                            url: "https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/" + result.Results[0].Make + "?format=json",
+                            type: "GET",
+                            dataType: "json",
+                            success: function (result, status) {
+
+                                $('#getModel').html($('<option>', {
+                                    value: "",
+                                    text: "Select a Model"
+                                }));
+
+                                $.each(result.Results, function (i, item) {
+
+                                    $('#getModel').append($('<option>', {
+                                        value: item.Model_Name,
+                                        text: item.Model_Name
+
+                                    }));
+                                });
+
+                                $("#getModel").val(getModel);
+                            },
+                            error: function () {
+
+
+
+
+                            }
+                        });
+
+
+
+
+
+                        $("#YearofCar").val(result.Results[0].ModelYear);
+                        $("#MakeofCar").val(result.Results[0].Make);
+                        $("#ModelofCar").val(result.Results[0].Model);
+
+                        $("#loaderForVin").hide();
+
+                    } else {
+                        // NextPage(1);
+                        $("#vinTrue").text('');
+                        $("#vinFalse").text('Not Found');
+
+
+
+
+                        $("#loaderForVin").hide();
+
+                    }
+
+
+
+                },
+                error: function () {
+
+                    $("#vinTrue").text('');
+                    $("#vinFalse").text('Not Found');
+                    $("#loaderForVin").hide();
+
+
+
+                }
+            });
+
+        }
+    }
+</script>
+
+
+<script>
+
+
+    //       AIzaSyBZXUxsPREgv13fH4iD1_Nmj624kdMvhw4
+    var api = 'https://maps.googleapis.com/maps/api/geocode/json';
+
+    var countrycodeapi = 'https://restcountries.com/v2/alpha/{code}';
+
+
+    var button = document.getElementById('ajax-button');
+    //button.addEventListener("click", findLocation());
+
+    function findLocation() {
+
+                                    /*debugger*/;
+        var ZipCode = document.getElementById('ZipCode').value;
+        var url = api + "?address=" + ZipCode + "&key=AIzaSyBZXUxsPREgv13fH4iD1_Nmj624kdMvhw4";
+        var geocoder = new google.maps.Geocoder();
+        $("#loadImg").show();
+        geocoder.geocode({ 'address': ZipCode },
+            function (results, status) {
+                if (status == 'OK') {
+                    var x = results[0].formatted_address;
+                    //var x = results[0].postcode_localities;
+
+                    //  alert(x);
+                    //ViewBag.ZipCodeAddress = x;
+                    $('#location1').text("");
+
+                    $('#location').text(x);
+
+                    /*document.getElementById("location").style.color = "green";     .css('color' : 'green');   */
+                    $("#loadImg").hide();
+                } else {
+                    $('#location').text("");
+                    $('#location1').text("Not Found!");
+                    $("#loadImg").hide();
+                }
+            });
+
+        //var xhr = new XMLHttpRequest();
+        //xhr.open('GET', url, true);
+        //xhr.onreadystatechange = function () {
+        //    if (xhr.readystate < 4) {
+        //        showLoading();
+        //    } if (xhr.readystate >= 2 && xhr.status == 200) {
+        //        alert("abc");
+        //        outputLocation(xhr.responceText);
+        //    }
+        //}
+        //xhr.send();
+    }
+    function showLoading() {
+
+        //$('#location').text("loading........");
+
+        var target = document.getElementById('location');
+
+        target.innerHTML = 'loading........';
+    }
+
+    function outputLocation(data) {
+        var targer = document.getElementById('location');
+        var json = JSON.parse(data);
+        var address = json.results[0].formatted_address;
+        targer.innerHTML = address;
+    }
+
+    //var button = document.getElementById('ajax-button');
+    //button.addEventListener("click", findLocation());
+
+</script>
+
+<script>
+
+// checking country code validity
+
+
+      function Countrycodevalidate() {
+          //let fd = $("#myform").serialize();
+          /*debugger*/
+          var countryISO = $('#CountryCode').val();                                          //     1    complete
+
+
+
+                $.ajax({
+                    type: 'POST',
+                    url:  '@Url.Action("CheckCountryCode", "Ajax")',                                 /*"../Ajax/GetUserById",*/
+                    dataType: "json",
+                    data: {
+
+
+                        //   2
+
+                        Countrycode: countryISO,
+
+
+
+
+                    },
+
+
+                    dataType: "json",
+
+                    success: function (CC) {
+
+                        if (CC != "") {
+                            $('#countrycodefalse').text('');
+                            $('#countrycodetrue').text(CC);
+                        }
+                        else
+                        {
+                            $("#countrycodetrue").text('');
+                            $("#countrycodefalse").text("your code Does Not matched with USA ISO Code");
+                        }
+
+
+
+                    },
+                    error: function () {
+                        alert("sbc");
+                    }
+
+                }); // Submit the form
+            }
+
+
+    
+
+
+</script>
+<script>
+    $("[name='driveablestatus']").change(function () {
+        var val = $(this).val();
+        console.log("drivablestatus: ",val);
+        if (val == "D") {
+            console.log("div to show: ", $("#doesStartdiv"));
+
+            $("#doesStartdiv").css("display", "none");
+            $("#does70").css("display", "block");
+        }
+        else {
+
+            $("#doesStartdiv").css("display", "block");
+            $("#does70").css("display", "none");
+        }
+        $("[name='odometerReading']").attr("checked", false);
+    });
+
+
+    $("[name='doesStart']").change(function () {
+        var val = $(this).val();
+
+        if (val == "Y") {
+            $("#engTransRem").prop("hidden", true);
+            $("#TransRem").prop("hidden", false);
+        }
+        else {
+            $("#engTransRem").prop("hidden", false);
+            $("#TransRem").prop("hidden", true);
+        }
+        $("[name='transRemove']").attr('checked', false);
+    });
+</script>
+@*<script type="text/javascript">
+        (async () => {
+            const where = encodeURIComponent(JSON.stringify({
+                "Year": 2022
+                //"Make": "ABC",
+                //"Model": "DEF",
+                //"Category": "AMERICA"
+            }));
+            const response = await fetch(
+                `https://parseapi.back4app.com/classes/Car_Model_List?count=1&limit=10&order=Year&keys=Year&where=${where}`,
+                {
+                    headers: {
+                        'X-Parse-Application-Id': 'hlhoNKjOvEhqzcVAJ1lxjicJLZNVv36GdbboZj3Z', // This is the fake app's application id
+                        'X-Parse-Master-Key': 'SNMJJF0CZZhTPhLDIqGhTlUNV9r60M2Z5spyWfXW', // This is the fake app's readonly master key
+                    }
+                }
+            );
+            const data = await response.json(); // Here you have the data that you need
+            console.log(JSON.stringify(data, null, 2));
+        })();
+    </script>*@

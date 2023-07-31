@@ -1,0 +1,709 @@
+﻿
+@{
+    ViewBag.Title = "Car Detail List";
+}
+
+
+<style>
+    .table > tbody > tr > td {
+        padding: 5px !important;
+    }
+</style>
+
+
+@*<div class="breadcrumb-line">
+        <ul class="breadcrumb">
+            <li><a href="@Url.Action("Login","Auth")"><i class="icon-home2 position-left"></i> Home</a></li>
+            <li class="active">View Employee</li>
+        </ul>
+    </div>*@
+
+
+
+@*   custom search   *@
+
+<div class="row m-10">
+    <div class="panel panel-flat text-black">
+        <div class="panel-heading" style="background: #e8eced ">
+            <h2 class="text-center text-black">
+                Search
+            </h2>
+            <div class="heading-elements">
+                <ul class="icons-list">
+                    <li><a data-action="collapse" class="rotate-180"></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="panel-body pt-20 pb-20" style="display: none;">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label><strong>Lot Year:</strong></label>
+                        <input type="text" placeholder="" class="form-control" id="searchLotYear">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label><strong>Lot Model:</strong></label>
+                        <input type="text" class="form-control" placeholder="" id="searchLotModel">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label><strong>Damage Type:</strong></label>
+                        <input type="text" class="form-control" placeholder="" id="searchDamageType">
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <button onclick="clearSearch()" class="btn btn-danger btn-block">Reset</button><br>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12 col-xs-12"></div>
+
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                    <div class="form-group text-right">
+                        <button onclick="searchTable()" class="btn btn-success btn-block">Search</button><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*  custom search end  *@
+
+
+<div class="modal" id="deleteModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title text-center">Do you want to delete?</h4>
+                <button type="button" class="close text-danger" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer text-center">
+                <form action="@Url.Action("DeleteCarDetail", "Admin")" method="post">
+
+                    <input type="hidden" name="id" id="deleteId" required />
+                    <button type="submit" class="btn btn-danger">Yes</button>
+
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="updateModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="text-center text-bold">Update Car Detail</h5>
+                <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form action="@Url.Action("PostEditCarDetail", "Admin")" method="post">
+
+                    <input type="hidden" name="Id" id="updId" />
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="text-bold">Lot Year: <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" name="LotYear" id="updLotYear" placeholder="e.g 2022" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="text-bold">Lot Make: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="LotMake" id="updLotMake" placeholder="e.g Ford" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="text-bold">Lot Model: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="LotModel" id="updLotModel" placeholder="e.g TUNDRA DOU" required>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="text-bold">Lot Run Condition: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="LotRunCondition" id="updLotRunCondition" placeholder="e.g D - DRIVES / N - No" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="text-bold">Damage Type Description: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="DamageTypeDescription" id="updDamageTypeDescription" placeholder="e.g MN - MINOR DENT/SCRATCHES" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="text-bold">Copart Facility Name: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="CopartFacilityName" id="updCopartFacilityName" placeholder="e.g LA - BATON ROUGE" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="text-bold">Sale Title State: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="SaleTitleState" id="updSaleTitleState" placeholder="e.g LA" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="text-bold">Sale Title Type: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="SaleTitleType" id="updSaleTitleType" placeholder="e.g CT" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="text-bold">Damage Type: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="DamageType" id="updDamageType" placeholder="e.g MINOR DENT/SCRATCHES" required>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="text-bold">Lot Color: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="LotColor" id="updLotColor" placeholder="e.g red" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="text-bold">Has Key: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="HasKey" id="updHasKey" placeholder="e.g Y/N" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="text-bold">Odometer Reading: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" onkeypress="isInputNumber(event)" name="OdometerReading" id="updOdometerReading" placeholder="e.g 316113" required>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="text-bold">Sale Price: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" onkeypress="isInputNumber(event)" name="SalePrice" id="updSalePrice" placeholder="e.g 2800" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="text-bold">$ Repair Cost: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" onkeypress="isInputNumber(event)" name="RepairCost" id="updRepairCost" placeholder="e.g 100" required>
+                            </div>
+                        </div>
+                        
+                    </div>
+         
+                    <div class="modal-footer">
+                        <button type="submit" value="submit" class="btn btn-primary" id="updSubBtn">Update</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="panel p-20 m-10">
+
+    <div class="row">
+        <center><u><h3>Car Detail List</h3></u></center>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8"></div>
+        <div class="col-md-2 pull-right btn-block">
+            <a href="@Url.Action("AddCarDetail", "Admin")" class="btn btn-primary m-5 pull-right">Add New</a>
+        </div>
+    </div>
+
+    <div class="text-center" id="alertMsg" style="color:@ViewBag.Color ; font-weight:bold">
+        @ViewBag.Message
+    </div>
+
+
+    <div class="table-responsive">
+        <table class="table text-md-nowrap table-striped table-bordered text-center no-footer" id="userTable">
+            <thead class="bg-indigo">
+                <tr>
+                    <th class="text-bold" hidden>...</th>
+                    <th class="text-bold text-center" style="min-width:120px;">
+                        Lot Year
+                    </th>
+                    <th class="text-bold text-center" style="min-width:140px;">
+                        Lot Make
+                    </th>
+                    <th class="text-bold text-center" style="min-width:150px;">
+                        Lot Model
+                    </th>
+                    <th class="text-bold text-center" style="min-width:140px;">
+                        Lot Run Condition
+                    </th>
+                    <th class="text-bold text-center" style="min-width:130px">
+                        Damage Type Description
+                    </th>
+                    <th class="text-bold text-center" style="min-width:150px;">
+                        Copart Facility Name
+                    </th>
+                    <th class="text-bold text-center" style="min-width:140px;">
+                        Sale Title State
+                    </th>
+                    <th class="text-bold text-center" style="min-width:130px">
+                        Sale Title Type
+                    </th>
+                    <th class="text-bold text-center" style="min-width:150px;">
+                        Damage Type
+                    </th>
+                    <th class="text-bold text-center" style="min-width:130px">
+                        Lot Color
+                    </th>
+                    <th class="text-bold text-center" style="min-width:150px;">
+                        Has Key
+                    </th>
+                    <th class="text-bold text-center" style="min-width:140px;">
+                        Odometer Reading
+                    </th>
+                    <th class="text-bold text-center" style="min-width:150px;">
+                        Sale Price
+                    </th>
+                    <th class="text-bold text-center" style="min-width:140px;">
+                        $ Repair Cost
+                    </th>
+                    <th class="text-bold text-center" style="min-width:130px">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<script>
+
+
+
+    loadTable();
+
+    //$('#checkbox').is(":checked")
+
+
+    function loadTable(lotyear , lotmodel , damagetype)
+    {
+
+        $('#userTable').DataTable(
+        {
+            "ajax":
+            {
+                "url": '@Url.Action("GetCarDetailDataTableList", "Ajax")',
+                "type": "POST",
+                "datatype": "json",
+                "data": { lotyear : lotyear, lotmodel : lotmodel, damagetype : damagetype}
+            },
+            'columns':
+            [
+                { "data": "hidden", "name": "0" },
+                { "data": "LotYear", "name": "LotYear" },
+                { "data": "LotMake", "name": "LotMake" },
+                { "data": "LotModel", "name": "LotModel" },
+                { "data": "LotRunCondition", "name": "LotRunCondition" },
+                { "data": "DamageTypeDescription", "name": "DamageTypeDescription" },
+                { "data": "CopartFacilityName", "name": "CopartFacilityName" },
+                { "data": "SaleTitleState", "name": "SaleTitleState" },
+                { "data": "SaleTitleType", "name": "SaleTitleType" },
+                { "data": "DamageType", "name": "DamageType" },
+                { "data": "LotColor", "name": "LotColor" },
+                { "data": "HasKey", "name": "HasKey" },
+                { "data": "OdometerReading", "name": "OdometerReading" },
+                { "data": "SalePrice", "name": "SalePrice" },
+                { "data": "RepairCost", "name": "RepairCost" },
+                { "data": "Action", "name": "0" },
+            ],
+            'columnDefs':
+            [
+                {
+                "targets": 0,
+                    "visible": false,
+                    "searchable": false,
+                    "render": function (data, type, full, meta) {
+                    return null;
+                }
+            },
+                {
+                "targets": 1,
+
+                    'className': '',
+                    "render": function (data, type, full, meta)
+                    {
+                        return '<span>' + full.LotYear+'</span>';
+                }
+            },
+                {
+                "targets": 2,
+                    'className': '',
+                    "render": function (data, type, full, meta)
+                    {
+                        return '<span>' + full.LotMake + '</span>';
+                }
+            },
+                {
+                "targets": 3,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        return full.LotModel;
+                }
+            },
+                {
+                "targets": 4,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        return full.LotRunCondition;
+                }
+                    },
+                    {
+                        "targets": 5,
+                        'className': '',
+                        "render": function (data, type, full, meta) {
+                            return full.DamageTypeDescription;
+                        }
+                    },
+                    {
+                        "targets": 6,
+                        'className': '',
+                        "render": function (data, type, full, meta) {
+                            return full.CopartFacilityName;
+                        }
+                    },
+                    {
+                        "targets": 7,
+                        'className': '',
+                        "render": function (data, type, full, meta) {
+                            return full.SaleTitleState;
+                        }
+                    },
+                    {
+                        "targets": 8,
+                        'className': '',
+                        "render": function (data, type, full, meta) {
+                            return full.SaleTitleType;
+                        }
+                    },
+                    {
+                        "targets": 9,
+                        'className': '',
+                        "render": function (data, type, full, meta) {
+                            return full.DamageType;
+                        }
+                    },
+                    {
+                        "targets": 10,
+                        'className': '',
+                        "render": function (data, type, full, meta) {
+                            return full.LotColor;
+                        }
+                    },
+                    {
+                        "targets": 11,
+                        'className': '',
+                        "render": function (data, type, full, meta) {
+                            return full.HasKey;
+                        }
+                    },
+                    {
+                        "targets": 12,
+                        'className': '',
+                        "render": function (data, type, full, meta) {
+                            return full.OdometerReading;
+                        }
+                    },
+                    {
+                        "targets": 13,
+                        'className': '',
+                        "render": function (data, type, full, meta) {
+                            return full.SalePrice;
+                        }
+                    },
+                    {
+                        "targets": 14,
+                        'className': '',
+                        "render": function (data, type, full, meta) {
+                            return full.RepairCost;
+                        }
+                    },
+                {
+                "targets": 15,
+                    'className': '',
+                    'sortable': false,
+                    "render": function (data, type, full, meta)
+                    {
+
+                    return '<ul class="icons-list"> ' +
+                        '<li class="dropdown" >' +
+                        '			<a href="#" class="dropdown-toggle" data-toggle="dropdown">' +
+                        '				<i class="icon-menu9"></i>' +
+                        '			</a>' +
+                        '			<ul class="dropdown-menu dropdown-menu-right"  style="padding-left:5px !important; min-width:95px !important;">' +
+                        '				<li>' +
+                        '                   <span><a onclick="updateFunction(' + full.Id + ')" class="btn btn-sm bg-info icon-pencil" title="Edit"></a></span> ' +
+                        '                   <span><a onclick="deleteFunction(' + full.Id + ')"  class="btn btn-sm bg-danger icon-bin" title="Delete"></a></span> ' +
+
+
+                        //    '                   <button class="btn btn-sm bg-info icon-pencil" title="Edit"><a href="../Admin/EditUser?id=' + full.EncId + '" ></a></button>' +
+                        //    '                   <button onclick="deleteFunction(' + full.Id + ')" class="btn btn-sm bg-danger icon-bin"  title="Edit"></button>' +
+                        '               </li>' +
+                        '			</ul>' +
+                        '		</li >' +
+                        '	</ul >';
+
+
+                }
+            },
+            ],
+            "serverSide": "true",
+            "processing": "true",
+            "language":
+            {
+                "processing": "<i class='icon-spinner spinner icon-2x'></i>",
+                "search": "<span>Search :</span> _INPUT_",
+                "searchPlaceholder": "Filter Car Detail",
+                "lengthMenu": "<span>Show :</span> _MENU_",
+                "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            }
+
+        });
+    }
+    
+
+    function searchTable() {
+        var lotyear = $('#searchLotYear').val();
+        var lotmodel = $('#searchLotModel').val();
+        var damagetype = $('#searchDamageType').val();
+
+        $('#userTable').DataTable().clear();
+        $('#userTable').DataTable().destroy();
+
+        loadTable(lotyear, lotmodel, damagetype);
+    }
+
+    function clearSearch() {
+        $('#searchLotYear').val("");
+        $('#searchLotModel').val("");
+        $('#searchDamageType').val("");
+
+        $('#userTable').DataTable().clear();
+        $('#userTable').DataTable().destroy();
+
+        loadTable();
+    }
+
+
+
+    function updateFunction(id)
+    {
+        $.ajax({
+            type: 'POST',
+            url:  '@Url.Action("GetCarDetailById", "Ajax")',
+            dataType: "json",
+            data: {
+                id: id
+            },
+            success: function (response) {
+                $("#updId").val(response.Id);
+
+                //$("#updSubStoreId").val(response.SubStoreId).change();
+                $("#updLotYear").val(response.LotYear);
+                $("#updLotMake").val(response.LotMake);
+                $("#updLotModel").val(response.LotModel);
+                $("#updLotRunCondition").val(response.LotRunCondition);
+
+                $("#updDamageTypeDescription").val(response.DamageTypeDescription);
+
+                $("#updCopartFacilityName").val(response.CopartFacilityName);
+
+                $("#updSaleTitleState").val(response.SaleTitleState);
+
+                $("#updSaleTitleType").val(response.SaleTitleType);
+
+                $("#updDamageType").val(response.DamageType);
+
+                $("#updLotColor").val(response.LotColor);
+
+                $("#updHasKey").val(response.HasKey);
+
+                $("#updOdometerReading").val(response.OdometerReading);
+
+                $("#updSalePrice").val(response.SalePrice);
+
+                $("#updRepairCost").val(response.RepairCost);
+
+                $("#updateModal").modal('show');
+            },
+            error: function () {
+                $("#loadImg").hide();
+
+                alert("ajax Failed");
+            }
+
+        
+
+        });
+
+    }
+
+    function deleteFunction(id) {
+        $('#deleteId').val(id);
+        $('#deleteModal').modal('show');
+    }
+
+
+    
+    /////////////////////// function for load all javascripts file
+
+    $(document).ready(function (){
+
+        window.onresize = loadsTable;
+        function loadsTable() {
+        loadTable();
+    }
+    });
+
+
+
+    //       for validate contact no. field ( not take alphabets )
+
+
+    function isInputNumber(evt) {
+        var ch = String.fromCharCode(evt.which);
+        if (!(/[0-9\.]+/.test(ch))) {
+            evt.preventDefault();
+        }
+    }
+
+
+
+
+
+    @*function validateEmail(email) {
+        //var id = -1;
+        //if (type == 2) {
+        //    id = $('#updId').val();
+        //}
+
+        if (email != "") {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ValidateEmail", "Ajax")',
+                dataType: "json",
+                data:
+                {
+                    email: email
+                },
+                success: function (response) {
+                    if (response == true) {
+
+                        $('#updErrMsg').text("");
+                        $('#updSubBtn').prop('disabled', false);
+
+                    }
+                    else {
+
+                        $('#updErrMsg').text("Duplicate Email");
+                        $('#updSubBtn').prop('disabled', true);
+
+                    }
+                },
+                error: function () {
+                    $('#addErrMsg').text("");
+                    $('#addSubBtn1').prop('disabled', false);
+                    $('#updErrMsg').text("");
+                    $('#updSubBtn').prop('disabled', false);
+                    alert("Email Validation Ajax Failed");
+                }
+            });
+        }
+
+    }*@
+
+
+
+
+    //function searchTable()
+    //{
+    //    var fName = $('#searchFName').val();
+    //    var lName = $('#searchLName').val();
+    //    var email = $('#searchEmail').val();
+
+    //    $('#userTable').DataTable().clear();
+    //    $('#userTable').DataTable().destroy();
+
+    //    loadTable(fName, lName, email);
+    //}
+
+    //function toggleSearch()
+    //{
+    //    if ($('#searchIcon').hasClass('icon-search4')) {
+    //        $('#searchIcon').removeClass('icon-search4');
+    //        $('#searchIcon').removeClass('text-info');
+    //        $('#searchIcon').addClass('icon-cross2');
+    //        $('#searchIcon').addClass('text-danger');
+
+    //        $('#searchDiv').toggle('show');
+    //    }
+    //    else {
+    //        $('#searchIcon').addClass('icon-search4');
+    //        $('#searchIcon').addClass('text-info');
+    //        $('#searchIcon').removeClass('icon-cross2');
+    //        $('#searchIcon').removeClass('text-danger');
+
+    //        $('#searchDiv').toggle('hide');
+    //    }
+
+    //}
+
+
+
+    //function clearSearch()
+    //{
+    //    $('#userTable').DataTable().clear();
+    //    $('#userTable').DataTable().destroy();
+
+    //    $('#searchFName').val("");
+    //    $('#searchLName').val("");
+    //    $('#searchEmail').val("");
+
+    //    loadTable();
+    //}
+
+
+</script>
+

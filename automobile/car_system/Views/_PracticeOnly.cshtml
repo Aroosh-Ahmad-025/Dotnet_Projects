@@ -1,0 +1,634 @@
+﻿
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Agents</title>
+
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" type="image/x-icon" href="/Content/assets/images/Favicons/S-Fav.jpg">
+
+
+    <!-- Global stylesheets -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+    <link href="/Content/assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
+    <link href="/Content/assets/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="/Content/assets/css/core.css" rel="stylesheet" type="text/css">
+    <link href="/Content/assets/css/components.css" rel="stylesheet" type="text/css">
+    <link href="/Content/assets/css/colors.css" rel="stylesheet" type="text/css">
+    <!-- /global stylesheets -->
+    <!-- Core JS files -->
+    <script type="text/javascript" src="/Content/assets/js/plugins/loaders/pace.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/core/libraries/jquery.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/core/libraries/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/loaders/blockui.min.js"></script>
+    <!-- /core JS files -->
+    <!-- libraries for tabbed input form -->
+    <script type="text/javascript" src="/Content/assets/js/plugins/forms/wizards/stepy.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/forms/selects/select2.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/forms/styling/uniform.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/core/libraries/jasny_bootstrap.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/forms/validation/validate.min.js"></script>
+    <!-- /libraries for tabbed input form -->
+    <!-- Theme JS files -->
+    <script type="text/javascript" src="/Content/assets/js/plugins/visualization/d3/d3.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/visualization/d3/d3_tooltip.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/forms/styling/switchery.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/forms/styling/uniform.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/forms/selects/bootstrap_multiselect.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/ui/moment/moment.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/pickers/daterangepicker.js"></script>
+
+
+
+    <script type="text/javascript" src="/Content/assets/js/plugins/tables/datatables/datatables.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/tables/datatables/extensions/row_reorder.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/tables/datatables/extensions/responsive.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/tables/datatables/extensions/buttons.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/pages/datatables_extension_buttons_html5.js"></script>
+
+
+    <script type="text/javascript" src="/Content/assets/js/core/app.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/pages/datatables_extension_row_reorder.js"></script>
+    <!-- libraries for tabbed input form -->
+    <script type="text/javascript" src="/Content/assets/js/pages/wizard_stepy.js"></script>
+    <script type="text/javascript" src="/Content/assets/js/plugins/ui/ripple.min.js"></script>
+    <!-- /libraries for tabbed input form -->
+
+    <script type="text/javascript" src="/Content/assets/js/pages/dashboard.js"></script>
+
+
+    <!-- /theme JS files -->
+    <!-- /theme JS files -->
+    <!-- /Custom add libraries -->
+
+
+
+    <link href="/Content/assets/css/icons/fontawesome/styles.min.css" rel="stylesheet" type="text/css">
+    <link href="/Content/assets/css/icons/fontawesome/fonts/fontawesome-webfont.svg" rel="stylesheet" type="text/css">
+
+
+
+</head>
+<body class="bg-white">
+
+    <div class="modal fade" id="updStoreModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="text-center text-bold">Update Store</h5>
+                    <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <form action="/Store/PostUpdateStore" method="post">
+                        <input type="hidden" name="Id" value="1" />
+                        <div class="form-group">
+                            <label class="text-bold">Store Name: <span class="text-danger">*</span></label><br />
+                            <input type="text" class="form-control" name="StoreName" placeholder="Enter Store Name" value="Omni Store" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Owner: <span class="text-danger">*</span></label><br />
+                            <input type="text" class="form-control" name="Owner" placeholder="Enter Store Owners' Name" value="Uzair Aslam" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Contact: <span class="text-danger">*</span></label><br />
+                            <input type="text" class="form-control" name="Contact" placeholder="Enter Store Contact Number" value="0000-0000000" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Address: <span class="text-danger">*</span></label><br />
+                            <input type="text" class="form-control" name="Address" placeholder="Enter Store Address" value="Kasur, Pakistan" required>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" id="addSubBtn" value="submit" class="btn btn-primary">Update</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Main navbar -->
+    <div class="navbar navbar-inverse bg-blue-600">
+        <div class="navbar-header">
+
+
+            <ul class="nav navbar-nav visible-xs-block">
+                <li><a data-toggle="collapse" data-target="#navbar-mobile"><i class="icon-tree5"></i></a></li>
+                <li><a class="sidebar-mobile-main-toggle"><i class="icon-paragraph-justify3"></i></a></li>
+            </ul>
+
+        </div>
+
+
+        <div class="navbar-collapse collapse" id="navbar-mobile">
+            <ul class="nav navbar-nav">
+            </ul>
+
+            <div class="navbar-right">
+
+                <ul class="nav navbar-nav navbar-right">
+
+
+                    <!--This is Manage profile Segment-->
+                    <li class="dropdown dropdown-user">
+                        <a class="dropdown-toggle" data-toggle="dropdown">
+                            <span>Uzair Aslam </span>
+                            <i class="caret"></i>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="/Auth/UpdateProfile"><i class="icon-profile"></i> Update Profile</a></li>
+                            <li><a href="/Auth/UpdatePassword"><i class="icon-lock2"></i> Update Password</a></li>
+                            <li class="divider"></li>
+                            <li><a href="/Auth/Logout"><i class="icon-switch2"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                    <!--This is Manage profile Segment-->
+
+
+                </ul>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+    <!-- /main navbar -->
+
+
+
+
+    <div class="page-container bg-white">
+
+
+        <!-- Main sidebar -->
+        <div class="sidebar sidebar-main sidebar-default">
+            <div class="sidebar-content">
+
+                <!-- User menu -->
+                <div class="sidebar-user-material">
+                    <div class="category-content">
+                        <div class="sidebar-user-material-content">
+                            <h6>Omni Store</h6>
+                            <br />
+                            <span class="text-size-small">uzair.aslam02@gmail.com</span>
+                        </div>
+
+                        <div class="sidebar-user-material-menu">
+                            <a href="#user-nav" data-toggle="collapse"><span>My Account</span> <i class="caret"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="navigation-wrapper collapse" id="user-nav">
+                        <ul class="navigation">
+                            <li><a href="/Auth/UpdateProfile"><i class="icon-profile"></i> <span>Update Profile</span></a></li>
+                            <li><a href="/Auth/UpdatePassword"><i class="icon-lock2"></i> <span>Update Password</span></a></li>
+                            <li><a data-toggle="modal" data-target="#updStoreModal"><i class="icon-store"></i> <span>Update Store</span></a></li>
+                            <li><a href="/Auth/Logout"><i class="icon-switch2"></i> <span>Logout</span></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- /user menu -->
+
+                <div class="sidebar-category sidebar-category-visible">
+                    <div class="category-content no-padding">
+                        <ul class="navigation navigation-main navigation-accordion">
+
+                            <li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
+                            <li><a href="/Store/Index"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
+                            <li>
+                                <a href="#"><i class="icon-store2"></i> <span>Manage Sub-Stores</span></a>
+                                <ul id="domain">
+                                    <li><a id="domainAll" href="/Store/AddSubStore">Add New</a></li>
+                                    <li><a href="/Store/ViewSubStore">View Record</a></li>
+
+                                </ul>
+                            </li>
+                            <li><a href="/Store/ManageAgent"><i class="icon-users4"></i> <span>Manage Agents</span></a></li>
+                            <li><a href="/Store/ManageCreditCard"><i class="icon-paypal2"></i> <span>Manage Cards</span></a></li>
+                            <li><a href="/Store/ViewCash"><i class="icon-coin-dollar"></i> <span>View Cash</span></a></li>
+                        </ul>
+                    </div>
+
+                </div>
+                <!--/main navigation-->
+
+            </div>
+        </div>
+        <!-- /main sidebar -->
+
+
+        <div class="bg-white">
+
+
+
+            <img id="loadImg" src='../Content/assets/images/loading.gif' width='150' style="position:fixed; margin-top:20%; margin-left:35%; z-index:111; display:none" />
+
+
+            <div class="modal" id="deleteModal">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title text-center">Do You Want to Delete?</h4>
+                            <button type="button" class="close text-danger" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <div class="modal-body">
+                            <center class="text-danger">All cash records against this Agent will also remove</center>
+                        </div>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer text-center">
+                            <a class="btn btn-danger" id="deleteId">Yes</a>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="addModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="text-center text-bold">Add New Agent</h5>
+                            <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+                            <form action="/Store/PostAddAgent" method="post">
+
+
+
+                                <div class="form-group">
+                                    <label class="text-bold">Name: <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="Name" placeholder="Add Store Agent Name Here" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="text-bold">Contact: <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Add Agent Contact Number Here" required name="Contact">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="text-bold">Email: <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" onkeyup="validateEmail(this.value, 1)" placeholder="Add Agent Email Here" required name="Email">
+                                    <span class="text-danger" id="addErrMsg"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="text-bold">Password: <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Set Agent Login Password" required name="Password">
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="submit" id="addSubBtn1" value="submit" class="btn btn-primary">Add</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="modal fade" id="updateModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="text-center text-bold">Update Agent</h5>
+                            <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+                            <form action="/Store/PostUpdateAgent" method="post">
+
+                                <input type="hidden" name="Id" id="updId" />
+                                <input type="hidden" name="way" value="" />
+
+
+
+                                <div class="form-group">
+                                    <label class="text-bold">Name: <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="Name" id="updName" placeholder="Add Store Agent Name Here" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="text-bold">Contact: <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Add Agent Contact Number Here" required name="Contact" id="updContact">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="text-bold">Email: <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" onkeyup="validateEmail(this.value, '2')" placeholder="Add Agent Email Here" required name="Email" id="updEmail">
+                                    <span class="text-danger" id="updErrMsg"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="text-bold">Password: <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" placeholder="Set Agent Login Password" required name="Password" id="updPassword">
+                                    <div class="input-group-addon">
+                                        <input id="toggle" type="checkbox" class="pull-left"> <span id="toggleText" class="ml-5 pull-left" onclick="$('#toggle').click()">Show</span>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="submit" value="submit" class="btn btn-primary" id="updSubBtn">Update</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <br />
+            <div class="clearfix">
+                <button class="btn btn-primary m-5 pull-right" data-toggle="modal" data-target="#addModal">Add New</button>
+
+                <h3 class="text-center">
+                    <u>Agents List</u>
+                </h3>
+            </div>
+            <br />
+
+            <div style="min-height:700px" class="m-10">
+
+                <div style="font-weight:bold; color:black ; margin-left:10px;" id="alertMsg">
+
+                </div>
+
+                <div class="datatable-scroll table-bordered p-10">
+
+                    <input type="hidden" value="" id="sid" />
+                    <table class="table no-footer table-responsive table-striped" id="agentTable">
+                        <thead class="bg-blue-400">
+                            <tr>
+                                <th class="text-bold" hidden>
+                                    ..,
+                                </th>
+
+                                <th class="text-bold">
+                                    Name
+                                </th>
+                                <th class="text-bold">
+                                    Contact
+                                </th>
+                                <th class="text-bold">
+                                    Email
+                                </th>
+                                <th class="text-bold text-center">
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+
+            <script>
+
+    var sid = $('#sid').val();
+
+    $('#agentTable').DataTable(
+    {
+        "ajax":
+        {
+            "url": '/Ajax/GetAgentList',
+            "type": "POST",
+            "datatype": "json",
+            "data": { id: sid },
+        },
+        'columns':
+        [
+            { "data": "hidden", "name": "0" },
+            //{ "data": "SubStore", "name": "SubStore" },
+            { "data": "Name", "name": "Name" },
+            { "data": "Contact", "name": "Contact" },
+            { "data": "Email", "name": "Email" },
+            { "data": "Action", "name": "0" }
+        ],
+        'columnDefs':
+        [
+            {
+                "targets": 0,
+                "visible": false,
+                "searchable": false,
+                "render": function (data, type, full, meta) {
+                    return null;
+                }
+            },
+            //{
+            //    "targets": 1,
+            //    'className': 'col-lg-2',
+            //    "render": function (data, type, full, meta)
+            //    {
+            //        return full.SubStore;
+            //    }
+            //},
+            {
+                "targets": 1,
+                'className': 'col-lg-2',
+                "render": function (data, type, full, meta)
+                {
+                    return full.Name;
+                }
+            },
+            {
+                "targets": 2,
+                'className': 'col-lg-2',
+                "render": function (data, type, full, meta)
+                {
+                    return full.Contact;
+                }
+            },
+            {
+                "targets": 3,
+                'className': 'col-lg-3',
+                "render": function (data, type, full, meta)
+                {
+                    return full.Email;
+                }
+            },
+            {
+                "targets": 4,
+                'sortable': false,
+                'className': 'col-lg-1',
+                "render": function (data, type, full, meta)
+                {
+                    return '<ul class="icons-list text-center"> <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-menu9"></i> </a> <ul class="dropdown-menu dropdown-menu-right"> ' +
+                        '<li><a class="text-primary" onclick="updateFunction(' + full.Id + ')"><i class="icon-pencil"></i> Edit</a></li>' +
+                        '<li><a class="" href="../Store/ViewCash?aid=' + full.EncId + '"><i class="icon-coin-dollar"></i> View Cash</a></li>' +
+                        '<li><a class="text-danger" onclick="deleteFunction(' + full.Id + ')" data-toggle="modal" data-target="#deleteModal"><i class="glyphicon glyphicon-floppy-remove"></i> Delete</a></li>' +
+                        '</ul></li></ul>';
+                }
+            }
+        ],
+       "serverSide": "true",
+        "processing": "true",
+        "language":
+        {
+            "processing": "<img src='../Content/assets/images/loading.gif' width='150'/>",
+            "search": "<span>Search :</span> _INPUT_",
+            "searchPlaceholder": "Type to Filter",
+            "lengthMenu": "<span>Show :</span> _MENU_",
+            "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+        },
+    });
+
+
+    function updateFunction(id)
+    {
+        $('#updErrMsg').text("");
+        $('#updSubBtn').attr('disabled', false);
+
+        $("#loadImg").show();
+
+        $.ajax({
+            type: 'POST',
+            url: "../Ajax/GetAgentById",
+            dataType: "json",
+            data: {
+                id: id
+            },
+            success: function (response)
+            {
+                $("#updId").val(response.Id);
+
+                //$("#updSubStoreId").val(response.SubStoreId).change();
+                $("#updName").val(response.Name);
+                $("#updContact").val(response.Contact);
+                $("#updEmail").val(response.Email);
+                $("#updPassword").val(response.Password);
+
+
+
+                $("#loadImg").hide();
+                $("#updateModal").modal('show');
+            },
+            error: function ()
+            {
+                $("#loadImg").hide();
+
+                alert("ajax Failed");
+            }
+        });
+
+    }
+
+
+    function validateEmail(email, type)
+    {
+        var id = -1;
+        if (type == 2)
+        {
+            id = $('#updId').val();
+        }
+
+        if (email != "")
+        {
+            $.ajax({
+                type: 'POST',
+                url: "../Ajax/ValidateEmail",
+                dataType: "json",
+                data:
+                {
+                    email: email, id: id
+                },
+                success: function (response)
+                {
+                    if (response == true)
+                    {
+                        if (type == 1)
+                        {
+                            $('#addErrMsg').text("");
+                            $('#addSubBtn1').prop('disabled', false);
+                        }
+                        else {
+                            $('#updErrMsg').text("");
+                            $('#updSubBtn').prop('disabled', false);
+                        }
+                    }
+                    else
+                    {
+                        if (type == 1) {
+                            $('#addErrMsg').text("Duplicate Email");
+                            $('#addSubBtn1').prop('disabled', true);
+                        }
+                        else {
+                            $('#updErrMsg').text("Duplicate Email");
+                            $('#updSubBtn').prop('disabled', true);
+                        }
+                    }
+                },
+                error: function ()
+                {
+                    $('#addErrMsg').text("");
+                    $('#addSubBtn1').prop('disabled', false);
+                    $('#updErrMsg').text("");
+                    $('#updSubBtn').prop('disabled', false);
+                    alert("Email Validation Ajax Failed");
+                }
+            });
+        }
+
+    }
+
+    $("#toggle").change(function () {
+        if ($(this).is(':checked')) {
+            $("#updPassword").attr("type", "text");
+
+            $("#toggleText").text("Hide");
+        } else {
+            $("#updPassword").attr("type", "password");
+
+            $("#toggleText").text("Show");
+        }
+
+    });
+
+    function deleteFunction(id) {
+        var a = document.getElementById('deleteId');
+        a.href = "../Store/DeleteAgent?id=" + id + "&way=";
+    }
+
+            </script>
+
+        </div>
+    </div>
+
+    <script>
+        //function Used to hide automatically alert message after 4 seconds
+        $("#alertMsg").fadeTo(4000, 500).slideUp(500, function () {
+            $("#alertMsg").slideUp(600);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,480 @@
+﻿
+@{
+    ViewBag.Title = "View Users";
+}
+
+<style>
+    .table > tbody > tr > td {
+        padding: 5px !important;
+    }
+</style>
+
+
+@*<div class="breadcrumb-line">
+        <ul class="breadcrumb">
+            <li><a href="@Url.Action("Login","Auth")"><i class="icon-home2 position-left"></i> Home</a></li>
+            <li class="active">View Employee</li>
+        </ul>
+    </div>*@
+
+
+@*   custom search   *@
+
+<div class="row m-10">
+    <div class="panel panel-flat text-black">
+        <div class="panel-heading" style="background: #e8eced ">
+            <h2 class="text-center text-black">
+                Search
+            </h2>
+            <div class="heading-elements">
+                <ul class="icons-list">
+                    <li><a data-action="collapse" class="rotate-180"></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="panel-body pt-20 pb-20" style="display: none">
+            <div class="row">
+                <div class="col-md-6">                                    @*  change   2/18/2022*@
+                    <div class="form-group">
+                        <label><strong>Name:</strong></label>
+                        <input type="text" placeholder="" class="form-control" id="searchName">
+                    </div>
+                </div>
+
+                <div class="col-md-6">                                   @*    change   2/18/2022*@
+                    <div class="form-group">
+                        <label><strong>Email:</strong></label>
+                        <input type="text" class="form-control" placeholder="" id="searchEmail">
+                    </div>
+                </div>
+
+                @*<div class="col-md-4">
+                    <div class="form-group">
+                        <label><strong>Gender:</strong></label>
+                        <select class="select " id="searchGender" >              change 2/18/2022
+                            <option value=""> All</option>
+                            <option value="1">Male</option>
+                            <option value="2">Female</option>
+                        </select>
+                    </div>
+                </div>*@
+
+            </div>
+            <div class="row">
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <button onclick="clearSearch()" class="btn btn-danger btn-block">Reset</button><br>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12 col-xs-12"></div>
+
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                    <div class="form-group text-right">
+                        <button onclick="searchTable()" class="btn btn-success btn-block">Search</button><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*  custom search end  *@
+
+
+<div class="modal" id="deleteModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title text-center">Do you want to delete?</h4>
+                <button type="button" class="close text-danger" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer text-center">
+                <form action="@Url.Action("DeleteUser", "Admin")" method="post">
+
+                    <input type="hidden" name="id" id="deleteId" required />
+                    <button type="submit" class="btn btn-danger">Yes</button>
+
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="updateModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="text-center text-bold">Update User</h5>
+                <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form action="@Url.Action("PostEditUser", "Admin")" method="post">
+
+                    <input type="hidden" name="Id" id="updId" />
+
+
+                    <div class="form-group">
+                        <label class="text-bold">Name: <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="Name" id="updName" placeholder="Name Here" required>
+                    </div>
+
+                    @*<div class="form-group has-feedback has-feedback-left border-blue">
+                        <label class="display-block text-semibold">Select Gender</label>
+
+                        <label class="radio-inline">
+                            <label>Male <input class="" type="radio" id="checkbox1" name="Gender" value="1" required></label>
+                        </label>
+
+                        <label class="radio-inline">
+                            <label>Female <input type="radio" id="checkbox2" name="Gender" value="2" required></label>
+                        </label>
+
+                    </div>*@
+
+                    <div class="form-group">
+                        <label class="text-bold">Email: <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" onkeyup="validateEmail(this.value)" placeholder="something@gmail.com" required name="Email" id="updEmail">
+                        <span class="text-danger" id="updErrMsg"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Contact: <span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control" onkeypress="isInputNumber(event)" placeholder="0000-000000" required name="Contact" id="updContact">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Password: <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" placeholder="Password" required name="Password" id="updPassword">
+
+                        @*<div class="input-group-addon">
+                                <input id="toggle" type="checkbox" class="pull-left"> <span id="toggleText" class="ml-5 pull-left" onclick="$('#toggle').click()">Show</span>
+                            </div>*@
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" value="submit" class="btn btn-primary" id="updSubBtn">Update</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="panel p-20 m-10">
+
+    <div class="row">
+        <center><u><h3>User List</h3></u></center>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8"></div>
+        <div class="col-md-2 pull-right btn-block">
+            <a href="@Url.Action("AddUser", "Admin")" class="btn btn-primary m-5 pull-right">Add New</a>
+        </div>
+    </div>
+
+    <div class="text-center" id="alertMsg" style="color:@ViewBag.Color ; font-weight:bold">
+        @ViewBag.Message
+    </div>
+
+
+    <div class="table-responsive">
+        <table class="table text-md-nowrap table-striped table-bordered text-center no-footer" id="userTable">
+            <thead class="bg-indigo">
+                <tr>
+                    <th class="text-bold" hidden>...</th>
+                    <th class="text-bold text-center" style="min-width:120px;">
+                        Name
+                    </th>
+                    <th class="text-bold text-center" style="min-width:150px;">
+                        Email
+                    </th>
+                    <th class="text-bold text-center" style="min-width:140px;">
+                        Contact
+                    </th>
+                    
+                    @*<th class="text-bold text-center" style="min-width:140px;">
+                        Gender
+                    </th>*@
+                    <th class="text-bold text-center" style="min-width:130px">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<script>
+
+
+
+    loadTable();
+
+    function loadTable(name, email, /*gender*/)                // parameter pass  for custom search      change   2/18/2022
+    {
+        $('#userTable').DataTable(
+        {
+            "ajax":
+            {
+                "url": '@Url.Action("GetUserDataTableList", "Ajax")',
+                "type": "POST",
+                "datatype": "json",
+                "data": { name: name, email: email /*gender:gender*/ }          //   change   2/18/2022
+            },
+            'columns':
+            [
+                { "data": "hidden", "name": "0" },
+                { "data": "Name", "name": "Name" },
+                { "data": "Email", "name": "Email" },
+                { "data": "Contact", "name": "Contact" },
+                       
+                //{ "data": "Gender", "name": "Gender" },            change   2/18/2022
+                { "data": "Action", "name": "0" },
+            ],
+            'columnDefs':
+            [
+                {
+                "targets": 0,
+                    "visible": false,
+                    "searchable": false,
+                    "render": function (data, type, full, meta) {
+                    return null;
+                }
+            },
+                {
+                "targets": 1,
+
+                    'className': '',
+                    "render": function (data, type, full, meta)
+                    {
+                    return '<span>'+full.Name+'</span>';
+                }
+            },
+                {
+                "targets": 2,
+                    'className': '',
+                    "render": function (data, type, full, meta)
+                    {
+                        return '<span>' + full.Email + '</span>';
+                }
+            },
+                {
+                "targets": 3,
+                    'className': '',
+                    "render": function (data, type, full, meta)
+                    {
+                        return full.Contact;
+                }
+            },
+            //    {
+            //    "targets": 4,
+            //        'className': '',
+            //        "render": function (data, type, full, meta) {                 change  2/18/2022
+            //        return full.Gender;
+            //    }
+            //},
+                {
+                "targets": 4,                                                   //    change 2/18/2022   
+                    'className': '',
+                    'sortable': false,
+                    "render": function (data, type, full, meta)
+                    {
+
+                    return '<ul class="icons-list"> ' +
+                        '<li class="dropdown" >' +
+                        '			<a href="#" class="dropdown-toggle" data-toggle="dropdown">' +
+                        '				<i class="icon-menu9"></i>' +
+                        '			</a>' +
+                        '			<ul class="dropdown-menu dropdown-menu-right"  style="padding-left:5px !important; min-width:95px !important;">' +
+                        '				<li>' +
+                        //    '                   <span><a href="../Admin/EditUser?id=' + full.EncId + '" class="btn btn-sm bg-info icon-pencil" title="Edit"></a></span> ' +
+                        '                   <span><a onclick="updateFunction(' + full.Id + ')" class="btn btn-sm bg-info icon-pencil" title="Edit"></a></span> ' +
+                        '                   <span><a onclick="deleteFunction(' + full.Id + ')"  class="btn btn-sm bg-danger icon-bin" title="Delete"></a></span> ' +
+
+
+                        //    '                   <button class="btn btn-sm bg-info icon-pencil" title="Edit"><a href="../Admin/EditUser?id=' + full.EncId + '" ></a></button>' +
+                        //    '                   <button onclick="deleteFunction(' + full.Id + ')" class="btn btn-sm bg-danger icon-bin"  title="Edit"></button>' +
+                        '               </li>' +
+                        '			</ul>' +
+                        '		</li >' +
+                        '	</ul >';
+
+
+                }
+            },
+            ],
+            "serverSide": "true",
+            "processing": "true",
+            "language":
+            {
+                "processing": "<i class='icon-spinner spinner icon-2x'></i>",
+                "search": "<span>Search :</span> _INPUT_",
+                "searchPlaceholder": "Filter user",
+                "lengthMenu": "<span>Show :</span> _MENU_",
+                "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            }
+
+        });
+    }
+
+    function searchTable()
+    {
+        var name = $('#searchName').val();
+        var email = $('#searchEmail').val();
+        //var gender = $('#searchGender').val();               change 2/18/2022
+
+        $('#userTable').DataTable().clear();
+        $('#userTable').DataTable().destroy();
+
+        loadTable(name, email/*, gender*/);                     //   change   2/18/2022
+    }
+
+    function clearSearch()
+    {
+        $('#searchName').val("");
+        $('#searchEmail').val("");
+        //$('#searchGender').val("").change();                change 2/18/2022
+
+        $('#userTable').DataTable().clear();
+        $('#userTable').DataTable().destroy();
+
+        loadTable();
+    }
+
+
+
+    function updateFunction(id) {
+        $('#updErrMsg').text("");
+        $('#updSubBtn').attr('disabled', false);
+
+        $("#loadImg").show();
+
+        $.ajax({
+            type: 'POST',
+            url:  '@Url.Action("GetUserById", "Ajax")',                                 /*"../Ajax/GetUserById",*/
+            dataType: "json",
+            data: {
+                id: id
+            },
+            success: function (response) {
+                $("#updId").val(response.Id);
+
+                //$("#updSubStoreId").val(response.SubStoreId).change();
+                $("#updName").val(response.Name);
+
+
+                if (response.Gender == "Male") {
+                    $("#checkbox1").prop('checked', true)
+                    $("#checkbox2").prop('unchecked')                                  // change 2/18/2022
+
+                } else
+                {
+                    $("#checkbox2").prop('checked', true)
+                    $("#checkbox1").prop('unchecked')
+                }
+
+                $("#updEmail").val(response.Email);
+                $("#updContact").val(response.Contact);
+                $("#updPassword").val(response.Password);
+
+
+
+                $("#loadImg").hide();
+                $("#updateModal").modal('show');
+            },
+            error: function () {
+                $("#loadImg").hide();
+
+                alert("ajax Failed");
+            }
+        });
+
+    }
+
+
+
+    function validateEmail(email) {
+        //var id = -1;
+        //if (type == 2) {
+            var id= $('#updId').val();
+        //}
+
+        if (email != "") {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ValidateEmail", "Ajax")',
+                dataType: "json",
+                data:
+                {
+                    email: email , id:id
+                },
+                success: function (response) {
+                    if (response == true) {
+
+                        $('#updErrMsg').text("");
+                        $('#updSubBtn').prop('disabled', false);
+
+                    }
+                    else {
+
+                        $('#updErrMsg').text("Duplicate Email");
+                        $('#updSubBtn').prop('disabled', true);
+
+                    }
+                },
+                error: function () {
+                    $('#addErrMsg').text("");
+                    $('#addSubBtn1').prop('disabled', false);
+                    $('#updErrMsg').text("");
+                    $('#updSubBtn').prop('disabled', false);
+                    alert("Email Validation Ajax Failed");
+                }
+            });
+        }
+
+    }
+
+
+
+    function deleteFunction(id) {
+        $('#deleteId').val(id);
+        $('#deleteModal').modal('show');
+    }
+
+
+    //    for validate contact no. field ( not take alphabets )
+
+    function isInputNumber(evt) {
+        var ch = String.fromCharCode(evt.which);
+        if (!(/[0-9\-]+/.test(ch))) {
+            evt.preventDefault();
+        }
+    }
+
+
+    /////////////////////// function for load all javascripts file
+    $(document).ready(function () {
+
+        window.onresize = loadsTable;
+        function loadsTable() {
+            loadTable();
+        }
+    });
+
+
+</script>
+

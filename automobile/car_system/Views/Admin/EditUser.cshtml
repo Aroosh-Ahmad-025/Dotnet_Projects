@@ -1,0 +1,84 @@
+﻿@using CarSystem.Helping_Classes
+@using CarSystem.Models
+@{
+    ViewBag.Title = "Edit User";
+}
+
+
+
+<div class="p-20">
+    <div class="row">
+        <form action="@Url.Action("PostEditUser","Admin")" method="post">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="panel panel-flat">
+                        <div class="panel-heading">
+                            <h2 class="panel-title text-center text-bold">Edit User</h2>
+
+                            <input type="hidden" name="Id" value="@ViewBag.User.Id" />
+
+                            <div class="text-center" id="alertMsg" style="color:@ViewBag.Color ; font-weight:bold">
+                                @ViewBag.Message
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <legend class="text-bold text-uppercase"><span class="text-danger">*</span> Fields are mandatory to fill</legend>
+
+                            <div class="form-group">
+                                <label class="text-bold">Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" required value="@ViewBag.User.Name" name="Name" placeholder="Enter Name Here">
+                                <span class="text-danger" id="depErrMsg"></span>
+                            </div>
+
+                            <div class="form-group has-feedback has-feedback-left border-blue">
+                                <label class="display-block text-semibold">Select Gender</label>
+                                @if (ViewBag.User.Gender == 1)
+                                {
+                                    <label class="radio-inline">
+                                        <label>Male <input class="" type="radio" name="Gender" value="1" checked required></label>
+                                    </label>
+
+                                    <label class="radio-inline">
+                                        <label>Female <input type="radio" name="Gender" value="2" required></label>
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label class="radio-inline">
+                                        <label>Male <input class="" type="radio" name="Gender" value="1" required></label>
+                                    </label>
+
+                                    <label class="radio-inline">
+                                        <label>Female <input type="radio" name="Gender" value="2" checked required></label>
+                                    </label>
+                                }
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="text-bold">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" required value="@ViewBag.User.Email" name="Email" placeholder="something@gmail.com">
+                                <span class="text-danger" id="depErrMsg"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-bold">Contact <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" required value="@ViewBag.User.Contact" name="Contact" placeholder="0000-0000000">
+                                <span class="text-danger" id="depErrMsg"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" required value="@StringCipher.Decrypt(ViewBag.User.Password)" name="Password" placeholder="Your strong password">
+                                <span class="text-danger" id="depErrMsg"></span>
+                            </div>
+
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">Updated <i class="icon-database-insert position-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="DatabaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CarDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LotYear" Type="nvarchar" MaxLength="20" />
+          <Property Name="LotMake" Type="nvarchar" MaxLength="255" />
+          <Property Name="LotModel" Type="nvarchar" MaxLength="255" />
+          <Property Name="LotRunCondition" Type="nvarchar" MaxLength="255" />
+          <Property Name="DamageTypeDescription" Type="nvarchar" MaxLength="255" />
+          <Property Name="CopartFacilityName" Type="nvarchar" MaxLength="255" />
+          <Property Name="SaleTitleState" Type="nvarchar" MaxLength="255" />
+          <Property Name="SaleTitleType" Type="nvarchar" MaxLength="255" />
+          <Property Name="DamageType" Type="nvarchar" MaxLength="255" />
+          <Property Name="LotColor" Type="nvarchar" MaxLength="255" />
+          <Property Name="HasKey" Type="nvarchar" MaxLength="255" />
+          <Property Name="OdometerReading" Type="nvarchar" MaxLength="20" />
+          <Property Name="SalePrice" Type="nvarchar" MaxLength="20" />
+          <Property Name="RepairCost" Type="nvarchar" MaxLength="20" />
+          <Property Name="IsActive" Type="int" />
+          <Property Name="CreatedAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" />
+          <Property Name="Contact" Type="nvarchar" MaxLength="255" />
+          <Property Name="Gender" Type="int" />
+          <Property Name="Email" Type="nvarchar" MaxLength="255" />
+          <Property Name="Password" Type="nvarchar(max)" />
+          <Property Name="Role" Type="int" />
+          <Property Name="IsActive" Type="int" />
+          <Property Name="CreatedAt" Type="datetime" />
+        </EntityType>
+        <EntityContainer Name="DatabaseModelStoreContainer">
+          <EntitySet Name="CarDetail" EntityType="Self.CarDetail" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CarDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LotYear" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="LotMake" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="LotModel" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="LotRunCondition" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="DamageTypeDescription" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CopartFacilityName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="SaleTitleState" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="SaleTitleType" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="DamageType" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="LotColor" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="HasKey" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="OdometerReading" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="SalePrice" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="RepairCost" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Int32" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Contact" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Gender" Type="Int32" />
+          <Property Name="Email" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Role" Type="Int32" />
+          <Property Name="IsActive" Type="Int32" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityContainer Name="DatabaseEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CarDetails" EntityType="Self.CarDetail" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DatabaseModelStoreContainer" CdmEntityContainer="DatabaseEntities">
+          <EntitySetMapping Name="CarDetails">
+            <EntityTypeMapping TypeName="DatabaseModel.CarDetail">
+              <MappingFragment StoreEntitySet="CarDetail">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="LotYear" ColumnName="LotYear" />
+                <ScalarProperty Name="LotMake" ColumnName="LotMake" />
+                <ScalarProperty Name="LotModel" ColumnName="LotModel" />
+                <ScalarProperty Name="LotRunCondition" ColumnName="LotRunCondition" />
+                <ScalarProperty Name="DamageTypeDescription" ColumnName="DamageTypeDescription" />
+                <ScalarProperty Name="CopartFacilityName" ColumnName="CopartFacilityName" />
+                <ScalarProperty Name="SaleTitleState" ColumnName="SaleTitleState" />
+                <ScalarProperty Name="SaleTitleType" ColumnName="SaleTitleType" />
+                <ScalarProperty Name="DamageType" ColumnName="DamageType" />
+                <ScalarProperty Name="LotColor" ColumnName="LotColor" />
+                <ScalarProperty Name="HasKey" ColumnName="HasKey" />
+                <ScalarProperty Name="OdometerReading" ColumnName="OdometerReading" />
+                <ScalarProperty Name="SalePrice" ColumnName="SalePrice" />
+                <ScalarProperty Name="RepairCost" ColumnName="RepairCost" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="DatabaseModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Contact" ColumnName="Contact" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
