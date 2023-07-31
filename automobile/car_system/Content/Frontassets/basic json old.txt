@@ -1,0 +1,38 @@
+//var body = @"{" + "\n" +
+                    //@"""transactionId"":""f11069dc-7762-44e3-a304-f0206cd08788""," + "\n" +
+                    //@"    ""adminInfo"": {" + "\n" +
+                    //@"        ""sellerCompanyCode"": ""RLK2""," + "\n" +
+                    //@"    }," + "\n" +
+                    //@"    ""vehicleLocationSite"": {" + "\n" +
+                    //@"        ""address"": {" + "\n" +
+                    //@"            ""contact"": {" + "\n" +
+                    //@"                ""postalCode"": ""_postalCode_""" + "\n" +
+                    //@"            }" + "\n" +
+                    //@"        }" + "\n" +
+                    //@"    }," + "\n" +
+                    //@"    ""claimNumber"": """"," + "\n" +
+                    //@"    ""lossInfo"": {" + "\n" +
+                    //@"        ""lossType"": ""_lossType_""," + "\n" +
+                    //@"        ""primaryPointOfImpact"": ""_primaryPointOfImpact_""," + "\n" +
+                    //@"        ""secondaryPointOfImpact"": ""_secondaryPointOfImpact_""," + "\n" +
+                    //@"        ""damageSeverity"": ""_damageSeverity_""" + "\n" +
+                    //@"    }," + "\n" +
+                    //@"    ""vehicleInformation"": {" + "\n" +
+                    //@"        ""vin"": ""_vin_""," + "\n" +
+                    //@"        ""vehicleType"": ""_vehicleType_""," + "\n" +
+                    //@"        ""odometerInfo"": {" + "\n" +
+                    //@"            ""odometerReading"": ""_odometerReading_""," + "\n" +
+                    //@"            ""odometerBrand"": ""_odometerBrand_""" + "\n" +
+                    //@"        }," + "\n" +
+                    //@"        ""hasKeys"": ""_hasKeys_""," + "\n" +
+                    //@"        ""powerTrain"": ""_powerTrain_""" + "\n" +
+                    //@"    }," + "\n" +
+                    //@"    ""valuation"": {" + "\n" +
+                    //@"        ""acv"":  ""_acv_""," + "\n" +
+                    //@"        ""repairCost"": ""_repairCost_""" + "\n" +
+                    //@"    }," + "\n" +
+                    //@"    ""vehicleCondition"": {" + "\n" +
+                    //@"        ""drivabilityRating"": ""_drivabilityRating_""," + "\n" +
+                    //@"        ""titleCategory"": ""_titleCategory_""" + "\n" +
+                    //@"    }" + "\n" +
+                    //@"}";

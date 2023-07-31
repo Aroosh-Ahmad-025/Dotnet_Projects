@@ -1,0 +1,117 @@
+
+ALTER PROCEDURE [dbo].[GetAnyAttr]
+
+		@list varchar(MAX) ='',
+
+		@abc varchar(max) OUTPUT
+
+AS
+
+BEGIN 
+
+declare @i int, @current_alias int, @final_query nvarchar(Max) , @get_table_name nvarchar(max), @paramsdeclare nvarchar(MAX), @tbl_array nvarchar(max), @commulateAttr nvarchar(Max), @get_foreignkey nvarchar(Max), @total_colms nvarchar(max), @lastquery nvarchar(max), @finalquery nvarchar(max)
+
+SET @i=0;
+
+SET @current_alias = 65;
+
+while( @i < LEN(@list) - LEN(REPLACE(@list, ',', '')) + 1)
+
+BEGIN
+
+
+    declare @item nvarchar(MAX)
+
+    SET  @item = SUBSTRING(@list,  @i,CHARINDEX(',',@list,@i)-@i) -- to get item from the list
+
+	SET @get_table_name = 'SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME ='''+@item+''''
+
+	
+    
+	--do your stuff here with @item 
+
+	 SET @paramsdeclare = ' @abc varchar(MAX) OUTPUT '
+
+     EXEC sp_executesql @get_table_name, @params = @paramsdeclare , @abc = @abc
+
+	 SET @get_table_name = @abc
+
+	 SELECT @get_table_name
+
+	 IF CHARINDEX(@tbl_array,@get_table_name) > 0
+
+		 BEGIN
+
+		 
+		
+		  SET @commulateAttr = SUBSTRING(@tbl_array, 
+                 CHARINDEX(@get_table_name, @tbl_array),
+                 CHARINDEX(',', @tbl_array, CHARINDEX(@get_table_name, @tbl_array))
+                 - CHARINDEX(@get_table_name, @tbl_array)
+                 ) + '.'+@item
+
+
+		 SELECT @commulateAttr
+
+		 END  
+
+	 ELSE
+
+		BEGIN
+
+			
+
+			SET @tbl_array 	= @tbl_array +','+ @get_table_name
+
+			SELECT @tbl_array
+
+			
+
+			IF (LEN(@tbl_array) - LEN(REPLACE(@tbl_array, ',', '')) + 1> 1) --OR LEN of @tbl_array
+
+			BEGIN 
+
+				
+			
+				SET  @get_foreignkey = 'SELECT RIGHT(name, CHARINDEX(''_'',REVERSE(name))-1) FROM sys.foreign_keys WHERE parent_object_id = object_id('+@get_table_name+')'
+
+				SET @paramsdeclare = ' @abc varchar(MAX) OUTPUT '
+
+				EXEC sp_executesql @get_foreignkey, @params = @paramsdeclare , @abc = @abc
+
+				SET @get_foreignkey = @abc
+
+				SET @get_table_name = ' LEFT Join '+ @get_table_name+' '+CHAR(@current_alias) + ' ON ' + CHAR(@current_alias-1) + '.Id' +' = '+CHAR(@current_alias)+'.'+ @get_foreignkey
+
+			END
+
+		END
+
+	SET @current_alias = @current_alias + 1;
+
+	
+	
+	SET @lastquery = @lastquery + @get_table_name
+
+
+    SET @total_colms = @total_colms+ ',' +@commulateAttr
+	
+	
+
+
+    set @i = CHARINDEX(',',@list,@i)+1
+	
+    if(@i = 0) set @i = LEN(@list) 
+
+
+END
+
+SET @finalquery = 'SELECT' +@total_colms + 'from' +@lastquery
+
+SELECT @final_query
+
+EXECUTE sp_executesql @finalquery, @params = @paramsdeclare, @abc = @abc
+
+
+END
+

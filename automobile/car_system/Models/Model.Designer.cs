@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\Users\daniy\OneDrive\Desktop\First\CarSystem\Models\Model.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Users\pc\Desktop\NodlaysProjects\Car_System\car_system\Models\Model.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

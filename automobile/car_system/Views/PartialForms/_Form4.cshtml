@@ -1,0 +1,89 @@
+﻿@using CarSystem.Helping_Classes
+@using CarSystem.Models
+@using CarSystem.BL
+
+@{
+    DatabaseEntities de = new DatabaseEntities();
+    GeneralPurpose gp = new GeneralPurpose();
+    ViewBag.CDLotMakelist = new CarDetailBL().GetActiveCarDetailList(de).ToList().Select(x => x.LotMake).Distinct();
+}
+
+
+<div class="card-deck mb-3">
+    <div class="card mb-4 shadow-sm custom-padding">
+        <div class="row p-3">
+            <div class="col-md-6">
+                <div class="row text-center">
+                    <div class="col-md-12">
+                        <img src="~/Content/Frontassets/images/OfferForm/02.png" class="image-size" />
+                    </div>
+                    <div class="col-md-12">
+                        <img src="~/Content/Frontassets/images/car-img-03.png" class="image-size" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+
+                <h2 class="text-center">Congrats you got an Offer!</h2>
+
+                <h4 class="text-center mt-3 mb-5 pb-5" style="color: #555555">We want to buy your car</h4>
+                <div class="text-center">
+
+                    <img id="loadNameAndPrice" src='~/Content/assets/images/loading.gif' width='40' style=" display: none " />
+
+                    <h3 class="custom-heading" style="color:#dc5700"><i><span style="color:#dc5700" id="showYearMakeModel"></span></i></h3>
+
+
+                    <h4 class="custom-heading" style="color:#666"><strong id="priceshow"> </strong><span id="showPrice"></span></h4>
+
+                </div>
+
+
+                <div class="mt-5 pt-5">
+                    <div class="text-left">
+                        <ul type="circle">
+                            <li>We Come to You</li>
+                            <li>We Pay you on the spot</li>
+                        </ul>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 col-sm-6">
+                            <a class="btn btn-block btn-danger text-white"> Proceed </a>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+
+        @* buttons position fixing  *@
+    <div class="row">
+
+        <div class="col-md-6 col-sm-6">
+
+        </div>
+
+        <div class="col-md-6">
+            <div class="row" style="">
+                <div class="col-md-6 col-sm-6">
+                    <a onclick="PreviousPage(1)" class="text-danger"><span class="angle_arrow"><i class="fa fa-arrow-left" aria-hidden="true"></i></span> Back </a>
+                </div>
+               
+            </div>
+        </div>
+
+    </div>
+
+        @*  *@
+    </div>
+</div>
+

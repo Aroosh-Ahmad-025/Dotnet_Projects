@@ -1,0 +1,912 @@
+﻿@using CarSystem.Helping_Classes
+@using CarSystem.Models
+@using CarSystem.BL
+
+@{
+    DatabaseEntities de = new DatabaseEntities();
+    GeneralPurpose gp = new GeneralPurpose();
+    ViewBag.CDLotYearlist = new CarDetailBL().GetActiveCarDetailList(de).ToList().Select(x => x.LotYear).OrderByDescending(x => x).Distinct();
+    
+}                                                                                           
+
+<div class="card-deck mb-3">
+    <div class="card mb-4 shadow-sm custom-padding">
+
+
+        <div class="row p-3">
+
+
+            @*<div class="col-md-6">
+                <div class="row text-center">
+                    <div class="col-md-12">
+                        <img src="~/Content/Frontassets/images/OfferForm/01.png" class="image-size" />
+                    </div>
+                    <div class="col-md-12">
+                        <img src="~/Content/Frontassets/images/car-img-03.png" class="image-size" />
+                    </div>
+                </div>
+            </div>*@
+
+            @*    Search by VIN   *@
+
+            <div class="col-md-12" style="display:none" id="showDivOfVin">
+
+                <h3 class="text-center">Get Instant Offer</h3>
+                <br />
+
+                <input type="hidden" id="IsVIN" />
+                <div class="form-group">
+
+
+                    <label class="control-label">Enter VIN</label>
+                    <input type="text" onchange="searchByVin()" id="getVINnumber" class="form-control" placeholder="Enter your VIN" />
+
+                    <img id="loaderForVin" src='~/Content/assets/images/loading.gif' width='40' style="margin-top: -2%; margin-left: -3%; display: none " />
+                    <span class="text-success" id="vinTrue"></span>   <span class="text-danger" id="vinFalse"></span>
+
+                </div>
+
+
+                <hr />
+                <div class="form-group">
+
+
+                    <label class="control-label"> Year <span class="text-danger">*</span></label>
+
+                    <select type="text" id="getYear" class="form-control" placeholder="Enter your Year" required>
+                        <option value="">Select a Year</option>
+                        <option>2024</option>
+                        <option>2023</option>
+                        <option>2022</option>
+                        <option>2021</option>
+                        <option>2020</option>
+                        <option>2019</option>
+                        <option>2018</option>
+                        <option>2017</option>
+                        <option>2016</option>
+                        <option>2015</option>
+                        <option>2014</option>
+                        <option>2013</option>
+                        <option>2012</option>
+                        <option>2011</option>
+                        <option>2010</option>
+                        <option>2009</option>
+                        <option>2008</option>
+                        <option>2007</option>
+                        <option>2006</option>
+                        <option>2005</option>
+                        <option>2004</option>
+                        <option>2003</option>
+                        <option>2002</option>
+                        <option>2001</option>
+                        <option>2000</option>
+                        <option>1999</option>
+                        <option>1998</option>
+                        <option>1997</option>
+                        <option>1996</option>
+                        <option>1995</option>
+                        <option>1994</option>
+                        <option>1993</option>
+                        <option>1992</option>
+                        <option>1991</option>
+                        <option>1990</option>
+                        <option>1989</option>
+                        <option>1988</option>
+                        <option>1987</option>
+                        <option>1986</option>
+                        <option>1985</option>
+                        <option>1984</option>
+                        <option>1983</option>
+                        <option>1982</option>
+                        <option>1981</option>
+                        <option>1980</option>
+                        <option>1979</option>
+                        <option>1978</option>
+                        <option>1977</option>
+                        <option>1976</option>
+                        <option>1975</option>
+                        <option>1974</option>
+                        <option>1973</option>
+                        <option>1972</option>
+                        <option>1971</option>
+                        <option>1970</option>
+                        <option>1969</option>
+                        <option>1968</option>
+                        <option>1967</option>
+                        <option>1966</option>
+                        <option>1965</option>
+                        <option>1964</option>
+                        <option>1963</option>
+                        <option>1962</option>
+                        <option>1961</option>
+                        <option>1960</option>
+                        <option>1959</option>
+                        <option>1958</option>
+                        <option>1957</option>
+                        <option>1956</option>
+                        <option>1955</option>
+                        <option>1954</option>
+                        <option>1953</option>
+                        <option>1952</option>
+                        <option>1951</option>
+                        <option>1950</option>
+                        <option>1949</option>
+                        <option>1948</option>
+                        <option>1947</option>
+                        <option>1946</option>
+                        <option>1945</option>
+                        <option>1944</option>
+                        <option>1943</option>
+                        <option>1942</option>
+                        <option>1941</option>
+                        <option>1940</option>
+                    </select>
+
+
+
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label"> Make <span class="text-danger">*</span> </label>
+                    <select id="getMake" class="form-control" placeholder="Enter your Make" required>
+                        <option value="">Select a Make</option>
+
+
+                        <option value="ACURA">ACURA</option>
+                        <option value="ALFA ROMEO">ALFA ROMEO</option>
+                        @*<option value="AMERICAN GENERAL">AMERICAN GENERAL</option>*@
+                        <option value="AMERICAN MOTORS">AMERICAN MOTORS</option>
+                        <option value="ASSEMBLY">ASSEMBLY</option>
+                        <option value="ASTON MARTIN">ASTON MARTIN</option>
+                        <option value="AUDI">AUDI</option>
+                        <option value="AUSTIN">AUSTIN</option>
+                        @*<option value="AUTOBIANCHI">AUTOBIANCHI</option>*@
+
+
+                        <option value="BENTLEY">BENTLEY</option>
+                        @*<option value="BERTONE">BERTONE</option>*@
+                        <option value="BIG DOG">BIG DOG</option>
+                        <option value="BLUEBIRD">BLUEBIRD</option>
+                        <option value="BMW">BMW</option>
+                        @*<option value="BMW MOTORRAD">BMW MOTORRAD</option>
+                <option value="BRICKLAN">BRICKLAN</option>*@
+                        <option value="BUICK">BUICK</option>
+
+
+                        <option value="CADILLAC">CADILLAC</option>
+                        @*<option value="CHECKER">CHECKER</option>*@
+                        <option value="CHEVROLET">CHEVROLET</option>
+                        <option value="CHRYSLER">CHRYSLER</option>
+                        <option value="CLASSIC ROADSTER">CLASSIC ROADSTER</option>
+                        <option value="COACH">COACH</option>
+                        <option value="CODA">CODA</option>
+                        <option value="CROSLEY">CROSLEY</option>
+
+
+                        <option value="DAEWOO">DAEWOO</option>
+                        <option value="DAIHATSU">DAIHATSU</option>
+                        <option value="DATSUN">DATSUN</option>
+                        @*<option value="DELOREAN">DELOREAN</option>*@
+                        <option value="DESOTO">DESOTO</option>
+                        <option value="DODGE">DODGE</option>
+                        <option value="DUCATI">DUCATI</option>
+
+
+                        <option value="EAGLE">EAGLE</option>
+                        <option value="ELDORADO">ELDORADO</option>
+                        <option value="EXCALIBUR">EXCALIBUR</option>
+
+
+                        <option value="FERRARI">FERRARI</option>
+                        <option value="FIAT">FIAT</option>
+                        <option value="FISKER">FISKER</option>
+                        <option value="FORD">FORD</option>
+                        <option value="FREIGHTLINER">FREIGHTLINER</option>
+
+                        <option value="GEM">GEM</option>
+                        <option value="GENESIS">GENESIS</option>
+                        <option value="GEO">GEO</option>
+                        <option value="GM">GM</option>
+                        <option value="GMC">GMC</option>
+                        <option value="GOLF CART">GOLF CART</option>
+
+
+                        <option value="HARLEY DAVIDSON">HARLEY DAVIDSON</option>
+                        <option value="HONDA">HONDA</option>
+                        <option value="HUMMER">HUMMER</option>
+                        <option value="HYUNDAI">HYUNDAI</option>
+
+
+                        <option value="INFINITI">INFINITI</option>
+                        <option value="INTERNATIONAL">INTERNATIONAL</option>
+                        <option value="ISUZU">ISUZU</option>
+
+
+                        <option value="JAGUAR">JAGUAR</option>
+                        <option value="JEEP">JEEP</option>
+
+
+                        <option value="KAWASAKI">KAWASAKI</option>
+                        <option value="KIA">KIA</option>
+
+
+                        <option value="LAFORZA">LAFORZA</option>
+                        <option value="LAMBORGHINI">LAMBORGHINI</option>
+                        <option value="LANCIA">LANCIA</option>
+                        <option value="LAND ROVER">LAND ROVER</option>
+                        <option value="LEXUS">LEXUS</option>
+                        <option value="LINCOLN">LINCOLN</option>
+                        <option value="LOTUS">LOTUS</option>
+
+
+                        <option value="MASERATI">MASERATI</option>
+                        <option value="MAYBACH">MAYBACH</option>
+                        <option value="MAZDA">MAZDA</option>
+                        <option value="MCLAREN">MCLAREN</option>
+                        <option value="MERCEDES">MERCEDES</option>
+                        <option value="MERCURY">MERCURY</option>
+                        <option value="MERKUR">MERKUR</option>
+                        <option value="MG">MG</option>
+                        @*<option value="MGB">MGB</option>*@
+                        <option value="MINI">MINI</option>
+                        <option value="MITSUBISHI">MITSUBISHI</option>
+                        <option value="MOTO GUZZI">MOTO GUZZI</option>
+
+
+                        <option value="NASH">NASH</option>
+                        <option value="NISSAN">NISSAN</option>
+                        @*<option value="NISSAN DIESEL">NISSAN DIESEL</option>
+                <option value="NORTH AMERICAN BUS">NORTH AMERICAN BUS</option>*@
+
+
+                        <option value="OLDSMOBILE">OLDSMOBILE</option>
+                        <option value="OPEL">OPEL</option>
+                        <option value="OSHKOSH">OSHKOSH</option>
+                        @*<option value="OTHER AUTOMOBILE">OTHER AUTOMOBILE</option>*@
+
+
+                        @*<option value="PACKARD">PACKARD</option>
+                <option value="PANTERA">PANTERA</option>*@
+                        <option value="PEUGEOT">PEUGEOT</option>
+                        <option value="PIERCE">PIERCE</option>
+                        <option value="PLYMOUTH">PLYMOUTH</option>
+                        <option value="PONTIAC">PONTIAC</option>
+                        <option value="PORSCHE">PORSCHE</option>
+
+
+                        @*<option value="RAM TRUCKS">RAM TRUCKS</option>
+                <option value="RANGE ROVER">RANGE ROVER</option>
+                <option value="GROUPE RENAULT">RENAULT</option>
+                <option value="ROADMASTER RAIL">ROADMASTER RAIL</option>*@
+                        <option value="RANGE">RANGE</option>
+                        <option value="ROLLS ROYCE">ROLLS ROYCE</option>
+                        <option value="ROVER">ROVER</option>
+
+
+                        <option value="SAAB">SAAB</option>
+                        <option value="SALEEN">SALEEN</option>
+                        <option value="SATURN">SATURN</option>
+                        @*<option value="SCION">SCION</option>
+                <option value="SMART CARS">SMART CARS</option>*@
+                        <option value="SPRINTER">SPRINTER</option>
+                        <option value="STERLING">STERLING</option>
+                        <option value="STUDEBAKER">STUDEBAKER</option>
+                        <option value="SUBARU">SUBARU</option>
+                        <option value="SUZUKI">SUZUKI</option>
+
+
+                        <option value="TESLA">TESLA</option>
+                        <option value="TOYOTA">TOYOTA</option>
+                        <option value="TRIUMPH">TRIUMPH</option>
+
+
+                        <option value="VOLKSWAGEN">VOLKSWAGEN</option>
+                        <option value="VOLVO">VOLVO</option>
+
+
+                        <option value="WHEEGO">WHEEGO</option>
+                        @*<option value="WILLY">WILLY</option>*@
+
+                        <option value="YAMAHA">YAMAHA</option>
+
+                        <option value="YUGO">YUGO</option>
+
+
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label"> Model <span class="text-danger">*</span> </label>
+                    <select type="text" id="getModel" class="form-control" placeholder="Enter your Model" required>
+                        <option value="">Select a Model</option>
+                    </select>
+                </div>
+
+
+                @*Massam Form 2 Start*@
+
+                <div class="form-group">
+                    <label class="control-label">Enter Zip Code <span class="text-danger">*</span></label>
+                    <input type="text" onkeyup="findLocation()" class="form-control" id="ZipCode" name="ZipCode" placeholder="Enter Zip Code" />
+                    <img id="loadImg" src='~/Content/assets/images/loading.gif' width='40' style="margin-top: -2%; margin-left: -3%; display: none " />
+                    <span class="text-danger" id="location1"></span>   <span class="text-success" id="location"></span>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="control-label">Does it moves forward and backward ? <span class="text-danger">*</span></label>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="driveable" value="D" name="driveablestatus" class="custom-control-input">
+                        <label class="custom-control-label" for="driveable">Yes</label>
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="Notdriveable" value="N" name="driveablestatus" class="custom-control-input">
+                        <label class="custom-control-label" for="Notdriveable">No</label>
+                    </div>
+                </div>
+
+
+                <div id="odoDiv" class="form-group" hidden>
+                    <label class="control-label">Does it drives upto 70 miles / hr ? <span class="text-danger">*</span></label>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="odometer70" value="50000" name="odometerReading" class="custom-control-input">
+                        <label class="custom-control-label" for="odometer70">Yes</label>
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="notodometer70" value="0" name="odometerReading" class="custom-control-input">
+                        <label class="custom-control-label" for="notodometer70">No</label>
+                    </div>
+                </div>
+
+
+                <div id="doesStartdiv" class="form-group" hidden>
+                    <label class="control-label">Does it starts ? <span class="text-danger">*</span></label>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="yesStart" value="Y" name="doesStart" class="custom-control-input">
+                        <label class="custom-control-label" for="yesStart">Yes</label>
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="noStart" value="N" name="doesStart" class="custom-control-input">
+                        <label class="custom-control-label" for="noStart">No</label>
+                    </div>
+                </div>
+
+                @*Massam Form 2 End*@
+
+
+                @*Massam Form 3 Start*@
+
+                <div id="engTransRem" class="form-group" hidden>
+                    <label class="control-label">Is Car Transmission Removed? <span class="text-danger">*</span></label>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="yesTrans" value="Y" name="transRemove" class="custom-control-input">
+
+                        <label class="custom-control-label" for="yesTrans">Yes</label>
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="noTrans" value="N" name="transRemove" class="custom-control-input">
+                        <label class="custom-control-label" for="noTrans">No</label>
+                    </div>
+                </div>
+
+
+                <div id="TransRem" class="form-group" hidden>
+                    <label class="control-label">Is Car Engine or Transmission Removed? <span class="text-danger">*</span></label>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="noTransAndEngine" value="Y" name="transRemove" class="custom-control-input">
+
+                        <label class="custom-control-label" for="noTransAndEngine">Yes</label>
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="YesTransAndEngine" value="N" name="transRemove" class="custom-control-input">
+                        <label class="custom-control-label" for="YesTransAndEngine">No</label>
+                    </div>
+                </div>
+
+
+                <div id="odoMeterReading" class="form-group" hidden>
+                    <label class="control-label">Select Odometer Reading <span class="text-danger">*</span></label>
+                    <select id="odometerReadings" name="odometerReadings" class="form-control" placeholder="Enter odometerReading" required>
+                        <option value="" selected>-- Select Odometer Reading -- </option>
+                        <option value="50000">Under 50,000</option>
+                        <option value="100000">Under 100,000</option>
+                        <option value="150000">Under 150,000</option>
+                        <option value="200000">Under 200,000</option>
+                        <option value="300000">Under 300,000</option>
+                        <option value="350000">Unknown</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Select Wheel Type <span class="text-danger">*</span></label>
+                    <select id="powerTrain" name="powerTrain" class="form-control" placeholder="Enter Power Train" required>
+                        <option value="" selected>-- Select Wheel Type -- </option>
+                        <option value="FWD">Front Wheel Drive</option>
+                        <option value="RWD">Rear Wheel Drive</option>
+                        <option value="AWD">All Wheel Drive</option>
+                        <option value="4x4">4x4</option>
+                        <option value="4x2">4x2</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">What kind of sale title type do you have? <span class="text-danger">*</span></label>
+
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="cleartitle" value="Clear" name="Title" class="custom-control-input SaleTitleTypeEmptyModalPopup">
+                        <label class="custom-control-label" for="cleartitle">Clear Title (CT)</label>
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="salvagecertificate" value="Salvage" name="Title" class="custom-control-input SaleTitleTypeEmptyModalPopup">
+                        <label class="custom-control-label" for="salvagecertificate">Salvage Title (ST)</label>
+                    </div>
+                </div>
+
+                @*Massam Form 3 End*@
+
+
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 ">
+                        <a hidden onclick="SelectLotYear(2)" class="btn bg-primary float-left text-white">
+                            <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
+                        </a>
+                    </div>
+                    <div id="nextBtnForVin" class="col-md-6 col-sm-6 ">
+                        <a id="SubmitFullForm" onclick="NextPage(3)" disabled class="float-right btn bg-primary text-white">
+                            Next <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-6" hidden>
+                <input hidden  id="YearofCar" class="form-control"  />
+                <input hidden  id="MakeofCar" class="form-control"  />
+                <input hidden  id="ModelofCar" class="form-control"  />
+
+
+            </div>
+           
+
+
+        </div>
+
+
+
+        @* buttons position fixing  *@
+
+        @*<div class="row">
+            <div class="col-md-6 col-sm-6">
+
+            </div>
+
+            <div class="col-md-6" id="fixedpositionbuttons" hidden>
+                <div class="row" style="">
+                    <div class="col-md-6 col-sm-6">
+                        <a href="@Url.Action("Index","Home")" class="text-danger"><span class="angle_arrow"><i class="fa fa-arrow-left" aria-hidden="true"></i></span> Back </a>
+                    </div>
+                    <div class="col-md-6 col-sm-6 ">
+                        <a onclick="NextPage(1)" style="padding-right: 17px" class="float-right text-danger"> Next <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+
+      
+    </div>
+</div>
+
+
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZXUxsPREgv13fH4iD1_Nmj624kdMvhw4&callback=initAutocomplete&libraries=geometry,places&v=weekly"
+        defer>
+</script>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous">
+
+    
+</script>
+
+<script>
+
+    
+    $(document).ready(function () {
+      
+        
+        $("#fixedpositionbuttons").css("display", "none");
+        $("#showDivOfVins").css("display", "none");
+        $("#nextBtnForVin").hide();
+
+        $("#showDivOfVin").css("display", "block");
+    });
+
+
+
+    //$("#getYear").change(function () {
+    //    var year = $(this).val();
+
+    //    //$("#YearofCar").val(year);
+    //    $("#MakeofCar").val("");
+    //    $.ajax({
+    //        url: "https://vpic.nhtsa.dot.gov/api/vehicles/GetMakesForVehicleType/car?format=json",
+    //        type: "GET",
+    //        dataType: "json",
+    //        success: function (result, status) {
+
+
+    //            $('#getMake').html($('<option>', {
+    //                value: "",
+    //                text: ""
+    //            }));
+
+    //            console.log("MakeResponse", result);
+    //            $.each(result.Results, function (i, item) {
+                  
+    //                $('#getMake').append($('<option>', {
+    //                    value: item.MakeName,
+    //                    text: item.MakeName
+    //                }));
+    //            });
+    //        },
+    //        error: function () {
+
+               
+
+
+    //        }
+    //    });
+        
+    //});
+
+
+    $("#getMake").change(function () {
+        var make = $(this).val();
+
+        $("#MakeofCar").val(make);
+        $("#ModelofCar").val("");
+        $.ajax({
+            url: "https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/" + make +"?format=json",
+            type: "GET",
+            dataType: "json",
+            success: function (result, status) {
+
+                $('#getModel').html($('<option>', {
+                    value: "",
+                    text: ""
+                }));
+                $.each(result.Results, function (i, item) {
+                    $('#getModel').append($('<option>', {
+                        value: item.Model_Name,
+                        text: item.Model_Name
+                    }));
+                });
+            },
+            error: function () {
+
+               
+
+
+            }
+        });
+        
+    });
+
+    $("#getModel").change(function () {
+        var model = $(this).val();
+        $("#YearofCar").val($("#getYear").val());
+        $("#MakeofCar").val($("#getMake").val());
+        $("#ModelofCar").val(model);
+        $("#nextBtnForVin").show();
+
+    });
+    function searchByVin() {
+      
+        //        ======>    API     AIzaSyBZXUxsPREgv13fH4iD1_Nmj624kdMvhw4     API      <======
+
+        //  1N4AL3AP4DC295509
+        //  4T1BK1EB6DU056165
+        //  KM8JM12D56U303366
+        //  5NMSH73E88H134350
+        //  1GTHK29U74E341306
+        //  JTLKT324X64085338
+        //  2HGEJ6446YH110899
+        //  JN8AS5MT2DW022816
+        //  3FADP4BJ2FM195587
+        //  1G6AF5SX6D0125409
+
+
+        $("#getYear").val("").trigger('change');
+        $("#getMake").val("").trigger('change');
+        $("#getModel").html('');
+        $('#getModel').append($('<option>', {
+            value: '',
+            text: 'Select a Model'
+        }));
+        //$("#getModel").val("").trigger('change');
+
+        
+      
+        $("#vinTrue").text('');
+        var val = $("#getVINnumber").val();
+
+        
+
+
+        if (val != null && val != "") {
+            $("#loaderForVin").show();
+            $.ajax({
+                url: "https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVINValuesBatch/",
+                type: "POST",
+                data: { format: "json", data: val },
+                dataType: "json",
+                success: function (result, status) {
+
+                    console.log("VIN Response",result);
+                    if (result.Results[0].ErrorCode == "0") {
+                        $("#vinFalse").text('');
+                     
+                       
+
+                        $("#vinTrue").text(result.Results[0].ModelYear + ' ' + result.Results[0].Make + ' ' + result.Results[0].Model);
+                        $("#nextpge").show();//now babar
+
+                      
+                        $("#getYear").val(result.Results[0].ModelYear).trigger('change');
+                        $("#getMake").val(result.Results[0].Make.toUpperCase()).trigger('change');
+                        
+
+                
+                        //hidden fields values appending
+                        var toUprformodel = result.Results[0].Model.toUpperCase();
+                     
+                        $("#YearofCar").val(result.Results[0].ModelYear);
+                        $("#MakeofCar").val(result.Results[0].Make);
+                        $("#ModelofCar").val(toUprformodel);
+
+                        $('#getModel').append($('<option>', {
+                            value: toUprformodel,
+                            text: toUprformodel
+                        }));
+
+                        $("#getModel").val(result.Results[0].Model.toUpperCase()).trigger('change');
+
+                      
+                        $("#nextBtnForVin").show();
+                     
+                        $("#loaderForVin").hide();
+                      
+                    } else {
+                        // NextPage(1);
+                        $("#vinTrue").text('');
+                        $("#vinFalse").text('Not Found');
+
+
+
+
+                        $("#loaderForVin").hide();
+                       
+                    }
+
+
+
+                },
+                error: function () {
+
+                    $("#vinTrue").text('');
+                    $("#vinFalse").text('Not Found');
+                    $("#loaderForVin").hide();
+
+
+                   
+                }
+            });
+
+        }
+    }
+</script>
+
+
+@*Form 2*@
+<script>
+
+    //       AIzaSyBZXUxsPREgv13fH4iD1_Nmj624kdMvhw4
+
+
+    var api = 'https://maps.googleapis.com/maps/api/geocode/json';
+
+    var countrycodeapi = 'https://restcountries.com/v2/alpha/{code}';
+
+
+    var button = document.getElementById('ajax-button');
+
+
+    
+
+    function findLocation() {
+
+        /*debugger*/;
+        var ZipCode = document.getElementById('ZipCode').value;
+        var url = api + "?address=" + ZipCode + "&key=AIzaSyBZXUxsPREgv13fH4iD1_Nmj624kdMvhw4";
+        var geocoder = new google.maps.Geocoder();
+        $("#loadImg").show();
+        geocoder.geocode({ 'address': ZipCode },
+            function (results, status) {
+                if (status == 'OK') {
+                    var x = results[0].formatted_address;
+                    //var x = results[0].postcode_localities;
+
+                    //  alert(x);
+                    //ViewBag.ZipCodeAddress = x;
+                    $('#location1').text("");
+
+                    $('#location').text(x);
+
+                    /*document.getElementById("location").style.color = "green";     .css('color' : 'green');   */
+                    $("#loadImg").hide();
+                } else {
+                    $('#location').text("");
+                    $('#location1').text("Not Found!");
+                    $("#loadImg").hide();
+                }
+            });
+
+        //var xhr = new XMLHttpRequest();
+        //xhr.open('GET', url, true);
+        //xhr.onreadystatechange = function () {
+        //    if (xhr.readystate < 4) {
+        //        showLoading();
+        //    } if (xhr.readystate >= 2 && xhr.status == 200) {
+        //        alert("abc");
+        //        outputLocation(xhr.responceText);
+        //    }
+        //}
+        //xhr.send();
+    }
+
+    function showLoading() {
+
+        //$('#location').text("loading........");
+
+        var target = document.getElementById('location');
+
+        target.innerHTML = 'loading........';
+    }
+
+    function outputLocation(data) {
+        var targer = document.getElementById('location');
+        var json = JSON.parse(data);
+        var address = json.results[0].formatted_address;
+        targer.innerHTML = address;
+    }
+
+    //var button = document.getElementById('ajax-button');
+    //button.addEventListener("click", findLocation());
+
+
+    // checking country code validity
+
+
+    function Countrycodevalidate() {
+        //let fd = $("#myform").serialize();
+        /*debugger*/
+        var countryISO = $('#CountryCode').val();//     1    complete
+
+
+
+        $.ajax({
+                type: 'POST',
+                url:  '@Url.Action("CheckCountryCode", "Ajax")',/*"../Ajax/GetUserById",*/
+                dataType: "json",
+                data: {
+                    //   2
+                    Countrycode: countryISO,
+                },
+
+
+                dataType: "json",
+
+                success: function (CC) {
+
+                    if (CC != "") {
+                        $('#countrycodefalse').text('');
+                        $('#countrycodetrue').text(CC);
+                    }
+                    else
+                    {
+                        $("#countrycodetrue").text('');
+                        $("#countrycodefalse").text("your code Does Not matched with USA ISO Code");
+                    }
+                },
+                error: function () {
+                    alert("sbc");
+                }
+
+            }); // Submit the form
+    }
+
+
+
+    $("input[name='driveablestatus']").change(function () {
+        var val = $(this).val();
+
+        if (val == "D") {
+
+            $("#odoDiv").prop("hidden", false);
+
+            //("#doesStartdiv").prop('checked', false);
+
+            $('input[name="doesStart"]').prop('checked', false);
+            $("#doesStartdiv").prop("hidden", true);
+
+            var val = $("input[name='odometerReading']:checked").val();
+
+            if (val == "50000") {
+                $("#odoMeterReading").prop("hidden", false);
+            }
+
+
+            $('input[name="transRemove"]').prop('checked', false);
+            $("#TransRem").prop("hidden", true);
+
+            $('input[name="transRemove"]').prop('checked', false);
+            $("#engTransRem").prop("hidden", true);
+        }
+        else {
+
+            $('input[name="odometerReading"]').prop('checked', false);
+            $("#odoDiv").prop("hidden", true);
+
+            $("#doesStartdiv").prop("hidden", false);
+
+            $('input[name="odometerReadings"]').prop('checked', false);
+            $("#odoMeterReading").prop("hidden", true);
+        }
+    });
+
+    $("input[name='odometerReading']").change(function () {
+
+        var val = $(this).val();
+        if (val == "50000") {
+
+            $("#odoMeterReading").prop("hidden", false);
+        }
+        else {
+            $('input[name="odometerReadings"]').prop('checked', false);
+            $("#odoMeterReading").prop("hidden", true);
+        }
+    });
+
+
+    $("input[name='doesStart']").change(function () {
+        debugger;
+
+        var doesStart = $(this).val();
+
+        if (doesStart == "Y") {
+            $("#engTransRem").prop("hidden", false);
+
+            $('input[name="transRemove"]').prop('checked', false);
+            $("#TransRem").prop("hidden", true);
+        }
+        else if (doesStart == "N") {
+            $('input[name="transRemove"]').prop('checked', false);
+            $("#engTransRem").prop("hidden", true);
+
+            $("#TransRem").prop("hidden", false);
+        }
+    });
+
+
+</script>

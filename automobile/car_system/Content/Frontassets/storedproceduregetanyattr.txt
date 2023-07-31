@@ -1,0 +1,88 @@
+public void GetDynmaicData(string list_of_attr="",SqlConnection de)
+        {
+
+            var str = "FirstName,LastName,SkillName,TagName,OrderTitle";
+
+            string new_alias = "", lastquery = "", totalcols = "", finalquery = "";
+
+            List<string> table_array = new List<string>();
+
+            var current_alias = 65;
+
+            var strToArr = str.Split(',');
+
+            foreach (var x in strToArr)
+            {
+                var proc = "SELECT TABLE_NAME as TabName FROM INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME ='"+x+"'";
+
+                string initial = "";
+
+                new_alias = Convert.ToChar(current_alias).ToString();
+
+                var col_name = new_alias + "." + x;
+
+                string getTabname = de.Query(proc).First().TabName;
+
+                if (!string.IsNullOrEmpty(getTabname))
+                {
+
+                    if (table_array.Any(s => s.Contains(getTabname)))
+                    {
+
+                        var getaliasIndex = table_array.Where(s => s.Contains(getTabname)).Select(a => a.IndexOf(a)).First();
+
+                        var alias = table_array[getaliasIndex].Split(' ')[1];
+
+                        col_name = alias + "." + x;
+
+                        initial = getTabname;
+
+                    }
+
+                    else
+                    {
+                        table_array.Add(getTabname + " " + Convert.ToChar(current_alias).ToString());
+
+                        
+
+                        if (table_array.Count() > 1)
+                        {
+                            var qr = "SELECT FKey= RIGHT(name, CHARINDEX('_',REVERSE(name))-1)  FROM sys.foreign_keys WHERE parent_object_id = object_id('" + getTabname + "')";
+                            var getforignkey = de.Query(qr).First().FKey;
+
+                            initial = " LEFT Join " + getTabname +" " + Convert.ToChar(current_alias).ToString() + " ON " + Convert.ToChar(current_alias - 1).ToString() + ".Id" + " = " + Convert.ToChar(current_alias).ToString() + '.' + getforignkey;
+                        }
+                        else
+                        {
+                            initial = getTabname +" " + Convert.ToChar(current_alias).ToString();
+                        }
+
+                        col_name = Convert.ToChar(current_alias).ToString() + "." + x;
+
+                        current_alias++;
+                    }
+                }
+
+                if (!lastquery.Contains(initial))
+                {
+                    lastquery = lastquery+" "+ initial;
+                }
+
+                if (totalcols.Length > 1)
+                {
+                    totalcols = totalcols + ',' + col_name;
+                }
+                else
+                {
+                    totalcols = col_name;
+                }
+
+                finalquery = "SELECT " + totalcols + " from " + lastquery;
+
+               
+
+
+            }
+
+            var getdata = de.Query<dynamic>(finalquery);
+        }

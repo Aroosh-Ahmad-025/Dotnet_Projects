@@ -516,7 +516,7 @@ namespace CarSystem.Controllers
         public ActionResult GenerateOfferPrice( string Year = "", string Make = "", string Model = "",
                                             int postalCode = 0,  string odometerReadings = "",
                                            string transRemove = "", 
-                                          string Title = "", string vin = "",string driveablestatus = "",string doesStart="", string powerTrain="")
+                                          string titleCategory = "", string vin = "",string drivable="",string doesStart="", string powerTrain="")
         {
 
                 #region token genrate
@@ -591,9 +591,9 @@ namespace CarSystem.Controllers
                     string odometerReading = odometerReadings;
                     string hasKeyss = "Y";
 
-                    string titleCategorys = Title;
-               
-                    if (driveablestatus == "D")
+                    string titleCategorys = titleCategory;
+
+                    if (drivable == "D")
                     {
                         doesStart = "D";
                     }
@@ -653,13 +653,13 @@ namespace CarSystem.Controllers
                
                     body = body.Replace("_lossType_", "N");
 
-                    body = body.Replace("_drivable_", doesStart);
+                    body = body.Replace("_secondaryPointOfImpact_", "");
 
-                    body = body.Replace("_drivabilityRating_", driveablestatus);
+                    body = body.Replace("_drivable_", drivable);
+
+                    body = body.Replace("_drivabilityRating_", doesStart);
 
                     body = body.Replace("_powerTrain_", powerTrain);
-
-                    body = body.Replace("_damageSeverity_", "M");
 
                     requestss.AddParameter("application/json", body, ParameterType.RequestBody);
 
@@ -681,23 +681,21 @@ namespace CarSystem.Controllers
 
                             var offerprice = Convert.ToDouble(ResponseOffer) * 0.67; // 67% of it
                             var finaloffer ="$"+ Convert.ToInt32(offerprice).ToString();
-                            return RedirectToAction("ResultPage", "Home", new { price = finaloffer });
+                            return Json(finaloffer, JsonRequestBehavior.AllowGet);
 
                         }
                     }
 
                 }
 
-                return RedirectToAction("ResultPage", "Home", new { price = "There's no offer for you available right now! " });
+                 return Json(ResponseOffer, JsonRequestBehavior.AllowGet);
 
             }
             catch (Exception e)
             {
-                return RedirectToAction("ResultPage", "Home", new { price = "Kindly provide a valid data !" });
+                return Json("", JsonRequestBehavior.AllowGet);
             }
         }
-
-       
 
     }
 }

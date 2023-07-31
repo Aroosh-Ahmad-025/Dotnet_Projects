@@ -22,11 +22,5 @@ namespace CarSystem.Controllers
             return View();
         }
 
-        public ActionResult ResultPage(string price = "")
-        {
-            ViewBag.Price = price;
-            return View();
-        }
-
     }
 }

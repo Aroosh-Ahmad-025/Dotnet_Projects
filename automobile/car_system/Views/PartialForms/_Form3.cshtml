@@ -1,0 +1,144 @@
+﻿<div class="card-deck mb-3 ">
+    <div class="card mb-4 shadow-sm custom-padding">
+        <div class="row p-3">
+            <div class="col-md-6" style="margin-top:20px">
+                <div class="row text-center">
+                    <div class="col-md-12">
+                        <img src="~/Content/Frontassets/images/OfferForm/03.png" class="image-size" style="width:60%" />
+                    </div>
+                
+                    <div class="col-md-12">
+                        <img src="~/Content/Frontassets/images/car-img-03.png" class="image-size" style="width:60%" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h3 class="text-center">Get Instant Offer</h3>
+
+
+                <div id="engTransRem" class="form-group" hidden>
+
+
+                    <label class="control-label">Is Car Transmission Removed? <span class="text-danger">*</span></label>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="yesTrans" value="Y" name="transRemove" class="custom-control-input">
+
+                        <label class="custom-control-label" for="yesTrans">Yes</label>
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="noTrans" value="N" name="transRemove" class="custom-control-input">
+                        <label class="custom-control-label" for="noTrans">No</label>
+                    </div>
+
+
+                </div>
+
+
+                <div id="TransRem" class="form-group" hidden>
+
+
+                    <label class="control-label">Is Car Engine or Transmission Removed? <span class="text-danger">*</span></label>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="noTransAndEngine" value="Y" name="transRemove" class="custom-control-input">
+
+                        <label class="custom-control-label" for="noTransAndEngine">Yes</label>
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="YesTransAndEngine" value="N" name="transRemove" class="custom-control-input">
+                        <label class="custom-control-label" for="YesTransAndEngine">No</label>
+                    </div>
+
+
+                </div>
+
+
+                <div id="odoMeterReading" class="form-group" hidden>
+                    <label class="control-label">Select Odometer Reading <span class="text-danger">*</span></label>
+                    <select id="odometerReadings" name="odometerReadings" class="form-control" placeholder="Enter odometerReading" required>
+                        <option value="" selected>-- Select Odometer Reading -- </option>
+                        <option value="50000">Under 50,000</option>
+                        <option value="100000">Under 100,000</option>
+                        <option value="150000">Under 150,000</option>
+                        <option value="200000">Under 200,000</option>
+                        <option value="300000">Under 300,000</option>
+                        <option value="350000">Unknown</option>
+                    </select>
+
+
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Select Wheel Type <span class="text-danger">*</span></label>
+                    <select id="powerTrain" name="powerTrain" class="form-control" placeholder="Enter Power Train" required>
+                        <option value="" selected>-- Select Wheel Type -- </option>
+                        <option value="FWD">Front Wheel Drive</option>
+                        <option value="RWD">Rear Wheel Drive</option>
+                        <option value="AWD">All Wheel Drive</option>
+                        <option value="4x4">4x4</option>
+                        <option value="4x2">4x2</option>
+                    </select>
+
+
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">What kind of sale title type do you have? <span class="text-danger">*</span></label>
+
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="cleartitle" value="Clear" name="Title" class="custom-control-input SaleTitleTypeEmptyModalPopup">
+                        <label class="custom-control-label" for="cleartitle">Clear Title (CT)</label>
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="salvagecertificate" value="Salvage" name="Title" class="custom-control-input SaleTitleTypeEmptyModalPopup">
+                        <label class="custom-control-label" for="salvagecertificate">Salvage Title (ST)</label>
+                    </div>
+
+
+                </div>
+
+
+
+
+
+
+            </div>
+        </div>
+
+        @* buttons position fixing  *@
+
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+
+            </div>
+
+            <div class="col-md-6">
+                <div class="row" style="">
+                    <div class="col-md-6 col-sm-6">
+                        <a onclick="PreviousPage(3)" class="text-danger"><span class="angle_arrow"><i class="fa fa-arrow-left" aria-hidden="true"></i></span> Back </a>
+                    </div>
+                    <div class="col-md-6 col-sm-6 ">
+                        <a id="SubmitFullForm" style="padding-right: 17px" onclick="NextPage(3)" class="float-right text-danger"> Next <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        @*  *@
+
+    </div>
+</div>
+
+<script>
+
+    function isInputNumber(evt) {
+        var ch = String.fromCharCode(evt.which);
+        if (!(/[0-9\.]+/.test(ch))) {
+            evt.preventDefault();
+        }
+    }
+
+</script>

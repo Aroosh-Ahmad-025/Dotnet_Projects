@@ -1,0 +1,56 @@
+--get foriegn key name
+
+--SELECT
+--  RIGHT(name, CHARINDEX('_',REVERSE(name))-1)
+--FROM sys.foreign_keys
+--WHERE parent_object_id = object_id('tblname')
+
+
+-- for checking if exsists
+
+--if CHARINDEX(@checkchar,@mainString) > 0
+
+
+--select a sub string
+
+--select from right
+--  RIGHT(name, CHARINDEX('_',REVERSE(name))-1)
+
+-- select from left
+--  LEFT(name, CHARINDEX('_',REVERSE(name))-1)
+
+
+-- for last alias name
+
+--CHARINDEX(',',@list,@i)+1
+
+--SUBSTRING(email, start , end)
+
+---for changing alias
+
+--set @current_alias = @current_alias+1-- CHAR(@current_alias) for converting to character
+
+-- for getting table name by column
+
+--SELECT      TABLE_NAME
+--FROM        INFORMATION_SCHEMA.COLUMNS
+--WHERE       COLUMN_NAME =@col_name
+
+--loop for ilterating
+declare @list varchar(MAX), @i int, @current_alias int
+select @i=0, @list ='4,7,12,22,19,', @current_alias = 65
+
+
+
+while( @i < LEN(@list))
+begin
+    declare @item varchar(MAX)
+    SET  @item = SUBSTRING(@list,  @i,CHARINDEX(',',@list,@i)-@i) -- to get item from the list
+
+     --do your stuff here with @item 
+     SELECT @item 
+
+    set @i = CHARINDEX(',',@list,@i)+1
+	
+    if(@i = 0) set @i = LEN(@list) 
+end

@@ -2308,14 +2308,6 @@
     <Content Include="Content\assets\js\plugins\visualization\sparkline.min.js" />
     <Content Include="Content\assets\swf\datatables\flashExport.swf" />
     <Content Include="Content\assets\swf\handsontable\zero_clipboard.swf" />
-    <Content Include="Content\css\custom.css" />
-    <Content Include="Content\css\elements\_portfoli.css" />
-    <Content Include="Content\css\font-icons.css" />
-    <Content Include="Content\css\plugins.css" />
-    <Content Include="Content\css\responsive.css" />
-    <Content Include="Content\css\sections\_error_404.css" />
-    <Content Include="Content\css\sections\_portfolio.css" />
-    <Content Include="Content\css\style.css" />
     <Content Include="Content\Frontassets\colors\blue.css" />
     <Content Include="Content\Frontassets\colors\green.css" />
     <Content Include="Content\Frontassets\colors\orange.css" />
@@ -2427,17 +2419,13 @@
     <Content Include="Content\Frontassets\js\owl.carousel.js" />
     <Content Include="Content\Frontassets\js\owl.carousel.min.js" />
     <Content Include="Content\Frontassets\js\slick.min.js" />
-    <Content Include="Content\js\contact.js" />
-    <Content Include="Content\js\google-map.js" />
-    <Content Include="Content\js\main.js" />
-    <Content Include="Content\js\maplace-active.js" />
-    <Content Include="Content\js\plugins.js" />
     <Content Include="Global.asax" />
     <Content Include="Models\Model.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>Model.edmx</DependentUpon>
       <LastGenOutput>Model.Context.cs</LastGenOutput>
     </Content>
+    <Content Include="Models\Model.edmx.sql" />
     <Content Include="Models\Model.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>Model.edmx</DependentUpon>
@@ -2808,8 +2796,8 @@
     <Content Include="Content\Frontassets\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Content\Frontassets\fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Content\Frontassets\basicjsonAttr.json" />
-    <Content Include="Content\css\style.css.map" />
     <None Include="packages.config" />
+    <Content Include="Views\Shared\_MyLayout.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Auth\Login.cshtml" />
     <Content Include="Views\Auth\Register.cshtml" />
@@ -2827,12 +2815,16 @@
     <Content Include="Views\Admin\AddCarDetail.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\PartialForms\_Form1.cshtml" />
+    <Content Include="Views\PartialForms\_Form2.cshtml" />
+    <Content Include="Views\PartialForms\_Form3.cshtml" />
+    <Content Include="Views\PartialForms\_Form4.cshtml" />
     <Content Include="Views\Home\Offer.cshtml" />
+    <Content Include="Views\PartialForms\_Form10.cshtml" />
     <None Include="Properties\PublishProfiles\Automobile.nodlays.co.uk - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
     <None Include="Properties\PublishProfiles\FTPProfile.pubxml" />
-    <Content Include="Views\Home\ResultPage.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
