@@ -1,0 +1,182 @@
+﻿@{
+    if(ViewBag.cat==2)
+    {
+        ViewBag.Title = "Add Customer";
+    }
+    else if(ViewBag.cat ==3)
+    {
+        ViewBag.Title = "Add Rider";
+    }
+   
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="p-20">
+
+    <div class="row">
+        <form action="@Url.Action("PostAddUser", "Admin")" method="post">
+
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="panel panel-flat">
+                        <div class="panel-heading">
+                            @if (ViewBag.cat == 3)
+                            {
+                                <h2 class="panel-title text-center text-bold">Add Rider</h2>
+                            }
+                            else if(ViewBag.cat==2)
+                            {
+                                 <h2 class="panel-title text-center text-bold">Add Customer</h2>
+                            } 
+                           
+                        </div>
+
+                        <div class="panel-body">
+                            <legend class="text-bold text-uppercase"><span class="text-danger">*</span> Fields are mandatory to fill</legend>
+
+
+                            <div class="form-group">
+                                <label class="text-bold">Full Name <span class="text-danger">*</span></label>
+                                <input type="text" onkeyup="limitText(this,40)" class="form-control" name="FullName" placeholder="Enter Full Name Here" required>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="text-bold">Email</label>
+                                <input type="email" name="Email" onkeydown="limitText(this,40)" class="form-control" onkeyup="validateEmail(this.value)" placeholder="Add Email Here">
+                                <span class="text-danger" id="emailErrMsg"></span>
+                            </div>
+
+                        
+                              <div class="form-group">
+                                <label class="text-bold">Contact No <span class="text-danger">*</span></label>
+                                <input type="text" name="Contact_No" onkeydown="limitText(this,40)" class="form-control" placeholder="Add Contact Here" required>
+                                
+                              </div>
+
+                              
+                              <div class="form-group">
+                                <label class="text-bold">Address</label>
+                                <input type="text" name="Address" onkeydown="limitText(this,40)" class="form-control" placeholder="Add Address Here">
+                                
+                              </div>
+
+                              @if(ViewBag.cat == 3)
+                                {
+                                  
+                                <div class="form-group">
+                                    <label class="text-bold">Salary </label>
+                                    <input type="number" name="Salary" onkeydown="limitText(this,40)" min="0" class="form-control" placeholder="Add Salary Here">
+                                </div>
+
+                                }
+
+                                @if(ViewBag.cat==2)
+                                {
+                                   <div class="form-group">
+                                    <label class="text-bold"> Is it Regular Customer ? <span class="text-danger">*</span></label>
+                                    <select name="IsRegular" class="form-control" placeholder="Is the customer regular" required>
+                                        <option value=""> -- Select an option -- </option>
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
+
+                                    </select>
+                                    </div>
+                                }
+
+                          
+
+                                 <input type="hidden" name="Role" value="@ViewBag.cat"/>
+
+                                 <input type="hidden" name="CreatedBy" value="@ViewBag.AdminId" />
+
+                            <div class="text-right">
+                                <button type="submit" id="subBtn" class="btn btn-primary">Add <i class="icon-database-insert position-right"></i></button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+
+
+  
+
+    function validateEmail(email) {
+        if (email != "") {
+            $.ajax({
+                type: 'POST',
+                url: "../Ajax/ValidateEmail",
+                dataType: "json",
+                data: {
+                    email: email, id: -1
+                },
+                success: function (response) {
+                    if (response == true) {
+                        $('#emailErrMsg').text("");
+                        $('#subBtn').attr('disabled', false);
+                    }
+                    else {
+                        $('#emailErrMsg').text("Email already exsist");
+                        $('#subBtn').attr('disabled', true);
+                    }
+                },
+                error: function () {
+                    $('#emailErrMsg').text("");
+                    $('#subBtn').attr('disabled', false);
+                    alert("Ajax failed");
+                }
+            });
+        }
+
+    }
+
+    function validateUsername(username) {
+            if (username != "") {
+                $.ajax({
+                    type: 'POST',
+                    url: "../Ajax/ValidateUsername",
+                    dataType: "json",
+                    data: {
+                        username: username, id: -1
+                    },
+                    success: function (response) {
+                        if (response == true) {
+                            $('#nameErrMsg').text("");
+                            $('#subBtn').attr('disabled', false);
+                        }
+                        else {
+                            $('#nameErrMsg').text("Username already exsist");
+                            $('#subBtn').attr('disabled', true);
+                        }
+                    },
+                    error: function () {
+                        $('#nameErrMsg').text("");
+                        $('#subBtn').attr('disabled', false);
+                        alert("Ajax failed");
+                    }
+                });
+            }
+        }
+
+
+    
+      
+         
+
+
+</script>
+
+@*<script>
+    //Used to handle Sidebar links Activeness
+    $('#manageUserTab1').addClass('active');
+
+</script>*@

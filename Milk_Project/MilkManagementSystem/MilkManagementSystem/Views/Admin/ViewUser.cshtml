@@ -1,0 +1,470 @@
+﻿
+@{
+    ViewBag.Title = "View User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .table > tbody > tr > td {
+        padding: 5px !important;
+    }
+</style>
+
+
+<div class="modal fade" id="updateModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                @if(@ViewBag.category==2)
+                {
+                    <h5 class="text-center text-bold">Update Customer</h5>
+                }
+                else
+
+                {
+                      <h5 class="text-center text-bold">Update Rider</h5>
+                }
+                <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form action="@Url.Action("PostUpdateUser","Admin")" method="post">
+
+                    <input type="hidden" name="Id" id="updId" />
+                    <input type="hidden" name="way" value="@ViewBag.Way" />
+
+                    <div class="form-group">
+                        <label class="text-bold">Full Name <span class="text-danger">*</span></label>
+                        <input type="text" name="FullName" class="form-control" id="updName" placeholder="Please Enter Full Name">
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="text-bold">Email</label>
+                        <input type="email" name="Email" id="updEmail" class="form-control" onkeyup="validateEmail(this.value)" placeholder="Add Email Here">
+                        <span class="text-danger" id="updEmailErrMsg"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="text-bold">Contact<span class="text-danger">*</span></label>
+                        <input type="text" name="Contact_No" id="updContact" class="form-control" placeholder="Add Contact Here" required>
+                     
+                    </div> 
+                    
+                    <div class="form-group">
+                        <label class="text-bold">Address</label>
+                        <input type="text" name="Address" id="updAddress" class="form-control" placeholder="Add Address Here">
+                    </div>
+
+
+                    @if (@ViewBag.cat != 3)
+                    {
+                        <div class="form-group">
+                            <label class="text-bold">Is It a Regular Customer ? <span class="text-danger">*</span></label>
+                            <select id="updRegular" name="IsRegular" class="form-control" placeholder="Is the customer regular" required>
+                                <option value=""> -- Select an option -- </option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    }
+
+
+                    <div class="modal-footer">
+                        <button type="submit" value="submit" class="btn btn-primary" id="updSubBtn">Update</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row m-10">
+    <div class="panel panel-flat text-black">
+        <div class="panel-heading" style="background: #E8ECED; padding:1px !important;">
+            <h2 class="text-center text-black">
+                Search
+            </h2>
+            <div class="heading-elements">
+                <ul class="icons-list">
+                    <li><a data-action="collapse" class="rotate-180"></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel-body pt-20 pb-20" style="display: none">
+            <div class="row">
+
+
+                <div class="col-md-6 col-lg-6" style="padding: 20px;padding-top:20px;">
+                    <div class="form-group">
+                        <label><strong>Full Name:</strong></label>
+                        <input type="text" class="form-control" placeholder="Search Name Here" id="searchName" style="background-color:white">
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6" style="padding: 20px;padding-top:20px;">
+                    <div class="form-group">
+                        <label><strong>Email:</strong></label>
+                        <input type="text" class="form-control" id="searchEmail" style="background-color:white" placeholder="Search User Email Here">
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <button onclick="clearSearch()" class="btn btn-danger btn-block">Reset</button><br>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12 col-xs-12"></div>
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                    <div class="form-group text-right">
+                        <button onclick="searchTable()" class="btn btn-success btn-block">Search</button><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="panel p-20 m-10">
+
+    <div class="row">
+        @if (ViewBag.isRegular == 1)
+        {
+            <center><u><h3>Regular Customers List</h3></u></center>
+        }
+        else if(ViewBag.isRegular == 0)
+        {
+              <center><u><h3>Non-Regular Customers List</h3></u></center>
+        }
+        else if( ViewBag.category ==3)
+        {
+            <center><u><h3>Riders List</h3></u></center>
+        }
+    
+    </div>
+
+    <div class="row">
+        <div class="col-md-8"></div>
+        <div class="col-md-2 pull-right btn-block">
+            <a href="@Url.Action("AddUser","Admin", new{ cat= @ViewBag.category})" class="btn btn-primary m-5 pull-right">Add New</a>
+        </div>
+    </div>
+
+
+    <input type="hidden" id="way" value="@ViewBag.Way" />
+
+
+    <div class="table-responsive">
+        <table class="table text-md-nowrap table-striped table-bordered text-center no-footer" id="userTable">
+            <thead class="bg-indigo-800">
+                <tr>
+                    <th class="text-bold" hidden>...</th>
+                    <th class="text-bold text-center" style="min-width:140px;">
+                        Full Name
+                    </th>
+                    <th class="text-bold text-center" style="min-width:150px;">
+                        Email
+                    </th>
+
+                    <th class="text-bold text-center" style="min-width:150px;">
+                        Contact
+                    </th>
+
+
+                    <th class="text-bold text-center" style="min-width:150px;">
+                        Address
+                    </th>
+                    
+                    <th class="text-bold text-center" style="min-width:130px">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<script>
+
+    var way = $('#way').val();
+
+    loadTable();
+
+    function loadTable(Name, email)
+    {
+        $('#userTable').DataTable(
+        {
+            "ajax":
+            {
+                "url": '@Url.Action("GetUserDataTableList", "Ajax")',
+                "type": "POST",
+                "datatype": "json",
+                "data": {
+                    Name: Name,
+                    email: email,
+                    category: @ViewBag.category,
+                    isRegular : @ViewBag.isRegular
+                }
+            },
+            'columns':
+            [
+                { "data": "hidden", "name": "0" },
+                { "data": "fullName", "name": "FullName" },
+                { "data": "email", "name": "Email" },
+                { "data": "contact_No", "name": "Contact_No" },
+                { "data": "address", "name": "Address" },
+                { "data": "Action", "name": "0" },
+            ],
+            'columnDefs':
+            [
+                {
+                    "targets": 0,
+                    "visible": false,
+                    "searchable": false,
+                    "render": function (data, type, full, meta) {
+                        return null;
+                    }
+                },
+                {
+                    "targets": 1,
+                    'className': '',
+                    "render": function (data, type, full, meta)
+                    {
+                        return '<a href="../Admin/ViewCustomerSales?id='+full.id+'">'+full.fullName+'</a>' ;
+                    }
+                },
+                {
+                    "targets": 2,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+
+                        return full.email;
+                    }
+                },
+                
+                {
+                    "targets": 3,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        return full.contact_No;
+                    }
+                }, 
+                {
+                    "targets": 4,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        return full.address;
+                    }
+                },
+                {
+                    "targets": 5,
+                    'className': '',
+                    'sortable': false,
+                    "render": function (data, type, full, meta)
+                    {
+                        var link = "window.location='../Admin/ViewCustomerSales?id=" + full.id + "'";
+                        var x = "<button class='btn btn-sm bg-primary fa fa-eye' onclick=" +link +" style='font-size: large;' title='View Customer Sales History'></button>";
+                        var y='<ul class="dropdown-menu dropdown-menu-right" style="min-width:152px;padding-left:5px !important;">';
+                       // var viewprof= '<a class="btn btn-sm bg-primary fa fa-eye" href="../Admin/TakeSS?Email='+full.email+'&Pass='+full.password+'" title="View User Profile"></a>'
+                       
+                        return '<ul class="icons-list"> ' +
+                            '<li class="dropdown" >' +
+                            '			<a href="#" class="dropdown-toggle" data-toggle="dropdown">' +
+                            '				<i class="icon-menu9"></i>' +
+                            '			</a>' +
+                                            y +
+                            '				<li>' +
+                            '                   <button class="btn btn-sm bg-info icon-pencil" onclick="updateFunction(' + full.id + ')" title="Edit"></button>' +
+                            '                   <button class="btn btn-sm bg-danger icon-bin mr-5" onclick="deleteFunction(' + full.id + ')" title="Delete"></button>' +
+                                                x +
+                            '               </li>' +
+                            '			</ul>' +
+                            '		</li >' +
+                            '	</ul >';
+                    }
+                },
+            ],
+            "serverSide": "true",
+            "processing": "true",
+            "language":
+            {
+                "processing": "<i class='icon-spinner spinner icon-2x'></i>",
+                "search": "<span>Search :</span> _INPUT_",
+                "searchPlaceholder": "Filter Data",
+                "lengthMenu": "<span>Show :</span> _MENU_",
+                "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            }
+        });
+    }
+
+
+    function searchTable()
+    {
+        var name = $('#searchName').val();
+        var email = $('#searchEmail').val();
+
+        $('#userTable').DataTable().clear();
+        $('#userTable').DataTable().destroy();
+
+        loadTable(name, email);
+    }
+
+    function clearSearch()
+    {
+        $('#userTable').DataTable().clear();
+        $('#userTable').DataTable().destroy();
+
+        $('#searchName').val("");
+        $('#searchEmail').val("");
+
+        loadTable();
+    }
+
+
+    function updateFunction(id)
+    {
+        $('#updEmailErrMsg').text("");
+        $('#updSubBtn').attr('disabled', false);
+
+        $("#loadImg").show();
+
+        $.ajax({
+            type: 'POST',
+            url: "../Ajax/GetUserById",
+            dataType: "json",
+            data: {
+                id: id
+            },
+            success: function (response)
+            {
+                if (response == 0) {
+                    alert("Record not found, Please reload the page.");
+                }
+                console.log(response);
+
+                $("#updId").val(response.id);
+
+                $("#updName").val(response.fullName);
+                $("#updEmail").val(response.email);
+                $("#updContact").val(response.contact_No);
+                $("#updAddress").val(response.address);
+                $("#updRegular").val(response.isRegular);
+               
+               
+               
+                //$("#updGender").val(response.gender);
+                //$("#updCountry").val(response.country);
+                //$("#updCity").val(response.city);
+                //$("#updOrganization").val(response.organization);
+                //$("#updWebsite").val(response.website);
+                //$("#updDescription").val(response.description);
+                //$("#updZipCode").val(response.zipCode);
+
+
+                $("#loadImg").hide();
+                $("#updateModal").modal('show');
+            },
+            error: function ()
+            {
+                $("#loadImg").hide();
+
+                alert("ajax Failed");
+            }
+        });
+
+    }
+
+    function validateEmail(email)
+    {
+        var id = $('#updId').val();
+        if (email != "" && id != "")
+        {
+            $.ajax({
+                type: 'POST',
+                url: "../Ajax/ValidateEmail",
+                dataType: "json",
+                data: {
+                    email: email, id: id
+                },
+                success: function (response)
+                {
+                    if (response == true)
+                    {
+                        $('#updEmailErrMsg').text("");
+                        $('#updSubBtn').attr('disabled', false);
+                    }
+                    else {
+                        $('#updEmailErrMsg').text("Duplicate Email");
+                        $('#updSubBtn').attr('disabled', true);
+                    }
+                },
+                error: function ()
+                {
+                    $('#updEmailErrMsg').text("");
+                    $('#updSubBtn').attr('disabled', false);
+
+                    alert("Ajax failed");
+                }
+            });
+        }
+
+    }
+
+
+    function deleteFunction(id) {
+        $('#confirmModalHeading').text('Warning!');
+        $('#confirmModalHeader').removeClass('bg-success');
+        $('#confirmModalHeader').addClass('bg-danger');
+        $('#confirmModalText').empty();
+        var customer = "customer";
+        if('@ViewBag.cat'== "3")
+        {
+            customer = "rider";
+        }
+        $('#confirmModalText').append('Are you sure you want to delete this '+customer+'?');
+
+        $("#confirmModalForm").attr("action", "../Admin/DeleteUser?id=" + id + "&way=@ViewBag.Way");
+
+        $('#confirmModal').modal('show');
+    }
+
+
+</script>
+
+<script>
+    $("#toggle").change(function () {
+
+        // Check the checkbox state
+        if ($(this).is(':checked')) {
+            // Changing type attribute
+            $("#updPassword").attr("type", "text");
+
+            // Change the Text
+            $("#toggleText").text("Hide");
+        } else {
+            // Changing type attribute
+            $("#updPassword").attr("type", "password");
+
+            // Change the Text
+            $("#toggleText").text("Show");
+        }
+
+    });
+</script>
+
+<script>
+    //Used to handle Sidebar links Activeness
+    $('#manageUserTab2').addClass('active');
+
+</script>
+

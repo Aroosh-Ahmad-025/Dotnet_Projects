@@ -1,0 +1,261 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="row m-10">
+    <div class="panel panel-flat text-black">
+        <div class="panel-heading" style="background: #E8ECED; padding:1px !important;">
+            <h2 class="text-center text-black">
+                Search
+            </h2>
+            <div class="heading-elements">
+                <ul class="icons-list">
+                    <li><a data-action="collapse" class="rotate-180"></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel-body pt-20 pb-20" style="display: block">
+            <div class="row">
+
+
+                <div class="col-md-6 col-lg-6" style="padding: 20px;padding-top:20px;">
+                    <div class="form-group">
+                        <label><strong>From Date:</strong></label>
+                        <input type="date" class="form-control" placeholder="From Date Here" id="fromDate" style="background-color:white">
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 col-lg-6" style="padding: 20px;padding-top:20px;">
+                    <div class="form-group">
+                        <label><strong>To Date:</strong></label>
+                        <input type="date" class="form-control" placeholder="To Date Here" id="toDate" style="background-color:white">
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div class="row">
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <button onclick="clearSearch()" class="btn btn-danger btn-block">Reset</button><br>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12 col-xs-12"></div>
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                    <div class="form-group text-right">
+                        <button onclick="searchTable()" class="btn btn-success btn-block">Search</button><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="col-md-12 text-center m-10" style="margin-left:4%!important;">
+
+
+    <h1 class="text-bold text-highlight"><u> Admin Dashboard</u></h1>
+
+</div>
+
+<div class="row text-center m-10">
+
+
+
+
+    <div class="col-md-4 col-md-offset-2">
+        <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+            <h3 class="text-semibold">Total Non-Regular Customers</h3>
+            <h2 id="custCount" class="text-bold"></h2>
+        </div>
+    </div>
+
+    <div class="col-md-4 col-md-offset-1 ">
+        <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+            <h3 class="text-semibold">Total Regular Customers</h3>
+            <h2 id="regularCust" class="text-bold"></h2>
+        </div>
+    </div>
+
+
+</div>
+
+<div class="row text-center m-10">
+
+    <div class="col-md-4 col-md-offset-2 ">
+        <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+            <h3 class="text-semibold">Total Packets</h3>
+            <h2 id="packetsCount" class="text-bold"></h2>
+        </div>
+
+    </div>
+
+    <div class="col-md-4 col-md-offset-1">
+        <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+            <h3 class="text-semibold">Total Packets Sold</h3>
+            <h2 id="soldpacketsCount" class="text-bold"></h2>
+        </div>
+
+
+
+    </div>
+
+</div>
+
+
+<div class="row text-center m-10">
+
+
+    <div class="col-md-4 col-md-offset-2">
+        <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+            <h3 class="text-semibold">Total Buffalo Packets</h3>
+            <h2 id="buffaloPackets" class="text-bold"></h2>
+        </div>
+    </div>
+
+    <div class="col-md-4 col-md-offset-1">
+        <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+            <h3 class="text-semibold">Total Buffalo Packets Sold</h3>
+            <h2 id="buffaloPacketsSold" class="text-bold"></h2>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+<div class="row text-center m-10">
+
+
+    <div class="col-md-4 col-md-offset-2">
+        <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+            <h3 class="text-semibold">Total Cow Packets</h3>
+            <h2 id="cowPackets" class="text-bold"></h2>
+        </div>
+    </div>
+
+    <div class="col-md-4 col-md-offset-1">
+        <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+            <h3 class="text-semibold">Total Cow Packets Sold</h3>
+            <h2 id="cowPacketsSold" class="text-bold"></h2>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="row text-center m-10">
+
+
+    <div class="col-md-4 col-md-offset-2">
+        <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+            <h3 class="text-semibold">Total Buffalo+Cow Packets</h3>
+            <h2 id="buffaloPcowPackets" class="text-bold"></h2>
+        </div>
+    </div>
+
+    <div class="col-md-4 col-md-offset-1">
+        <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+            <h3 class="text-semibold">Total Buffalo+Cow Packets Sold</h3>
+            <h2 id="buffaloPcowSold" class="text-bold"></h2>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row text-center m-10">
+
+
+    <div class="col-md-4 col-md-offset-2">
+        <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+            <h3 class="text-semibold">Total Riders</h3>
+            <h2 id="ridCount" class="text-bold"></h2>
+        </div>
+    </div>
+
+</div>
+
+
+
+<script>
+    //Used to handle Sidebar links Activeness
+    $('#adminIndex').addClass('active');
+
+</script>
+
+
+<script>
+
+    GetCandR();
+
+    function GetCandR(fromDate, ToDate) {
+        $.ajax({
+            type: 'POST',
+            url: "../Ajax/GetAssetsCount",
+            dataType: "json",
+            data: {
+                fromDate: fromDate, toDate: ToDate
+            },
+            success: function(response) {
+
+                //Response index sequence
+
+                //total cust//total riders//sold packets// total packets //regular customers // buffaloPackets //buffaloPacketsSold
+                //cowPackets
+                //cowPacketsSold
+                //buffaloPcow
+                //buffaloPcowSold
+
+
+                $("#custCount").html(response[0]);
+                $("#ridCount").html(response[1]);
+                $("#soldpacketsCount").html(response[2]);
+                $("#packetsCount").html(response[3]);
+                $("#regularCust").html(response[4]);
+
+                $("#buffaloPackets").html(response[5]);
+                $("#buffaloPacketsSold").html(response[6]);
+
+                $("#cowPackets").html(response[7]);
+                $("#cowPacketsSold").html(response[8]);
+
+                $("#buffaloPcowPackets").html(response[9]);
+                $("#buffaloPcowSold").html(response[10]);
+
+
+
+            },
+            error: function() {
+                alert("Ajax failed");
+            }
+        });
+    }
+
+    function searchTable() {
+        var from = $('#fromDate').val();
+        var to = $('#toDate').val();
+
+
+
+
+        GetCandR(from, to);
+    }
+
+    function clearSearch() {
+
+        $('#fromDate').val("");
+        $('#toDate').val("");
+
+        GetCandR();
+    }
+</script>

@@ -1,0 +1,366 @@
+﻿
+@{
+    ViewBag.Title = "View Packets Records";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .table > tbody > tr > td {
+        padding: 5px !important;
+    }
+</style>
+
+
+<div class="modal fade" id="updateModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="text-center text-bold">Update Packet</h5>
+                <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form action="@Url.Action("PostUpdatePackets","Admin")" method="post">
+
+                    <input type="hidden" name="Id" id="updId" />
+                    <input type="hidden" name="way" value="@ViewBag.Way" />
+                    <input type="hidden" id="createdBy" name="CreatedBy" value="@ViewBag.Way" />
+
+                     <div class="form-group">
+
+
+                                <label class="text-bold">Category<span class="text-danger">*</span></label>
+                                <select class="form-control" id="updCategory" required name="Category" placeholder="Select Category">
+                                    <option value="1">Buffalo</option>
+                                    <option value="2">Cow</option>
+                                    <option value="3">Buffalo+Cow</option>
+                                </select>
+
+                     </div>
+
+                     <div class="form-group">
+
+                                <label class="text-bold">Total Quantity <span class="text-danger">*</span></label>
+                                <input type="number" id="updTQuantity" class="form-control" required name="TotalQuantity" placeholder="Enter Total Quantity" />
+
+                     </div>
+
+                      
+                    <div class="form-group">
+
+
+                                <label class="text-bold"> Adding Date <span class="text-danger">*</span></label>
+                                <input type="datetime-local" id="updAddDate" class="form-control" required name="AddedDate" placeholder="Enter Add Date" />
+
+                    </div>
+                    
+
+                    <div class="modal-footer">
+                        <button type="submit" value="submit" class="btn btn-primary" id="updSubBtn">Update</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row m-10">
+    <div class="panel panel-flat text-black">
+        <div class="panel-heading" style="background: #E8ECED; padding:1px !important;">
+            <h2 class="text-center text-black">
+                Search
+            </h2>
+            <div class="heading-elements">
+                <ul class="icons-list">
+                    <li><a data-action="collapse" class="rotate-180"></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel-body pt-20 pb-20" style="display: none">
+            <div class="row">
+
+
+                <div class="col-md-6 col-lg-6" style="padding: 20px;padding-top:20px;">
+                    <div class="form-group">
+                        <label><strong>By Category:</strong></label>
+                        <select class="form-control" placeholder="Search Name Here" id="searchCategory" style="background-color:white">
+                            <option value=""> -- Select a Category -- </option>
+                            <option value="1">Buffalo</option>
+                            <option value="2">Cow</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-6" style="padding: 20px;padding-top:20px;">
+                    <div class="form-group">
+                        <label><strong>By Quantity:</strong></label>
+                        <input type="text" class="form-control" id="searchQuantity" style="background-color:white" placeholder="Search By Quantity Here">
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <button onclick="clearSearch()" class="btn btn-danger btn-block">Reset</button><br>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12 col-xs-12"></div>
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                    <div class="form-group text-right">
+                        <button onclick="searchTable()" class="btn btn-success btn-block">Search</button><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="panel p-20 m-10">
+
+    <div class="row">
+      
+            <center><u><h3>Packets List</h3></u></center>
+        
+      
+    
+    </div>
+
+    <div class="row">
+        <div class="col-md-8"></div>
+        <div class="col-md-2 pull-right btn-block">
+            <a href="@Url.Action("AddPackets","Admin")" class="btn btn-primary m-5 pull-right">Add New</a>
+        </div>
+    </div>
+
+
+    <input type="hidden" id="way" value="@ViewBag.Way" />
+
+
+    <div class="table-responsive">
+        <table class="table text-md-nowrap table-striped table-bordered text-center no-footer" id="packetsTable">
+            <thead class="bg-indigo-800">
+                <tr>
+                    <th class="text-bold" hidden>...</th>
+                    <th class="text-bold text-center" style="min-width:140px;">
+                        Category
+                    </th>
+                    <th class="text-bold text-center" style="min-width:140px;">
+                        Total Quantity
+                    </th>
+                 
+                    <th class="text-bold text-center" style="min-width:150px;">
+                        Added On
+                    </th>
+                    
+                    <th class="text-bold text-center" style="min-width:130px">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<script>
+
+    var way = $('#way').val();
+
+    loadTable();
+
+    function loadTable(category,quantity)
+    {
+        $('#packetsTable').DataTable(
+        {
+            "ajax":
+            {
+                "url": '@Url.Action("GetActivePacketDataTableList", "Ajax")',
+                "type": "POST",
+                "datatype": "json",
+                "data": {
+                 
+                    category: category, quantity: quantity
+                }
+            },
+            'columns':
+            [
+                { "data": "hidden", "name": "0" },
+                { "data": "category", "name": "Category" },
+                { "data": "totalQuantity", "name": "TotalQuantity" },
+                { "data": "createdAt", "name": "CreatedAt" },
+                { "data": "Action", "name": "0" },
+            ],
+            'columnDefs':
+            [
+                {
+                    "targets": 0,
+                    "visible": false,
+                    "searchable": false,
+                    "render": function (data, type, full, meta) {
+                        return null;
+                    }
+                },
+                {
+                    "targets": 1,
+                    'className': '',
+                    "render": function (data, type, full, meta)
+                    {
+                        if (full.category == 1) {
+                            return "Buffalo" ;
+                        }
+                        else if (full.category == 3) {
+                            return "Buffalo+Cow" ;
+                        }
+                        return "Cow" ;
+                    }
+                },
+                {
+                    "targets": 2,
+                    'className': '',
+                    "render": function (data, type, full, meta)
+                    {
+                        return full.totalQuantity;
+                    }
+                },
+              
+                {
+                    "targets": 3,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        return new Date(full.addedDate).toLocaleString();
+                    }
+                },
+                {
+                    "targets": 4,
+                    'className': '',
+                    'sortable': false,
+                    "render": function (data, type, full, meta)
+                    {
+                      
+                        var y='<ul class="dropdown-menu dropdown-menu-right" style="min-width:152px;padding-left:5px !important;">';
+                            
+                        
+                        return '<ul class="icons-list"> ' +
+                            '<li class="dropdown" >' +
+                            '			<a href="#" class="dropdown-toggle" data-toggle="dropdown">' +
+                            '				<i class="icon-menu9"></i>' +
+                            '			</a>' +
+                                            y +
+                            '				<li>' +
+                            '                   <button class="btn btn-sm bg-info icon-pencil" onclick="updateFunction(' + full.id + ')" title="Edit"></button>' +
+                            '                   <button class="btn btn-sm bg-danger icon-bin mr-5" onclick="deleteFunction(' + full.id + ')" title="Delete"></button>' +
+                            '               </li>' +
+                            '			</ul>' +
+                            '		</li >' +
+                            '	</ul >';
+                    }
+                },
+            ],
+            "serverSide": "true",
+            "processing": "true",
+            "language":
+            {
+                "processing": "<i class='icon-spinner spinner icon-2x'></i>",
+                "search": "<span>Search :</span> _INPUT_",
+                "searchPlaceholder": "Filter Data",
+                "lengthMenu": "<span>Show :</span> _MENU_",
+                "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            }
+        });
+    }
+
+
+    function searchTable()
+    {
+        var category = $('#searchCategory').val();
+        var quantity = $('#searchQuantity').val();
+
+        $('#packetsTable').DataTable().clear();
+        $('#packetsTable').DataTable().destroy();
+
+        loadTable(category, quantity);
+    }
+
+    function clearSearch()
+    {
+        $('#packetsTable').DataTable().clear();
+        $('#packetsTable').DataTable().destroy();
+
+        $('#searchName').val("");
+        $('#searchEmail').val("");
+
+        loadTable();
+    }
+
+
+    function updateFunction(id)
+    {
+        $('#updEmailErrMsg').text("");
+        $('#updSubBtn').attr('disabled', false);
+
+        $("#loadImg").show();
+
+        $.ajax({
+            type: 'POST',
+            url: "../Ajax/GetPacketById",
+            dataType: "json",
+            data: {
+                id: id
+            },
+            success: function (response)
+            {
+                if (response == 0) {
+                    alert("Record not found, Please reload the page.");
+                }
+
+                $("#updId").val(response.id);
+                $("#createdBy").val(response.createdBy);
+                $("#updCategory").val(response.category);
+                $("#updTQuantity").val(response.totalQuantity);
+                $("#updAddDate").val(response.addedDate);
+               
+             
+
+                $("#loadImg").hide();
+                $("#updateModal").modal('show');
+            },
+            error: function ()
+            {
+                $("#loadImg").hide();
+
+                alert("ajax Failed");
+            }
+        });
+
+    }
+
+    function deleteFunction(id) {
+        $('#confirmModalHeading').text('Warning!');
+        $('#confirmModalHeader').removeClass('bg-success');
+        $('#confirmModalHeader').addClass('bg-danger');
+        $('#confirmModalText').empty();
+        $('#confirmModalText').append('Are you sure you want to delete this record?');
+
+        $("#confirmModalForm").attr("action", "../Admin/DeletePackets?id=" + id + "&way=@ViewBag.Way");
+
+        $('#confirmModal').modal('show');
+    }
+
+
+</script>
+
+<script>
+    //Used to handle Sidebar links Activeness
+    $('#manageUserTab2').addClass('active');
+
+</script>
+

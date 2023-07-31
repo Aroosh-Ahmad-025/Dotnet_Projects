@@ -1,0 +1,168 @@
+﻿@{
+    ViewBag.Title = "Add Sold Packets";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="p-20">
+
+    <div class="row">
+        <form action="@Url.Action("PostSoldPackets", "Admin")" method="post">
+
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="panel panel-flat">
+                        <div class="panel-heading">
+                           
+                        <h2 class="panel-title text-center text-bold">Add Sold Packets</h2>
+                         
+                        </div>
+
+                        <div class="panel-body">
+                            <legend class="text-bold text-uppercase"><span class="text-danger">*</span> Fields are mandatory to fill</legend>
+
+
+                            <div class="form-group">
+                                <label class="text-bold">Category<span class="text-danger">*</span></label>
+                                <select class="form-control" required name="Category" placeholder="Select Category">
+                                    <option value="1">Buffalo</option>
+                                    <option value="2">Cow</option>
+                                    <option value="3">Buffalo+Cow</option>
+                                </select>
+                            </div>
+
+                             <div class="form-group">
+                                <label class="text-bold"> Total Quantity <span class="text-danger">*</span></label>
+                                <input type="number" min="0" class="form-control" required name="Quantity" placeholder="Enter Total Quantity Here" />
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="text-bold"> Price Per Packet <span class="text-danger">*</span></label>
+                                <input type="number" min="0" class="form-control" required name="PricePerPacket" placeholder="Enter Packet Price Here" />
+                            </div>
+
+                             <div class="form-group">
+                                <label class="text-bold"> From Date and Time <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" required name="FromDate" placeholder="Select From Date and Time " />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold"> To Date and Time <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" required name="ToDate" placeholder="Select To Date and Time " />
+                            </div>
+
+                             <div class="form-group">
+                                <label class="text-bold"> Adding Date and Time<span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" required name="SoldDate" placeholder="Select Add Date and Time " />
+                            </div>
+
+
+                           <div class="form-group">
+                                <label class="text-bold"> Pickup Location</label>
+                                <input type="text" class="form-control"  name="Pickup_Location" placeholder="Enter Pickup Location Here" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold"> DropOff Location</label>
+                                <input type="text" class="form-control"  name="DropOff_Location" placeholder=" Enter DropOff Location Here" />
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="text-bold"> Total Distance in KM </label>
+                                <input type="number" min="0" class="form-control"  name="Total_Distance" placeholder="Enter Total Distance Here" />
+                            </div>
+
+                             <div class="form-group">
+                                <label class="text-bold"> Select Rider</label>
+                                <select class="form-control" id="riders" name="PickedBy" placeholder="Select Rider ">
+
+                                    <option value="">-- Select a Rider --</option>
+                                
+
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                            
+                                <label class="text-bold"> Select Customer <span class="text-danger">*</span></label>
+                                <select class="form-control" id="customers" required name="SoldTo" placeholder="Select Customer">
+                                    <option value="">-- Select a Customer --</option>
+                                
+
+                                </select>
+
+                            </div>
+
+
+
+                            <input type="hidden" name="CreatedBy" value="@ViewBag.AdminId" />
+
+                            <input type="hidden" name="IsSold" value="1" />
+
+                          
+
+                            <div class="text-right">
+                                <button type="submit" id="subBtn" class="btn btn-primary">Add <i class="icon-database-insert position-right"></i></button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+         $.ajax({
+                type: 'GET',
+                url: "../Ajax/GetAllCustomers",
+                dataType: "json",
+                success: function (response)
+                {
+                     $.each(response, function(i, item) {
+                        
+                        $("#customers").append($('<option>', { 
+                                value: item.id,
+                                text : item.fullName +" (" + item.contact_No + ")"
+                            }));
+
+                    });
+                },
+                error: function ()
+                {
+                   
+
+                    alert("Ajax failed");
+                }
+            });
+
+
+            $.ajax({
+                type: 'GET',
+                url: "../Ajax/GetAllRiders",
+                dataType: "json",
+                success: function (response)
+                {
+                  
+                    $.each(response, function(i, item) {
+                        
+                        $("#riders").append($('<option>', { 
+                                value: item.id,
+                                text : item.fullName +" (" + item.contact_No + ")"
+                            }));
+
+                    });
+                },
+                error: function ()
+                {
+                   
+
+                    alert("Ajax failed");
+                }
+            });
+</script>

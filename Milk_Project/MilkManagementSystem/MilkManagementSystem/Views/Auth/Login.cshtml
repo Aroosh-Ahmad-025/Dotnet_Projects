@@ -1,0 +1,76 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_FrontLayout.cshtml";
+    ViewBag.Title = "Login";
+}
+
+
+<div class="login-container m-10">
+
+    <input type="hidden" id="viewbagMessage" value="@ViewBag.Message">
+    <input type="hidden" id="viewbagColor" value="@ViewBag.Color">
+
+    <br />
+
+
+    <!-- Page container -->
+    <div class="page-container">
+
+        <!-- Page content -->
+        <div class="page-content">
+
+            <!-- Main content -->
+            <div class="content-wrapper">
+
+                <!-- Advanced login -->
+                <form action="@Url.Action("PostLogin","Auth")" method="post" class="login-form">
+                    <div class="panel panel-body">
+
+                        <div class="text-center">
+                            @*<img src="~/assets/images/p2pLogo.png" width="80" height="80" alt="">*@
+                            <h5 class="content-group-lg">Login To Your Account <small class="display-block">Enter your credentials</small></h5>
+                        </div>
+
+                        <div class="form-group has-feedback has-feedback-left">
+                            <input type="email" class="form-control" placeholder="Enter Email" required name="Email">
+                            <div class="form-control-feedback">
+                                <i class="icon-mail5 text-muted"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group has-feedback has-feedback-left">
+                            <input type="password" class="form-control" placeholder="Password" required name="Password">
+                            <div class="form-control-feedback">
+                                <i class="icon-lock2 text-muted"></i>
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group">
+                            <button type="submit" class="btn bg-blue-400 btn-block">Login <i class="icon-arrow-right14 position-right"></i></button>
+                        </div>
+
+                        <a class="pull-right" href="@Url.Action("ForgotPassword","Auth")">Forgot Password?</a>
+                        <br />
+
+
+                     @*   <div class="content-divider text-muted form-group"><span>Don't have an account?</span></div>
+
+                        <a href="@Url.Action("Register","Auth")" class="btn bg-pink btn-block content-group">Sign up</a>*@
+
+                    </div>
+                </form>
+                <!-- /advanced login -->
+
+            </div>
+            <!-- /main content -->
+
+        </div>
+        <!-- /page content -->
+
+    </div>
+    <!-- /page container -->
+
+</div>
+

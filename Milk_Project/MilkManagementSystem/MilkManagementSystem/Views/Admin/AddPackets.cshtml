@@ -1,0 +1,65 @@
+﻿@{
+    
+        ViewBag.Title = "Add Packets";
+   
+   
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="p-20">
+
+    <div class="row">
+        <form action="@Url.Action("PostAddPackets", "Admin")" method="post">
+
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="panel panel-flat">
+                        <div class="panel-heading">
+                           
+                                 <h2 class="panel-title text-center text-bold">Add Packets</h2>
+                         
+                        </div>
+
+                        <div class="panel-body">
+                            <legend class="text-bold text-uppercase"><span class="text-danger">*</span> Fields are mandatory to fill</legend>
+
+
+                            <div class="form-group">
+                                <label class="text-bold">Category<span class="text-danger">*</span></label>
+                                <select class="form-control" required name="Category" placeholder="Select Category">
+                                    <option value="1">Buffalo</option>
+                                    <option value="2">Cow</option>
+                                    <option value="3">Buffalo+Cow</option>
+                                </select>
+                            </div>
+
+                             <div class="form-group">
+                                <label class="text-bold">Total Quantity <span class="text-danger">*</span></label>
+                                <input type="number" min="0" class="form-control" required name="TotalQuantity" placeholder="Enter Total Quantity" />
+                            </div> 
+                            
+                            
+                            <div class="form-group">
+                                <label class="text-bold"> Adding Date <span class="text-danger">*</span></label>
+                                <input type="datetime-local" min="0" class="form-control" required name="AddedDate" placeholder="Enter Add Date" />
+                            </div>
+
+                                
+
+                                 <input type="hidden" name="CreatedBy" value="@ViewBag.AdminId" />
+
+                            <div class="text-right">
+                                <button type="submit" id="subBtn" class="btn btn-primary">Add <i class="icon-database-insert position-right"></i></button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
